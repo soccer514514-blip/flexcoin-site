@@ -2,106 +2,93 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flexcoin — $FLEX</title>
-    <meta name="description" content="Flexcoin — Luxury × Meme. $FLEX" />
-    <meta property="og:title" content="Flexcoin — $FLEX" />
     <meta
-      property="og:description"
-      content="Survive the memecoin sector with style."
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://flexcoin.io.kr/" />
-    <meta property="og:image" content="/assets/flexcoin-cover.png" />
-    <link rel="icon" href="/favicon.ico" />
-    <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        background: #000;
-        color: #ffd700;
-        font-family: "Pretendard", sans-serif;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      #app {
-        width: 100%;
-        height: 100%;
-      }
-      #loading {
-        font-size: 1.2rem;
-        opacity: 0.8;
-        text-align: center;
-        animation: blink 1.2s infinite;
-      }
-      @keyframes blink {
-        50% {
-          opacity: 0.4;
-        }
-      }
-    </style>
+    <title>Flexcoin — $FLEX</title>
+    <meta name="theme-color" content="#000000" />
   </head>
-
   <body>
-    <div id="app">
-      <div id="loading">🚀 Loading Flexcoin ...</div>
-    </div>
+    <div id="app"></div>
 
-    <!-- =========================================
+    <!-- ================================
          ✅ Flexcoin Multi-Path Loader (Vite 2025)
-         ========================================= -->
-    <script type="module">
+         - manifest 기반 우선, 실패 시 정적 경로 다중 시도
+         - GitHub Pages / 커스텀 도메인/서브패스 안전
+       ================================= -->
+    <script>
       (async () => {
-        const manifestCandidates = [
-          "/.vite/manifest.json",
-          "/manifest.json",
-          "/assets/manifest.json"
+        const el = (t, a) => Object.assign(document.createElement(t), a || {});
+
+        const add = (tag, attrs, parent = document.head) => {
+          const node = el(tag, attrs);
+          parent.appendChild(node);
+          return new Promise((res, rej) => {
+            node.onload = () => res(true);
+            node.onerror = () => rej(new Error(attrs.src || attrs.href || tag));
+          });
+        };
+
+        const tryLoad = async (candidates) => {
+          for (const c of candidates) {
+            try {
+              if (c.endsWith(".css")) {
+                await add("link", { rel: "stylesheet", href: c });
+              } else {
+                await add("script", { type: "module", src: c }, document.body);
+              }
+              return c;
+            } catch (e) {}
+          }
+          throw new Error("all candidates failed");
+        };
+
+        // 1) manifest 우선
+        const mPaths = [];
+        try {
+          const res = await fetch("./.vite/manifest.json", { cache: "no-store" });
+          if (res.ok) {
+            const m = await res.json();
+            const entry = m["index.html"] || Object.values(m)[0] || {};
+            if (entry.css) entry.css.forEach((css) => mPaths.push(`./${css}`));
+            if (entry.file) mPaths.push(`./${entry.file}`);
+          }
+        } catch (e) {}
+
+        // 2) 정적 후보 경로 (루트/서브패스/리포명 대응)
+        const repo = location.pathname.split("/").filter(Boolean)[0] || "";
+        const bases = [
+          "./assets/",
+          "/assets/",
+          `/${repo}/assets/`,
+          (window.__FLEX_BASE__ || "").replace(/\/?$/, "/assets/")
+        ].filter(Boolean);
+
+        const jsBases = bases.map((b) => b);
+        const cssBases = bases.map((b) => b);
+
+        const fallbacks = [
+          ...cssBases.map((b) => b + "index.css"),
+          ...jsBases.map((b) => b + "index.js"),
+          ...jsBases.map((b) => b + "main.js")
         ];
 
-        async function tryManifest(url) {
-          try {
-            const res = await fetch(url, { cache: "no-store" });
-            if (!res.ok) return false;
-
-            const manifest = await res.json();
-            const entry =
-              manifest["src/main.ts"] ||
-              manifest["src/main.tsx"] ||
-              manifest["src/main.js"] ||
-              Object.values(manifest)[0];
-
-            const file = entry && (entry.file || entry.src || entry);
-            if (!file) return false;
-
-            const fullPath = file.startsWith("/") ? file : "/" + file;
-            await import(fullPath);
-            document.getElementById("loading")?.remove();
-            return true;
-          } catch (err) {
-            return false;
-          }
-        }
-
-        // 경로별 순차 시도
-        for (const p of manifestCandidates) {
-          if (await tryManifest(p)) return;
-        }
-
-        // fallback: dev 모드나 manifest 누락 시 직접 main.ts 시도
         try {
-          await import("/src/main.ts");
-          document.getElementById("loading")?.remove();
+          // CSS 먼저
+          const cssList = mPaths.filter((p) => p.endsWith(".css"));
+          if (cssList.length) await tryLoad(cssList);
+          else await tryLoad(fallbacks.filter((x) => x.endsWith(".css")));
+
+          // JS 다음
+          const jsList = mPaths.filter((p) => p.endsWith(".js"));
+          await tryLoad(jsList.length ? jsList : fallbacks.filter((x) => x.endsWith(".js")));
         } catch (e) {
-          console.error("❌ Flexcoin app load failed:", e);
-          const warn = document.createElement("div");
-          warn.textContent =
-            "⚠️ Build assets not found. Check GitHub Pages workflow artifact.";
-          warn.style.cssText =
-            "position:fixed;bottom:0;left:0;right:0;background:#2b1b1b;color:#ffaaaa;padding:10px;text-align:center;font-size:14px;z-index:9999;";
-          document.body.appendChild(warn);
+          document.body.style.cssText =
+            "margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#ffd700;font-family:system-ui, Pretendard, sans-serif;text-align:center;padding:24px;";
+          document.body.innerHTML =
+            "<div><div style='font-size:56px'>⚠️</div><h1 style='margin:8px 0'>로드 실패</h1><p>배포 산출물(./dist)이 비어있거나 경로가 올바르지 않습니다.<br/>Actions 빌드가 성공했고 <code>dist/</code>가 업로드되었는지 확인하세요.</p></div>";
+          console.error("[Flex Loader] failed:", e);
         }
       })();
     </script>
