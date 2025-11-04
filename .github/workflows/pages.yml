@@ -10,7 +10,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: true
 
 jobs:
@@ -24,21 +24,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          # ⛔️ cache 제거: lock 파일 없어서 실패하던 부분
+          cache: 'npm'
 
       - name: Install deps
-        run: npm install
+        run: npm install --no-audit --no-fund
 
-      - name: Build (with manifest)
+      - name: Build (Vite + manifest)
         run: npm run build:pages
 
-      - name: Disable Jekyll (serve dotfiles safely)
-        run: echo > dist/.nojekyll
-
-      - name: Upload artifact
+      - name: Upload dist for Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: dist
 
   deploy:
     needs: build
