@@ -5,13 +5,13 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
-# GitHub Pages 배포 권한
+# GitHub Pages 권한
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 동시에 한 번만 실행
+# 동시에 1개만 실행
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -20,36 +20,37 @@ jobs:
   build:
     name: Build site
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
-          cache: "npm"
+          node-version: 20
 
+      # ⚠️ 락파일 없을 때도 실패하지 않도록 안전 설치
       - name: Install deps
-        run: npm ci || npm i
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm i
+          fi
 
-      # manifest.json 생성 포함 (package.json의 build:pages 사용)
-      - name: Build (with manifest)
+      # manifest.json 포함 빌드 (package.json에 build:pages 추가해둔 상태)
+      - name: Build (vite --manifest)
         run: npm run build:pages
 
-      # Pages가 가져갈 정적물 업로드
+      # dist 폴더를 페이지 아티팩트로 업로드
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: dist
 
   deploy:
     name: Deploy to GitHub Pages
     needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
