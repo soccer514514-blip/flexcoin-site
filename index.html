@@ -4,74 +4,103 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flexcoin — $FLEX</title>
-    <meta
-      name="description"
-      content="Flexcoin — Luxury × Meme. $FLEX"
-    />
+    <meta name="description" content="Flexcoin — Luxury × Meme. $FLEX" />
     <meta property="og:title" content="Flexcoin — $FLEX" />
     <meta
       property="og:description"
       content="Survive the memecoin sector with style."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://flexcoin.io.kr/" />
+    <meta property="og:image" content="/assets/flexcoin-cover.png" />
     <link rel="icon" href="/favicon.ico" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        color: #ffd700;
+        font-family: "Pretendard", sans-serif;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #app {
+        width: 100%;
+        height: 100%;
+      }
+      #loading {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        text-align: center;
+        animation: blink 1.2s infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0.4;
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div id="loading">🚀 Loading Flexcoin ...</div>
+    </div>
 
-    <!-- ================================
-         Flexcoin Multi-Path Loader (Vite)
-         ================================ -->
+    <!-- =========================================
+         ✅ Flexcoin Multi-Path Loader (Vite 2025)
+         ========================================= -->
     <script type="module">
       (async () => {
-        // 여러 경로 중 존재하는 manifest.json을 찾습니다.
-        const manifestPaths = [
-          '/manifest.json',
-          '/.vite/manifest.json',
-          '/assets/manifest.json'
+        const manifestCandidates = [
+          "/.vite/manifest.json",
+          "/manifest.json",
+          "/assets/manifest.json"
         ];
 
-        async function loadManifest(path) {
+        async function tryManifest(url) {
           try {
-            const res = await fetch(path, { cache: 'no-store' });
+            const res = await fetch(url, { cache: "no-store" });
             if (!res.ok) return false;
-            const manifest = await res.json();
 
-            // entry 파일 자동 탐색
+            const manifest = await res.json();
             const entry =
-              manifest['src/main.ts'] ||
-              manifest['src/main.tsx'] ||
-              manifest['src/main.js'] ||
+              manifest["src/main.ts"] ||
+              manifest["src/main.tsx"] ||
+              manifest["src/main.js"] ||
               Object.values(manifest)[0];
 
             const file = entry && (entry.file || entry.src || entry);
             if (!file) return false;
 
-            const fullPath = file.startsWith('/') ? file : '/' + file;
+            const fullPath = file.startsWith("/") ? file : "/" + file;
             await import(fullPath);
+            document.getElementById("loading")?.remove();
             return true;
-          } catch {
+          } catch (err) {
             return false;
           }
         }
 
-        // 순서대로 manifest 경로 시도
-        for (const p of manifestPaths) {
-          const ok = await loadManifest(p);
-          if (ok) return;
+        // 경로별 순차 시도
+        for (const p of manifestCandidates) {
+          if (await tryManifest(p)) return;
         }
 
-        // 개발 모드 또는 fallback
+        // fallback: dev 모드나 manifest 누락 시 직접 main.ts 시도
         try {
-          await import('/src/main.ts');
+          await import("/src/main.ts");
+          document.getElementById("loading")?.remove();
         } catch (e) {
-          console.error('Flexcoin app load failed:', e);
-          const warn = document.createElement('div');
+          console.error("❌ Flexcoin app load failed:", e);
+          const warn = document.createElement("div");
           warn.textContent =
-            '⚠️ Flexcoin build assets not found — check GitHub Pages artifact.';
+            "⚠️ Build assets not found. Check GitHub Pages workflow artifact.";
           warn.style.cssText =
-            'position:fixed;top:0;left:0;right:0;background:#2b1b1b;color:#ffbbbb;padding:8px;font-size:14px;text-align:center;z-index:9999;';
+            "position:fixed;bottom:0;left:0;right:0;background:#2b1b1b;color:#ffaaaa;padding:10px;text-align:center;font-size:14px;z-index:9999;";
           document.body.appendChild(warn);
         }
       })();
