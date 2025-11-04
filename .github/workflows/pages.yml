@@ -2,7 +2,7 @@ name: Build & Deploy (Vite + Pages)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -17,7 +17,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,23 +25,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          # lockfile이 없어도 통과시키도록 강제
-          cache-dependency-path: '**/package.json'
+          cache: npm
 
-      - name: Clean install (no lockfile)
-        run: npm install --no-audit --no-fund --force
+      - name: Install dependencies
+        run: npm ci || npm i --no-audit --no-fund
 
-      - name: Verify vite version
-        run: npx vite --version
+      - name: Build (Vite)
+        run: npm run build
 
-      - name: Build (GitHub Pages)
-        run: npm run build:pages
-
-      - name: Upload build artifact
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: ./dist
 
   deploy:
     needs: build
@@ -50,15 +44,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    permissions:
-      pages: write
-      id-token: write
-
     steps:
-      - name: Configure Pages
-        id: pages
-        uses: actions/configure-pages@v5
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
