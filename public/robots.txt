@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://flexcoin.io.kr/sitemap.xml
