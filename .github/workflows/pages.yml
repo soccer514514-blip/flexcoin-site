@@ -3,7 +3,6 @@ name: Build & Deploy (Vite + Pages)
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,19 +23,22 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: 20
+          # ⛔️ cache 제거: lock 파일 없어서 실패하던 부분
 
-      # lockfile이 없으므로 npm ci 대신 install 사용
       - name: Install deps
-        run: npm i --no-audit --no-fund
+        run: npm install
 
-      - name: Build (vite + manifest)
+      - name: Build (with manifest)
         run: npm run build:pages
+
+      - name: Disable Jekyll (serve dotfiles safely)
+        run: echo > dist/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: ./dist
 
   deploy:
     needs: build
@@ -45,5 +47,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
