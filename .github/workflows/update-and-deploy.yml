@@ -23,9 +23,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
-      - run: npm ci
-      - run: npm run build
+      # ✅ lockfile 있으면 npm ci, 없으면 npm install
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify dist
+        run: |
+          test -f dist/index.html || (echo "dist/index.html not found" && exit 1)
 
       - name: Upload artifact (dist)
         uses: actions/upload-pages-artifact@v3
