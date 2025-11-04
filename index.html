@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ko">
   <head>
@@ -10,23 +9,10 @@
     <meta property="og:description" content="Survive the memecoin sector with style."/>
     <meta property="og:type" content="website"/>
     <link rel="icon" href="/favicon.ico"/>
-    <style>#err{position:fixed;left:0;right:0;bottom:0;background:#2b1f1f;color:#ffdede;border-top:1px solid #e77;padding:8px 12px;font-size:12px;display:none}</style>
   </head>
   <body>
     <div id="app"></div>
-    <div id="err"></div>
-    <script>
-      // Optional: show runtime errors in production
-      window.addEventListener('error', e => {
-        const el = document.getElementById('err'); if(!el) return;
-        el.style.display='block'; el.textContent = '[Error] ' + (e.message || e.error);
-      });
-      window.addEventListener('unhandledrejection', e => {
-        const el = document.getElementById('err'); if(!el) return;
-        el.style.display='block'; el.textContent = '[Promise] ' + (e.reason?.message || e.reason || 'unknown');
-      });
-    </script>
-    <!-- IMPORTANT: Keep this exact path. Vite will transform it to /assets/*.js when building -->
+    <!-- Keep this exact path; Vite will transform it to /assets/*.js on build -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
