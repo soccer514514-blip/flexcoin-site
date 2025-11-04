@@ -1,19 +1,8 @@
 {
-  "name": "flexcoin-site",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:pages": "vite build --manifest",   // ★ GitHub Pages용 빌드(동일 결과)
+    "build:pages": "vite build --manifest",
     "preview": "vite preview --port 5173"
-  },
-  "dependencies": {
-    "ethers": "^6.13.1"
-  },
-  "devDependencies": {
-    "typescript": "^5.6.3",
-    "vite": "^5.4.0"
   }
 }
