@@ -3,6 +3,7 @@ name: Build & Deploy (Vite + Pages)
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,17 +25,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          # ❌ lockfile 캐시를 쓰지 않습니다 (없어도 되게)
-          cache: 'npm'
-          cache-dependency-path: package.json
 
-      - name: Install (no lockfile needed)
-        run: npm install --no-fund --no-audit
+      - name: Install dependencies (no lockfile required)
+        run: npm i --no-audit --no-fund
 
       - name: Build (Vite + manifest)
         run: npm run build:pages
 
-      - name: Upload artifact
+      - name: Upload Pages artifact (dist)
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
