@@ -2,61 +2,15 @@
   "name": "flexcoin-site",
   "private": true,
   "version": "1.1.0",
-  "description": "Flexcoin — Luxury × Meme. Official memecoin & NFT hub (Pro build: SEO + sitemap + robots + image optimization).",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "serve": "vite",
-    "preview": "vite preview --port 4173",
     "build": "vite build",
-    "build:pages": "vite build --outDir dist --manifest && node scripts/postbuild.mjs",
-    "lint": "eslint --ext .ts,.tsx,.js src",
-    "format": "prettier --write ."
-  },
-  "dependencies": {
-    "axios": "^1.7.2",
-    "dayjs": "^1.11.13",
-    "ethers": "^6.11.1",
-    "pinia": "^2.2.2",
-    "vue": "^3.5.3",
-    "vue-i18n": "^9.8.0",
-    "vue-router": "^4.3.2"
+    "build:pages": "vite build --outDir dist --manifest",
+    "preview": "vite preview --port 5173"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.1.2",
-    "@vitejs/plugin-vue-jsx": "^4.1.1",
-    "eslint": "^9.13.0",
-    "eslint-plugin-vue": "^9.25.0",
-    "prettier": "^3.3.3",
-    "sass": "^1.79.4",
     "typescript": "^5.6.3",
-    "vite": "^5.4.8",
-
-    /*** PRO 추가 ***/
-    "vite-imagetools": "^7.0.4",
-    "sharp": "^0.33.4",
-    "sitemap": "^7.1.2"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
-  ],
-  "keywords": [
-    "flexcoin",
-    "memecoin",
-    "vite",
-    "bsc",
-    "nft",
-    "web3",
-    "seo",
-    "sitemap",
-    "robots"
-  ],
-  "author": "Flexcoin Team",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/soccer514514-blip/flexcoin-site"
+    "vite": "^5.4.8"
   }
 }
