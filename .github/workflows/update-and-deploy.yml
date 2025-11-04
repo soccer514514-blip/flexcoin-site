@@ -20,12 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 🔧 캐시 옵션 제거 (lockfile 없어도 통과)
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      # ✅ lockfile 있으면 npm ci, 없으면 npm install
+      # ✅ lockfile 있으면 ci, 없으면 install
       - name: Install deps
         run: |
           if [ -f package-lock.json ]; then
