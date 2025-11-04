@@ -16,7 +16,7 @@
     <div id="app"></div>
     <div id="err"></div>
     <script>
-      console.log('BOOT OK');
+      // Optional: show runtime errors in production
       window.addEventListener('error', e => {
         const el = document.getElementById('err'); if(!el) return;
         el.style.display='block'; el.textContent = '[Error] ' + (e.message || e.error);
@@ -26,6 +26,7 @@
         el.style.display='block'; el.textContent = '[Promise] ' + (e.reason?.message || e.reason || 'unknown');
       });
     </script>
-    <script type="module" src="/src/main.ts?v=hotfix"></script>
+    <!-- IMPORTANT: Keep this exact path. Vite will transform it to /assets/*.js when building -->
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
