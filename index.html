@@ -10,89 +10,13 @@
     <meta property="og:description" content="Survive the memecoin sector with style."/>
     <meta property="og:type" content="website"/>
     <link rel="icon" href="/favicon.ico"/>
-    <style>
-      :root{--gold:#d4af37;--bg:#0b0b0d;--fg:#f4f5f7;--muted:#b6b6c1}
-      *{box-sizing:border-box}
-      body{margin:0;background:linear-gradient(180deg,#0b0b0d,#121217);color:var(--fg);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
-      header{position:sticky;top:0;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);border-bottom:1px solid rgba(212,175,55,.25);z-index:30}
-      .wrap{max-width:1100px;margin:0 auto;padding:16px}
-      .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-      .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.3px;color:var(--gold)}
-      .lang{padding:8px;border-radius:8px;background:rgba(255,255,255,.05);color:var(--fg);border:1px solid rgba(255,255,255,.12)}
-      main{padding:40px 16px}
-      .hero{display:grid;gap:16px;place-items:center;text-align:center;padding:32px;border:1px solid rgba(212,175,55,.35);border-radius:20px;background:rgba(255,255,255,.02)}
-      h1{margin:8px 0 0;font-size:40px;color:var(--gold)}
-      p.lead{margin:6px 0 10px;opacity:.9}
-      .cd{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-      .stat{min-width:120px;padding:10px 12px;border:1px dashed rgba(212,175,55,.4);border-radius:12px;font-variant-numeric:tabular-nums}
-      .btn{display:inline-block;padding:12px 18px;border-radius:999px;border:1px solid var(--gold);color:var(--gold);text-decoration:none;font-weight:700}
-      section{margin-top:48px}
-      .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-      .card{border:1px solid rgba(212,175,55,.25);border-radius:16px;padding:16px;background:rgba(255,255,255,.02)}
-      footer{margin:40px 0 20px;text-align:center;opacity:.6}
-      .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
-      #err{position:fixed;left:0;right:0;bottom:0;background:#2b1f1f;color:#ffdede;border-top:1px solid #e77;padding:8px 12px;font-size:12px;display:none}
-    </style>
+    <style>#err{position:fixed;left:0;right:0;bottom:0;background:#2b1f1f;color:#ffdede;border-top:1px solid #e77;padding:8px 12px;font-size:12px;display:none}</style>
   </head>
   <body>
-    <header>
-      <div class="wrap row">
-        <div class="brand">💎 FLEXCOIN</div>
-        <div class="row" style="gap:8px">
-          <select id="lang" class="lang">
-            <option value="ko">한국어</option>
-            <option value="en">English</option>
-          </select>
-          <a class="btn" href="https://t.me/+p1BMrdypmDFmNTA1" target="_blank">Telegram</a>
-          <a class="btn" href="https://x.com/Flexcoinmeme" target="_blank">X</a>
-        </div>
-      </div>
-    </header>
-
-    <main class="wrap">
-      <div class="hero">
-        <h1 id="t-hero-title">Flexcoin</h1>
-        <p class="lead" id="t-hero-sub">Memecoin 섹터에서 살아남기</p>
-        <div id="countdown" class="cd">
-          <div class="stat"><b id="cd-days">00</b> d</div>
-          <div class="stat"><b id="cd-hours">00</b> h</div>
-          <div class="stat"><b id="cd-mins">00</b> m</div>
-          <div class="stat"><b id="cd-secs">00</b> s</div>
-        </div>
-      </div>
-
-      <section>
-        <h2 id="t-tokenomics-title">Tokenomics</h2>
-        <div id="tokenomics" class="grid"></div>
-      </section>
-
-      <section>
-        <h2 id="t-roadmap-title">Roadmap</h2>
-        <div id="roadmap" class="grid"></div>
-      </section>
-
-      <section>
-        <h2 id="t-nft-title">NFT Mint</h2>
-        <div class="card">
-          <div class="row" style="gap:10px;flex-wrap:wrap">
-            <select id="net" class="lang">
-              <option value="bscTestnet">BSC Testnet</option>
-              <option value="bscMainnet">BSC Mainnet</option>
-            </select>
-            <button id="connect" class="btn">Connect Wallet</button>
-            <button id="mint" class="btn">Mint 1 NFT</button>
-          </div>
-          <pre class="mono" id="mint-log" style="white-space:pre-wrap;margin-top:12px"></pre>
-        </div>
-      </section>
-    </main>
-
-    <footer>© Flexcoin — $FLEX</footer>
-
+    <div id="app"></div>
     <div id="err"></div>
-
     <script>
-      // Global error banner for quick diagnosis in production
+      console.log('BOOT OK');
       window.addEventListener('error', e => {
         const el = document.getElementById('err'); if(!el) return;
         el.style.display='block'; el.textContent = '[Error] ' + (e.message || e.error);
@@ -102,6 +26,6 @@
         el.style.display='block'; el.textContent = '[Promise] ' + (e.reason?.message || e.reason || 'unknown');
       });
     </script>
-    <script type="module" src="./src/main.ts"></script>
+    <script type="module" src="/src/main.ts?v=hotfix"></script>
   </body>
 </html>
