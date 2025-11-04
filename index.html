@@ -13,6 +13,27 @@
   <body>
     <div id="app"></div>
     <!-- Keep this exact path; Vite will transform it to /assets/*.js on build -->
-    <script type="module" src="/src/main.ts"></script>
+    <script type="module">
+(async () => {
+  // 1) Vite 배포: manifest.json에서 진짜 번들 파일명을 찾아 로드
+  try {
+    const res = await fetch('/assets/manifest.json', { cache: 'no-store' });
+    if (res.ok) {
+      const m = await res.json();
+      const entry = (m['src/main.ts'] && m['src/main.ts'].file) || null;
+      if (entry) {
+        await import('/assets/' + entry);
+        return;
+      }
+    }
+  } catch (e) {
+    // manifest 접근 실패 -> 개발용으로 폴백 시도
+  }
+
+  // 2) 개발/폴백: 소스 직접 임포트
+  await import('/src/main.ts');
+})();
+</script>
+
   </body>
 </html>
