@@ -5,7 +5,6 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
-# 권한: Pages 배포에 필수
 permissions:
   contents: read
   pages: write
@@ -17,7 +16,6 @@ concurrency:
 
 jobs:
   build:
-    name: Build static site
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,34 +24,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: "18"
 
-      # lockfile이 없으면 npm i, 있으면 npm ci
+      # lockfile이 없으므로 npm ci 대신 install 사용
       - name: Install deps
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci --no-audit --no-fund
-          else
-            npm i --no-audit --no-fund
-          fi
+        run: npm i --no-audit --no-fund
 
-      # Vite가 manifest 생성하도록 빌드 (vite.config.ts에 manifest:true도 있지만 안전하게)
-      - name: Build (with manifest)
+      - name: Build (vite + manifest)
         run: npm run build:pages
-
-      # 디버그: 산출물 확인 (문제 시 로그에서 dist 트리 확인)
-      - name: List dist
-        run: |
-          echo "---- dist tree ----"
-          ls -lah dist || true
-          echo "---- find manifest ----"
-          (ls -lah dist/manifest.json || true)
-          (ls -lah dist/.vite/manifest.json || true)
-          (ls -lah dist/assets/manifest.json || true)
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -61,13 +39,11 @@ jobs:
           path: dist
 
   deploy:
-    name: Deploy to GitHub Pages
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
