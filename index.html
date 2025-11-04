@@ -2,38 +2,72 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flexcoin — $FLEX</title>
-    <meta name="description" content="Flexcoin — Luxury × Meme. $FLEX"/>
-    <meta property="og:title" content="Flexcoin — $FLEX"/>
-    <meta property="og:description" content="Survive the memecoin sector with style."/>
-    <meta property="og:type" content="website"/>
-    <link rel="icon" href="/favicon.ico"/>
+    <meta name="description" content="Flexcoin — Luxury × Meme. $FLEX" />
+    <meta property="og:title" content="Flexcoin — $FLEX" />
+    <meta property="og:description" content="Survive the memecoin sector with style." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.ico" />
   </head>
+
   <body>
     <div id="app"></div>
-    <!-- Keep this exact path; Vite will transform it to /assets/*.js on build -->
+
+    <!-- ===============================
+         Flexcoin Multi-Path Loader (Vite manifest auto-resolver)
+         =============================== -->
     <script type="module">
-(async () => {
-  // 1) Vite 배포: manifest.json에서 진짜 번들 파일명을 찾아 로드
-  try {
-    const res = await fetch('/assets/manifest.json', { cache: 'no-store' });
-    if (res.ok) {
-      const m = await res.json();
-      const entry = (m['src/main.ts'] && m['src/main.ts'].file) || null;
-      if (entry) {
-        await import('/assets/' + entry);
-        return;
-      }
-    }
-  } catch (e) {
-    // manifest 접근 실패 -> 개발용으로 폴백 시도
-  }
+      (async () => {
+        // 후보 manifest 경로 (Vite 버전/환경별)
+        const candidates = [
+          "/manifest.json",
+          "/.vite/manifest.json",
+          "/assets/manifest.json",
+        ];
 
-  // 2) 개발/폴백: 소스 직접 임포트
-  await import('/src/main.ts');
-})();
-</script>
+        async function tryManifest(url) {
+          try {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) return false;
 
+            const m = await res.json();
+
+            // 엔트리 후보 탐색
+            const rec =
+              m["src/main.ts"] ||
+              m["src/main.tsx"] ||
+              m["src/main.js"] ||
+              Object.values(m)[0];
+
+            const file = rec && (rec.file || rec.src || rec);
+            if (!file) return false;
+
+            const path = file.startsWith("/") ? file : "/" + file;
+            await import(path);
+            return true;
+          } catch {
+            return false;
+          }
+        }
+
+        // 1️⃣ manifest 후보를 순서대로 시도
+        for (const p of candidates) {
+          if (await tryManifest(p)) return;
+        }
+
+        // 2️⃣ 개발/폴백: 소스 직접 임포트 (배포본엔 없을 수 있음)
+        try {
+          await import("/src/main.ts");
+        } catch (e) {
+          const div = document.createElement("div");
+          div.textContent = "⚠️ 앱 스크립트 로드 실패 (배포 아티팩트 확인 필요)";
+          div.style.cssText =
+            "position:sticky;top:0;z-index:9999;background:#291e1e;color:#ffd1d1;padding:8px 12px;border-bottom:1px solid #553;";
+          document.body.prepend(div);
+          console.error(e);
+        }
+      })();
+    </script>
   </body>
 </html>
