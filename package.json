@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview --port 5173"
+    "preview": "vite preview --port 5173",
+    "build:pages": "vite build --manifest"
   },
   "dependencies": {
     "ethers": "^6.13.1"
