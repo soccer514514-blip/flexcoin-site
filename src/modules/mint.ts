@@ -1,3 +1,4 @@
+
 import { BrowserProvider, Contract, parseEther } from 'ethers'
 
 const CHAINS:any = {
@@ -5,43 +6,31 @@ const CHAINS:any = {
   bscMainnet: { chainId: '0x38', name: 'BSC', rpc: 'https://bsc-dataseed.binance.org' }
 }
 
-// Replace these when ready
 const ADDR:any = {
   bscTestnet: '0xYourTestnetNFTAddress',
   bscMainnet: '0xYourMainnetNFTAddress'
 }
 const ABI = [
-  // minimal ABI: function mint(uint256 quantity) payable
   "function mint(uint256 quantity) payable",
   "function price() view returns (uint256)"
 ]
 
 async function connect(chainKey:string){
-  if (!window.ethereum) throw new Error('No wallet')
+  if (!(window as any).ethereum) throw new Error('지갑이 없습니다. MetaMask를 설치하세요.')
   const target = CHAINS[chainKey]
   try{
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: target.chainId }]
-    })
+    await (window as any).ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: target.chainId }] })
   }catch(e:any){
     if (e.code === 4902){
-      await window.ethereum.request({
+      await (window as any).ethereum.request({
         method: 'wallet_addEthereumChain',
-        params: [{
-          chainId: target.chainId,
-          chainName: target.name,
-          rpcUrls: [target.rpc],
-          nativeCurrency: { name:'BNB', symbol:'BNB', decimals:18 }
-        }]
+        params: [{ chainId: target.chainId, chainName: target.name, rpcUrls: [target.rpc], nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18} }]
       })
-    }else{
-      throw e
-    }
+    }else{ throw e }
   }
-  const provider = new BrowserProvider(window.ethereum as any)
+  const provider = new BrowserProvider((window as any).ethereum)
   const signer = await provider.getSigner()
-  return { provider, signer }
+  return signer
 }
 
 export function setupMintUI(){
@@ -52,9 +41,8 @@ export function setupMintUI(){
 
   btnC.onclick = async ()=>{
     try{
-      const { signer } = await connect(sel.value)
-      const addr = await signer.getAddress()
-      log.textContent = `Connected: ${addr}`
+      const signer = await connect(sel.value)
+      log.textContent = 'Connected: ' + await signer.getAddress()
     }catch(e:any){
       log.textContent = 'Connect error: ' + (e.message || e)
     }
@@ -62,18 +50,14 @@ export function setupMintUI(){
 
   btnM.onclick = async ()=>{
     try{
-      const { signer } = await connect(sel.value)
+      const signer = await connect(sel.value)
       const contract = new Contract(ADDR[sel.value], ABI, signer)
-      // If contract has price(), fetch; else example 0.01 BNB
       let value = parseEther('0.01')
-      try{
-        const p = await contract.price()
-        value = p
-      }catch(_){}
+      try{ value = await contract.price() }catch{}
       const tx = await contract.mint(1, { value })
       log.textContent = 'Minting... TX: ' + tx.hash
-      const r = await tx.wait()
-      log.textContent = 'Minted! Block: ' + r.blockNumber
+      await tx.wait()
+      log.textContent = 'Minted!'
     }catch(e:any){
       log.textContent = 'Mint error: ' + (e.message || e)
     }

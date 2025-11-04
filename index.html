@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="ko">
   <head>
@@ -30,6 +31,7 @@
       .card{border:1px solid rgba(212,175,55,.25);border-radius:16px;padding:16px;background:rgba(255,255,255,.02)}
       footer{margin:40px 0 20px;text-align:center;opacity:.6}
       .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+      #err{position:fixed;left:0;right:0;bottom:0;background:#2b1f1f;color:#ffdede;border-top:1px solid #e77;padding:8px 12px;font-size:12px;display:none}
     </style>
   </head>
   <body>
@@ -87,6 +89,19 @@
 
     <footer>© Flexcoin — $FLEX</footer>
 
-    <script type="module" src="/src/main.ts"></script>
+    <div id="err"></div>
+
+    <script>
+      // Global error banner for quick diagnosis in production
+      window.addEventListener('error', e => {
+        const el = document.getElementById('err'); if(!el) return;
+        el.style.display='block'; el.textContent = '[Error] ' + (e.message || e.error);
+      });
+      window.addEventListener('unhandledrejection', e => {
+        const el = document.getElementById('err'); if(!el) return;
+        el.style.display='block'; el.textContent = '[Promise] ' + (e.reason?.message || e.reason || 'unknown');
+      });
+    </script>
+    <script type="module" src="./src/main.ts"></script>
   </body>
 </html>
