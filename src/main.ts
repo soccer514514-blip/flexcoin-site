@@ -1,3 +1,4 @@
+import "./style.css";
 // src/main.ts
 import { initCountdown } from './modules/countdown'
 import { applyI18n, loadLang } from './modules/i18n'
