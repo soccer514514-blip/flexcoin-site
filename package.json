@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview --port 5173",
-    "build:pages": "vite build --manifest"
+    "build:pages": "vite build --manifest",   // ★ GitHub Pages용 빌드(동일 결과)
+    "preview": "vite preview --port 5173"
   },
   "dependencies": {
     "ethers": "^6.13.1"
