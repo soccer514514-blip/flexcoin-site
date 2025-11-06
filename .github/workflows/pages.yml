@@ -1,23 +1,37 @@
+<<<<<<< HEAD
 name: Build & Deploy (Vite + Pages)
 
+=======
+﻿name: Deploy Vite to GitHub Pages
+>>>>>>> c157e31 (deploy: add hero images + vite base=/ + workflow + build)
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
+<<<<<<< HEAD
 
+=======
+>>>>>>> c157e31 (deploy: add hero images + vite base=/ + workflow + build)
 permissions:
   contents: read
   pages: write
   id-token: write
+<<<<<<< HEAD
 
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
+=======
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+>>>>>>> c157e31 (deploy: add hero images + vite base=/ + workflow + build)
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+<<<<<<< HEAD
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -49,10 +63,29 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+=======
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+>>>>>>> c157e31 (deploy: add hero images + vite base=/ + workflow + build)
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+<<<<<<< HEAD
       - name: Deploy to GitHub Pages
         id: deployment
+=======
+      - id: deployment
+>>>>>>> c157e31 (deploy: add hero images + vite base=/ + workflow + build)
         uses: actions/deploy-pages@v4

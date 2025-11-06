@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Links + countdown + hero rotator
 const LINKS = {
   presale: "https://example.com/presale",
@@ -46,3 +47,37 @@ function startHero(){
 bindLinks();
 startCountdown();
 startHero();
+=======
+﻿const HERO_IMAGES = [
+  "/hero/1.jpg",
+  "/hero/2.jpg",
+  "/hero/3.jpg",
+  "/hero/4.jpg",
+  "/hero/5.jpg",
+  "/hero/6.jpg",
+  "/hero/7.jpg",
+];
+
+function applyHeroBackground(idx = 0) {
+  const el = document.body;
+  if (!el || HERO_IMAGES.length === 0) return;
+  el.style.backgroundImage = "url(" + HERO_IMAGES[idx % HERO_IMAGES.length] + ")";
+}
+
+applyHeroBackground(0);
+setInterval(() => {
+  const t = Math.floor(Date.now() / 8000);
+  applyHeroBackground(t);
+}, 8000);
+
+
+applyHeroBackground(0);
+setInterval(() => {
+  const t = Math.floor(Date.now() / 8000);
+  applyHeroBackground(t);
+}, 8000);
+
+
+
+
+>>>>>>> c157e31 (deploy: add hero images + vite base=/ + workflow + build)
