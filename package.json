@@ -11,7 +11,7 @@
   "dependencies": {
     "ethers": "^6.12.0",
     "i18next": "^23.10.1",
-    "i18next-browser-languageDetector": "^7.2.0"
+    "i18next-browser-languagedetector": "^7.2.0"
   },
   "devDependencies": {
     "typescript": "^5.6.3",
