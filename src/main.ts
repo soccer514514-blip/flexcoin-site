@@ -1,4 +1,8 @@
-﻿const LINKS = {
+﻿const HERO_IMAGES = [
+  
+];
+
+const LINKS = {
   website: "#",
   x: "#",
   telegram: "#",
