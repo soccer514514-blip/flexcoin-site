@@ -4,11 +4,74 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b0b0b" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>$FLEX — Flexcoin</title>
-    <script type="module" crossorigin src="/assets/index-C6SaTKor.js"></script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script type="module" crossorigin src="/assets/index-DJ4i52ec.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Doq5P2qb.css">
   </head>
   <body>
     <div id="app"></div>
+
+    <main class="wrap">
+      <span class="badge">Flexcoin Multi-Path Loader (Vite)</span>
+      <h1>$FLEX — 플렉스코인</h1>
+      <p class="subtitle">Luxury gold theme · fast · ready</p>
+
+      <div class="cta">
+        <button id="btn-presale" class="pill">프리세일 참여</button>
+        <button id="btn-x" class="pill">X (트위터)</button>
+        <button id="btn-telegram" class="pill">텔레그램</button>
+      </div>
+
+      <div id="countdown" class="countdown"></div>
+      <section id="hero-rotator" class="hero"></section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>토크노믹스</h2>
+          <ul class="kv">
+            <li><b>Total</b><span>1,000,000,000 $FLEX</span></li>
+            <li><b>LP</b><span>69%</span></li>
+            <li><b>Presale</b><span>10% (90d vesting)</span></li>
+            <li><b>Marketing</b><span>10%</span></li>
+            <li><b>Team</b><span>10% (6m lock + 6m linear)</span></li>
+            <li><b>Burn</b><span>1%</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>로드맵</h2>
+          <ol>
+            <li>Phase 1 — Survive in the memecoin sector</li>
+            <li>Phase 2 — Community growth + listings</li>
+            <li>Phase 3 — NFT utilities + more</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h2>NFT 뿜내기</h2>
+          <div class="mint">
+            <button id="btn-connect" class="pill">지갑 연결</button>
+            <div class="row">
+              <input id="mint-qty" type="number" min="1" value="1"/>
+              <button id="btn-mint" class="pill">민팅</button>
+            </div>
+            <small>Demo only. Set contract in <code>src/main.ts</code>.</small>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Links</h2>
+          <ul>
+            <li><a id="lnk-website" href="#" target="_blank">Website</a></li>
+            <li><a id="lnk-x" href="#" target="_blank">X / Twitter</a></li>
+            <li><a id="lnk-telegram" href="#" target="_blank">Telegram</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Status</h2>
+          <p>Build OK • Vite ready</p>
+          <p>URL: <code id="status-url"></code></p>
+        </div>
+      </section>
+    </main>
+
   </body>
 </html>
