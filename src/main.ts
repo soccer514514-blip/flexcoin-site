@@ -1,3 +1,65 @@
+/* ---------------------------------------------------------
+   FLEX ⤳ PATH HOTFIX (hero & nft-preview) — 2025-11-07
+   - 모든 "1.jpg~7.jpg" 같은 상대경로를 /public/hero/*.jpg 로 강제 보정
+   - NFT 프리뷰는 /public/nft-preview/publicnft-preview*.jpg 사용
+   - 프리세일 설정은 /public/config/presale.json 로드
+--------------------------------------------------------- */
+
+const VER = new URLSearchParams(location.search).get("v") || String(Date.now());
+const HERO_BASE = "/public/hero/";
+const PREVIEW_BASE = "/public/nft-preview/";
+const PRESALE_CONFIG = "/public/config/presale.json";
+
+// 1) 문서 내 <img> 경로 보정 (hero 1~7.jpg)
+function fixHeroImagePaths(scope: Document | HTMLElement = document) {
+  const imgs = Array.from(scope.querySelectorAll<HTMLImageElement>("img"));
+  imgs.forEach((img) => {
+    const raw = img.getAttribute("src") || "";
+    const m = raw.match(/(?:^|\/)([1-7])\.jpg(?:\?.*)?$/i);
+    if (!m) return;
+    const n = m[1];
+    const fixed = `${HERO_BASE}${n}.jpg?v=${VER}`;
+    if (img.src !== fixed) img.src = fixed;
+    img.onerror = () => (img.src = `${HERO_BASE}${n}.jpg?v=${Date.now()}`);
+  });
+}
+document.addEventListener("DOMContentLoaded", () => fixHeroImagePaths());
+window.addEventListener("load", () => setTimeout(() => fixHeroImagePaths(), 0));
+
+// 2) NFT 프리뷰 영역 채우기(있을 때만)
+(function mountNftPreview() {
+  const box = document.querySelector<HTMLElement>("[data-nft-preview], .nft-preview, #nft-preview");
+  if (!box) return;
+  const list = [1,2,3,4,5,6].map(n => `${PREVIEW_BASE}publicnft-preview${n}.jpg?v=${VER}`);
+  const img = new Image();
+  img.alt = "NFT Preview";
+  img.style.maxWidth = "100%";
+  img.style.height = "auto";
+  img.loading = "lazy";
+  let i = 0;
+  function cycle() {
+    img.src = list[i % list.length];
+    i++;
+  }
+  img.onerror = () => setTimeout(cycle, 100);
+  box.innerHTML = "";
+  box.appendChild(img);
+  cycle();
+  setInterval(cycle, 4000);
+})();
+
+// 3) 프리세일 타이머 설정 로드(파일이 있을 때만)
+(async function loadPresaleConfig() {
+  try {
+    const r = await fetch(`${PRESALE_CONFIG}?v=${VER}`);
+    if (!r.ok) return;
+    const cfg = await r.json();
+    (window as any).__FLEX_PRESALE__ = cfg;
+    // 기존 타이머 모듈이 있으면 여기서 cfg를 읽어 재초기화하도록 훅을 노출해둠
+    document.dispatchEvent(new CustomEvent("flex:presale:config", { detail: cfg }));
+  } catch {}
+})();
+
 // ---------------------------------------------------------
 // Flexcoin main.ts — hero path hotfix + countdown
 // ---------------------------------------------------------
