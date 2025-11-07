@@ -1,6 +1,25 @@
 ﻿<!doctype html>
 <html lang="en">
-  <head>
+ <style id="hero-hotfix">
+  /* 히어로 박스가 어떤 클래스/아이디든 무조건 잡히게 넓게 지정 */
+  .hero, .Hero, [data-hero], #hero, .hero-wrap {
+    aspect-ratio: 1792 / 1024;      /* 1,792×1,024 비율 고정 */
+    max-height: 560px;               /* 모바일에서 과도하게 커지지 않게 상한 */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%), #0b0805;
+  }
+  .hero img, .Hero img, [data-hero] img, #hero img, .hero-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;  /* 잘림 방지 */
+    display: block;
+  }
+</style>
+ <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b0b0b" />
