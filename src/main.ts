@@ -1,116 +1,159 @@
-﻿import './style.css';
+const $ = (sel:string, el:Document|HTMLElement=document)=>el.querySelector(sel)! as HTMLElement;
+const app = $('#app');
 
-/** 배포 후 강새로고침 쿼리 (?v=...) 가 있으면 그대로, 없으면 현시각으로 생성 */
-const VERSION =
-  new URLSearchParams(location.search).get('v') ||
-  String(Date.now());
+const HERO_IMAGES = [
+  "/public/hero/1.jpg",
+  "/public/hero/2.jpg",
+  "/public/hero/3.jpg",
+  "/public/hero/4.jpg",
+  "/public/hero/5.jpg",
+  "/public/hero/6.jpg",
+  "/public/hero/7.jpg",
+];
 
-/** 히어로 후보들(1번이 메인). 확장자는 jpg 고정(실제 파일을 jpg로 운영 권장) */
-const HERO_FILES = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg'];
+// 캐시 버스터
+const v = Date.now();
 
-/** 절대 경로 + 캐시버스터 */
-const HERO_IMAGES: string[] = HERO_FILES.map(
-  (f) => `/hero/${f}?v=${VERSION}`
-);
-
-/** 히어로를 장착할 대상 셀렉터(있으면 사용, 없으면 자동 생성) */
-const HERO_HOST_SELECTORS = ['[data-hero]', '.hero', '.Hero', '#hero', '.hero-wrap'];
-
-/** 히어로 컨테이너에 강제 스타일(안보임/잘림 방지 핫픽스) */
-function ensureHeroStyles(el: HTMLElement) {
-  el.style.display = 'flex';
-  el.style.alignItems = 'center';
-  el.style.justifyContent = 'center';
-  el.style.overflow = 'hidden';
-  el.style.width = '100%';
-  // 1792 x 1024 비율 고정 + 모바일 과확대 방지
-  (el.style as any).aspectRatio = '1792 / 1024';
-  el.style.maxHeight = '560px';
-  el.style.background =
-    'radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%), #0b0b0b';
+function heroSection(){
+  const wrap = document.createElement('section');
+  wrap.className = 'section';
+  wrap.innerHTML = `
+    <div class="hero-wrap hero">
+      <img id="hero-img" alt="Flexcoin Hero" src="${HERO_IMAGES[0]}?v=${v}">
+    </div>
+  `;
+  // (선택) 자동 슬라이드 – 이미지가 있으면 돌려줌
+  let idx = 0;
+  setInterval(()=> {
+    idx = (idx+1) % HERO_IMAGES.length;
+    (document.getElementById('hero-img') as HTMLImageElement).src = `${HERO_IMAGES[idx]}?v=${v}`;
+  }, 5000);
+  return wrap;
 }
 
-/** <img> 공통 스타일 */
-function styleHeroImg(img: HTMLImageElement) {
-  img.style.width = '100%';
-  img.style.height = '100%';
-  img.style.objectFit = 'contain'; // 잘림 방지
-  img.decoding = 'async';
-  // 크롬/사파리 최신: 첫 프레임 속도 ↑
-  (img as any).fetchPriority = 'high';
-  (img as any).loading = 'eager';
+function countdownSection(){
+  // KST 2025-12-01 00:00
+  const target = new Date('2025-12-01T00:00:00+09:00').getTime();
+  const box = document.createElement('section');
+  box.className = 'section center';
+  box.innerHTML = `
+    <h2>Presale starts in</h2>
+    <div id="cd" class="badge" style="font-size:1.25rem;font-weight:700">--d --h --m --s</div>
+  `;
+  const cd = $('#cd', box);
+  const tick = ()=>{
+    const now = Date.now();
+    let diff = Math.max(0, target - now);
+    const d = Math.floor(diff/86400000); diff%=86400000;
+    const h = Math.floor(diff/3600000);  diff%=3600000;
+    const m = Math.floor(diff/60000);    diff%=60000;
+    const s = Math.floor(diff/1000);
+    cd.textContent = `${d}d ${h}h ${m}m ${s}s`;
+  };
+  tick(); setInterval(tick, 1000);
+  return box;
 }
 
-/** 히어로 컨테이너 찾기/만들기 */
-function getOrCreateHeroHost(): HTMLElement {
-  for (const sel of HERO_HOST_SELECTORS) {
-    const found = document.querySelector<HTMLElement>(sel);
-    if (found) return found;
-  }
-  // 없으면 body 맨 위에 자동 생성
-  const host = document.createElement('section');
-  host.setAttribute('data-hero', '');
-  document.body.prepend(host);
-  return host;
+function tokenomicsSection(){
+  const box = document.createElement('section');
+  box.className = 'section';
+  box.innerHTML = `
+    <h2>토크노믹스</h2>
+    <div class="kv">
+      <div>Total</div><div>1,000,000,000 $FLEX</div>
+      <div>LP</div><div>69%</div>
+      <div>Presale</div><div>10% (90d vesting)</div>
+      <div>Marketing</div><div>10%</div>
+      <div>Team</div><div>10% (6m lock + 6m linear)</div>
+      <div>Burn</div><div>1%</div>
+    </div>
+    <p class="small">* 그래프형 시각화는 다음 단계에서 추가</p>
+  `;
+  return box;
 }
 
-/** 이미지 로드 가능한 첫 URL 반환 */
-function pickFirstLoadable(urls: string[]): Promise<string> {
-  return new Promise((resolve, reject) => {
-    let idx = 0;
-    const tryNext = () => {
-      if (idx >= urls.length) {
-        reject(new Error('No hero image loadable'));
-        return;
-      }
-      const url = urls[idx++];
-      const probe = new Image();
-      probe.onload = () => resolve(url);
-      probe.onerror = () => tryNext();
-      probe.src = url;
-    };
-    tryNext();
-  });
+function roadmapSection(){
+  const box = document.createElement('section');
+  box.className = 'section';
+  box.innerHTML = `
+    <h2>로드맵</h2>
+    <ol class="list">
+      <li>Phase 1 — Survive in the memecoin sector</li>
+      <li>Phase 2 — Community growth + listings</li>
+      <li>Phase 3 — NFT utilities + more</li>
+    </ol>
+  `;
+  return box;
 }
 
-/** 히어로 장착 */
-async function mountHero() {
-  const host = getOrCreateHeroHost();
-  ensureHeroStyles(host);
-
-  // 이미지 엘리먼트 준비
-  let img = host.querySelector<HTMLImageElement>('img');
-  if (!img) {
-    img = document.createElement('img');
-    styleHeroImg(img);
-    host.appendChild(img);
-  } else {
-    styleHeroImg(img);
-  }
-
-  try {
-    const firstOk = await pickFirstLoadable(HERO_IMAGES);
-    img.src = firstOk;
-  } catch {
-    // 모든 이미지 실패 시, 안전한 빈 프레임 유지
-    img.remove(); // 완전 공백 대신 배경만 보이도록
-  }
+function nftSection(){
+  const box = document.createElement('section');
+  box.className = 'section';
+  box.innerHTML = `
+    <h2>NFT 뽑내기</h2>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="small">Demo only. Set contract in <code>src/main.ts</code>.</div>
+        <div style="margin:12px 0;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="btn-connect">지갑 연결</button>
+          <input id="mint-qty" type="number" value="1" min="1" max="10" style="width:80px;background:#100e0c;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px">
+          <button class="btn gold" id="btn-mint">민팅</button>
+        </div>
+        <div class="small" id="mint-msg">지갑 연결 후 민팅을 진행하세요.</div>
+      </div>
+      <div class="card">
+        <div class="small">NFT 전용 페이지/도메인은 다음 단계에서 분리 연결</div>
+        <div style="height:140px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--border);border-radius:10px">NFT Preview</div>
+      </div>
+    </div>
+  `;
+  // 데모 클릭 메세지
+  $('#btn-connect', box).addEventListener('click', ()=> $('#mint-msg', box).textContent = '지갑 연결(데모). 실제 컨트랙트 연결은 다음 단계에서 설정.');
+  $('#btn-mint', box).addEventListener('click', ()=> $('#mint-msg', box).textContent = '민팅 요청(데모).');
+  return box;
 }
 
-/** 앱 초기화 */
-function boot() {
-  // 히어로 먼저 보이게
-  mountHero();
-
-  // 다른 초기화 로직이 있으면 아래에 추가하면 됩니다.
-  // 예) 네비, 버튼 핸들러, 지갑연결 초기화 등
+function linksSection(){
+  const box = document.createElement('section');
+  box.className = 'section';
+  box.innerHTML = `
+    <h2>Links</h2>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="grid cols-2">
+          <a class="btn" href="/" target="_blank" rel="noopener">Website</a>
+          <a class="btn" href="https://x.com/Flexcoinmeme" target="_blank" rel="noopener">X / Twitter</a>
+          <a class="btn" href="https://t.me/+p1BMrdypmDFmNTA1" target="_blank" rel="noopener">Telegram</a>
+          <a class="btn" href="#" target="_blank" rel="noopener">Explorer (BscScan/Etherscan)</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="small">하단부 팀 공식 지갑/락 정보도 다음 단계에서 표로 추가</div>
+      </div>
+    </div>
+  `;
+  return box;
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', boot, { once: true });
-} else {
-  boot();
+function footer(){
+  const box = document.createElement('section');
+  box.className = 'section center small';
+  box.innerHTML = `<span class="badge">Flexcoin Multi-Path Loader (Vite)</span>`;
+  return box;
 }
 
-// 내보내기: 다른 모듈에서 필요하면 사용할 수 있도록
-export { HERO_IMAGES, VERSION };
+/* 렌더 */
+(function render(){
+  const container = document.createElement('div');
+  container.className = 'container';
+  container.append(
+    heroSection(),
+    countdownSection(),
+    tokenomicsSection(),
+    roadmapSection(),
+    nftSection(),
+    linksSection(),
+    footer(),
+  );
+  app.replaceWith(container);
+})();
