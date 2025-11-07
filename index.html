@@ -1,25 +1,15 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
-    <!-- 기본 메타 -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0b0b0b">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0b0b" />
     <title>$FLEX — Flexcoin</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- 파비콘/매니페스트(있으면 유지, 없으면 무시됨) -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="manifest" href="/site.webmanifest">
-
-    <!-- 핵심 CSS -->
-    <link rel="stylesheet" href="/src/style.css">
-
-    <!-- Hero 이미지 안 보임/잘림 핫픽스: 반드시 head 안에 둠 -->
+    <!-- Hero 보임/잘림 핫픽스 -->
     <style id="hero-hotfix">
-      /* 히어로 박스가 어떤 클래스/아이디든 무조건 잡히도록 넓게 매칭 */
       .hero, .Hero, [data-hero], #hero, .hero-wrap {
-        /* 1,792×1,024 비율 유지 + 모바일 과확대 방지 */
         aspect-ratio: 1792 / 1024;
         max-height: 560px;
         width: 100%;
@@ -27,44 +17,21 @@
         align-items: center;
         justify-content: center;
         overflow: hidden;
-
-        /* 사이트 톤에 맞춘 안전 배경 */
         background:
           radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%),
           #0b0b0b;
       }
-      /* 내부 이미지는 무조건 contain (잘림 방지) */
       .hero img, .Hero img, [data-hero] img, #hero img, .hero-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain !important;
+        width: 100%; height: 100%;
+        object-fit: contain !important;  /* 잘림 방지 */
         display: block;
       }
     </style>
 
-    <!-- 성능: 메인 히어로 미리 로드(있으면 사용, 없어도 무시됨) -->
-    <link rel="preload" as="image" href="/hero/1.jpg" fetchpriority="high">
-
-    <!-- (선택) SNS 미리보기 메타 -->
-    <meta property="og:title" content="$FLEX — Flexcoin">
-    <meta property="og:description" content="The Meme Coin of Luxury Flex, Lifestyle Flex">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="/hero/1.jpg">
-    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="/src/style.css" />
   </head>
-
   <body>
-    <!-- Vite 앱 마운트 타깃 -->
     <div id="app"></div>
-
-    <!-- 엔트리 스크립트 -->
     <script type="module" src="/src/main.ts"></script>
-
-    <!-- JS 비활성화 사용자를 위한 안내(선택) -->
-    <noscript>
-      <p style="color:#aaa;text-align:center;margin:2rem 0">
-        JavaScript가 비활성화되어 있어 페이지의 일부 기능이 표시되지 않을 수 있습니다.
-      </p>
-    </noscript>
   </body>
 </html>
