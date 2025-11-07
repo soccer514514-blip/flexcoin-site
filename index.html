@@ -1,42 +1,188 @@
-<!doctype html>
-<html lang="ko"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<meta name="theme-color" content="#0b0b0b"/><title>$FLEX — Flexcoin</title>
-<link rel="icon" href="/favicon.svg"/><link rel="stylesheet" href="/src/style.css"/>
-</head><body>
-<header class="topbar"><div class="brand">$FLEX</div>
-<nav><a href="#roadmap">Roadmap</a><a href="#tokenomics">Tokenomics</a><a href="#presale">Presale</a><a href="#nft">NFT</a><a href="#links">Links</a></nav></header>
-<main>
-<section class="card hero" id="hero"><div class="hero-wrap"><img src="/public/hero/1.jpg" alt="Flexcoin Hero"/></div></section>
-<section id="roadmap" class="card"><h2>Roadmap</h2><ol>
-<li>Phase 1 — Memecoin 섹터에서 살아남기</li><li>Phase 2 — Community growth + listings</li><li>Phase 3 — NFT utilities + more</li></ol></section>
-<section id="tokenomics" class="card"><h2>Tokenomics</h2>
-<div class="donut-wrap"><canvas id="donut" width="300" height="300" aria-label="Tokenomics donut"></canvas>
-<ul class="legend"><li><span data-swatch="lp"></span>LP 69%</li><li><span data-swatch="presale"></span>Presale 10%</li><li><span data-swatch="mkt"></span>Marketing 10%</li><li><span data-swatch="team"></span>Team 10%</li><li><span data-swatch="burn"></span>Burn 1%</li></ul></div></section>
-<section id="presale" class="card"><h2>Presale</h2><p>한국시간 기준: 2025-12-01 21:00 시작 → 2026-01-01 21:00 종료</p><div id="countdown" class="countdown"></div></section>
-<section id="nft" class="card"><h2>NFT 민팅 (Demo)</h2><div class="nft-box"><div class="nft-grid" id="nftGrid" aria-label="NFT Preview"></div><p class="soon">flex-your-nft-coming-soon</p></div></section>
-<section id="links" class="card"><h2>Links</h2>
-<div class="links">
-<a class="btn" href="https://pancakeswap.finance/swap?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f&chainId=56" target="_blank" rel="noopener">Buy on PancakeSwap</a>
-<a class="btn" href="https://t.me/+p1BMrdypmDFmNTA1" target="_blank" rel="noopener">Telegram</a>
-<a class="btn" href="https://x.com/Flexcoinmeme" target="_blank" rel="noopener">X / Twitter</a>
-<a class="btn" href="https://bscscan.com/token/0xBa29562241F0489504C493c47aCBA16d7a98998f" target="_blank" rel="noopener">BscScan</a>
-</div>
-<div class="wallets"><h3>팀/락, 마케팅/에어드랍, 수령 지갑</h3><code id="addr-team"></code><br/><code id="addr-mkt"></code><br/><code id="addr-user"></code></div>
-</section></main>
-<footer class="foot">Flexcoin Multi‑Path Loader (Static)</footer>
-<script>
-const __HERO_VER = new URLSearchParams(location.search).get('v') || String(Date.now());
-const HERO_BASE = '/public/hero/';
-function fixHeroImagePaths(){document.querySelectorAll('img').forEach(img=>{const raw=img.getAttribute('src')||'';const m=raw.match(/(?:^|\/)([1-7])\.jpg(?:\?.*)?$/i);if(!m)return;const n=m[1];const fixed=`${HERO_BASE}${n}.jpg?v=${__HERO_VER}`;if(raw!==fixed)img.src=fixed;img.onerror=()=>{img.src=`${HERO_BASE}${n}.jpg?v=${Date.now()}`;};});}
-document.addEventListener('DOMContentLoaded', fixHeroImagePaths);
-// Donut
-(function(){const data=[69,10,10,10,1];const c=document.getElementById('donut');if(!c)return;const x=c.getContext('2d');const t=data.reduce((a,b)=>a+b,0);let s=-Math.PI/2;const r=140,cx=150,cy=150,h=80,sw=['#d7b76d','#b2903f','#9e7a2c','#7a5d1f','#e9cf8f'];data.forEach((v,i)=>{const a=(v/t)*Math.PI*2;x.beginPath();x.moveTo(cx,cy);x.arc(cx,cy,r,s,s+a);x.closePath();x.fillStyle=sw[i%sw.length];x.fill();s+=a;});x.globalCompositeOperation='destination-out';x.beginPath();x.arc(cx,cy,h,0,Math.PI*2);x.fill();x.globalCompositeOperation='source-over';})();
-// Countdown
-async function loadJSON(p){try{const r=await fetch(p);return await r.json();}catch{return null;}}
-(async()=>{const cfg=await loadJSON('/public/config/config.presale.json');const el=document.getElementById('countdown');if(!cfg||!el)return;const end=new Date(cfg.presale_end).getTime();const tick=()=>{const now=Date.now();let d=Math.max(0,end-now);const days=Math.floor(d/86400000);d%=86400000;const hrs=Math.floor(d/3600000);d%=3600000;const mins=Math.floor(d/60000);d%=60000;const secs=Math.floor(d/1000);el.textContent=`종료까지 ${days}일 ${hrs}시간 ${mins}분 ${secs}초`;requestAnimationFrame(tick);};tick();})();
-// NFT preview
-(function(){const grid=document.getElementById('nftGrid');if(!grid)return;const imgs=[1,2,3,4,5,6].map(n=>`/public/nft-preview/publicnft-preview${n}.jpg`);imgs.forEach(src=>{const i=new Image();i.loading='lazy';i.src=src;i.alt='NFT Preview';const wrap=document.createElement('div');wrap.className='thumb';wrap.appendChild(i);grid.appendChild(wrap);});})();
-// Addresses render
-(async()=>{const cfg=await loadJSON('/public/config/addresses.json');if(!cfg)return;document.getElementById('addr-team').textContent=`Team/Lock: ${cfg.team_lock_wallet}`;document.getElementById('addr-mkt').textContent=`Marketing/Airdrop: ${cfg.marketing_airdrop_wallet}`;document.getElementById('addr-user').textContent=`Receiving: ${cfg.receiving_wallet}`;})();
-</script></body></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>$FLEX — Flexcoin</title>
+  <meta name="description" content="Flex your life. The ultimate luxury meme coin on BNB Smart Chain." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    body {
+      margin: 0;
+      background: #0e0c09;
+      color: #f4e1b6;
+      font-family: "Pretendard", sans-serif;
+      text-align: center;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: #0a0908;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 { font-size: 1.2rem; color: #f1d48b; }
+    nav a {
+      color: #d7c087;
+      text-decoration: none;
+      margin: 0 8px;
+      font-weight: 500;
+    }
+    section {
+      padding: 40px 16px;
+      max-width: 900px;
+      margin: auto;
+      background: #14110e;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 0 10px rgba(255, 220, 150, 0.05);
+    }
+    h2 { color: #f3d58c; margin-bottom: 16px; }
+    ul { list-style: none; padding: 0; }
+    .tokenomics-chart {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #tokenomics-donut { margin: 20px 0; }
+    .nft-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .nft-grid img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #1b1815;
+      border: 1px solid #2c261f;
+    }
+    @media (max-width: 640px) {
+      .nft-grid { grid-template-columns: repeat(2, 1fr); }
+      .nft-grid img { height: 140px; }
+    }
+    footer {
+      padding: 32px;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+    a.btn {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 12px;
+      margin: 6px;
+      background: #201b13;
+      color: #f2d995;
+      text-decoration: none;
+      font-weight: 500;
+      border: 1px solid #3b3225;
+      transition: all 0.2s ease;
+    }
+    a.btn:hover {
+      background: #3a2f21;
+      color: #fff3c0;
+      box-shadow: 0 0 10px #c7a96350;
+    }
+    .wallets {
+      font-size: 0.9rem;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>$FLEX</h1>
+    <nav>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#tokenomics">Tokenomics</a>
+      <a href="#presale">Presale</a>
+      <a href="#nft">NFT</a>
+      <a href="#links">Links</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section id="hero">
+      <h2>Flex your life with $FLEX</h2>
+      <p>The luxury memecoin for those who live large.</p>
+      <img src="/public/hero/1.jpg" alt="Hero 1" style="width:100%;border-radius:16px;margin-top:20px;">
+    </section>
+
+    <!-- Roadmap -->
+    <section id="roadmap">
+      <h2>Roadmap</h2>
+      <ul>
+        <li>Phase 1 — Memecoin 섹터에서 살아남기</li>
+        <li>Phase 2 — Community growth + listings</li>
+        <li>Phase 3 — NFT utilities + more</li>
+      </ul>
+    </section>
+
+    <!-- Tokenomics -->
+    <section id="tokenomics">
+      <h2>Tokenomics</h2>
+      <div class="tokenomics-chart">
+        <div id="tokenomics-donut"></div>
+        <ul style="text-align:left;display:inline-block;margin-top:8px">
+          <li>LP — 69%</li>
+          <li>Presale — 10%</li>
+          <li>Marketing — 10%</li>
+          <li>Team — 10%</li>
+          <li>Burn — 1%</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Presale -->
+    <section id="presale">
+      <h2>Presale</h2>
+      <p id="presaleText">Loading...</p>
+    </section>
+
+    <!-- NFT Section -->
+    <section id="nft">
+      <h2>NFT 민팅 (Demo)</h2>
+      <!-- NFT 미리보기 6칸 -->
+      <div class="nft-grid">
+        <img data-nft="1" alt="NFT Preview" />
+        <img data-nft="2" alt="NFT Preview" />
+        <img data-nft="3" alt="NFT Preview" />
+        <img data-nft="4" alt="NFT Preview" />
+        <img data-nft="5" alt="NFT Preview" />
+        <img data-nft="6" alt="NFT Preview" />
+      </div>
+      <p style="opacity:0.8;margin-top:10px;">flex-your-nft-coming-soon</p>
+    </section>
+
+    <!-- Links -->
+    <section id="links">
+      <h2>Links</h2>
+      <a id="btnPancake" class="btn" href="#" target="_blank">Buy on PancakeSwap</a>
+      <a id="btnTelegram" class="btn" href="#" target="_blank">Telegram</a>
+      <a id="btnX" class="btn" href="#" target="_blank">X / Twitter</a>
+      <a id="btnBscScan" class="btn" href="#" target="_blank">BscScan</a>
+
+      <div class="wallets">
+        <p>팀/락 지갑: <span id="teamWallet"></span></p>
+        <p>마케팅/에어드랍: <span id="marketingWallet"></span></p>
+        <p>수령 지갑: <span id="userWallet"></span></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Flexcoin Multi-Path Loader (Static) — 2025 Mainnet Edition
+  </footer>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
