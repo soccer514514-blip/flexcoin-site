@@ -8,76 +8,110 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/src/style.css" />
 
-    <!-- HERO: 보이는/안잘리는/절대경로 강제 핫픽스 -->
-    <style>
-      .hero-wrap {
-        aspect-ratio: 1792/1024;
+    <!-- HERO quick fix styles (visibility/contain/gradient background) -->
+    <style id="hero-hotfix">
+      .hero-wrap{
+        aspect-ratio: 1792 / 1024;
         max-height: 560px;
         width: 100%;
         margin: 0 auto;
         border-radius: 16px;
-        background: #0b0b0b radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%);
+        background: #0b0b0b radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%), #0b0b0b;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        box-shadow: 0 0 0 1px rgba(255,215,128,.08) inset;
+        box-shadow: 0 0 1px rgba(255,215,128,.08) inset;
       }
-      .hero-wrap img {
+      .hero-wrap img{
         width: 100%;
         height: 100%;
-        object-fit: contain;
-        display: block;
-      }
-      /* 앱이 아래로 따라 나오도록 여백 */
-      .app-wrap {
-        max-width: 1200px;
-        margin: 24px auto 0;
-        padding: 0 12px;
+        object-fit: contain !important;
+        display:block;
       }
     </style>
   </head>
 
   <body>
-    <!-- ① SPA 밖에 독립 히어로 고정: 이미지가 무조건 뜹니다 -->
-    <div class="hero-wrap">
-      <img id="hero-img" src="/public/hero/1.jpg" alt="Flexcoin Hero" loading="eager" />
+    <div id="app">
+      <header class="topbar">
+        <div class="brand">$FLEX</div>
+        <nav class="nav">
+          <a href="#roadmap">Roadmap</a>
+          <a href="#tokenomics">Tokenomics</a>
+          <a href="#presale">Presale</a>
+          <a href="#nft">NFT</a>
+          <a href="#links">Links</a>
+        </nav>
+      </header>
+
+      <section class="panel hero" id="hero">
+        <div class="hero-wrap">
+          <img alt="Flexcoin Hero" src="/public/hero/1.jpg" />
+        </div>
+      </section>
+
+      <section class="panel" id="presale">
+        <h2>Presale starts in</h2>
+        <div id="countdown" class="countdown">Loading...</div>
+        <p class="muted">Target from <code>config.presale.json</code>. Adjust anytime.</p>
+      </section>
+
+      <section class="panel" id="tokenomics">
+        <h2>Tokenomics</h2>
+        <ul class="grid two">
+          <li><b>LP</b> 69%</li>
+          <li><b>Presale</b> 10% (90d vesting)</li>
+          <li><b>Marketing</b> 10%</li>
+          <li><b>Team</b> 10% (6m lock + 6m linear)</li>
+          <li><b>Burn</b> 1%</li>
+        </ul>
+      </section>
+
+      <section class="panel" id="roadmap">
+        <h2>Roadmap</h2>
+        <ol>
+          <li>Phase 1 — Launch site, branding, hero fix</li>
+          <li>Phase 2 — Community growth + listings</li>
+          <li>Phase 3 — NFT utilities + more</li>
+        </ol>
+      </section>
+
+      <section class="panel" id="nft">
+        <h2>NFT 민팅 (Demo)</h2>
+        <div class="grid two">
+          <div>
+            <p class="muted">Demo only. Set contract in <code>src/main.ts</code> later.</p>
+            <div class="row">
+              <button class="btn secondary" disabled>지갑 연결</button>
+              <select id="nft-qty">
+                <option>1</option><option>2</option><option>3</option>
+              </select>
+              <button class="btn primary" disabled>민팅</button>
+            </div>
+          </div>
+          <div class="preview">NFT Preview</div>
+        </div>
+      </section>
+
+      <section class="panel" id="links">
+        <h2>Links</h2>
+        <div class="grid two">
+          <div class="grid two">
+            <a class="pill" href="https://flexcoin.io.kr" target="_blank">Website</a>
+            <a class="pill" href="https://x.com/Flexcoinmeme" target="_blank">X / Twitter</a>
+            <a class="pill" href="https://t.me/+p1BMrdypmDFmNTA1" target="_blank">Telegram</a>
+            <a class="pill" href="#" target="_blank">Explorer</a>
+          </div>
+          <div class="muted">팀 지갑/락 정보, 체인 탐색기 링크는 다음 단계에서 표로 추가.</div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>Flexcoin Multi-Path Loader (Vite)</span>
+      </footer>
     </div>
 
-    <!-- ② 나머지 사이트는 기존처럼 SPA가 #app에 마운트 -->
-    <div class="app-wrap">
-      <div id="app"></div>
-    </div>
-
-    <!-- ③ 히어로 로테이션/캐시버스트: 절대경로만 사용 -->
-    <script>
-      (function () {
-        const ver = new URLSearchParams(location.search).get('v') || Date.now();
-        const list = [1,2,3,4,5,6,7].map(n => `/public/hero/${n}.jpg?v=${ver}`);
-        const img = document.getElementById('hero-img');
-
-        // 최초 src에 버전쿼리 부여
-        img.src = list[0];
-
-        // 프리로드(사용자 체감 향상)
-        list.slice(1).forEach(src => { const i = new Image(); i.src = src; });
-
-        // 4초 로테이션(원하면 값 조절)
-        let idx = 0;
-        setInterval(() => {
-          idx = (idx + 1) % list.length;
-          img.src = list[idx];
-        }, 4000);
-
-        // 에러시 즉시 새 버전으로 재시도
-        img.addEventListener('error', () => {
-          const noCache = `/public/hero/${((idx+1)%7)+1}.jpg?v=${Date.now()}`;
-          img.src = noCache;
-        });
-      })();
-    </script>
-
-    <!-- 기존 번들 로드 -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -1,69 +1,75 @@
-/* ---------------------------------------------------------
-   FLEX ⛏️ Main bootstrap (hero path hotfix 포함)
---------------------------------------------------------- */
+// ---------------------------------------------------------
+// Flexcoin main.ts — hero path hotfix + countdown
+// ---------------------------------------------------------
 
-/** 쿼리스트링 ?v= 가 있으면 그대로, 없으면 현재시각을 버전으로 사용 */
-const VER: string =
-  new URLSearchParams(location.search).get("v") || String(Date.now());
-
-/** 절대경로 생성기: 무조건 https://flexcoin.io.kr/public/hero/N.jpg 형태로 만듦 */
-function heroUrl(n: number) {
-  return new URL(`/public/hero/${n}.jpg?v=${VER}`, location.origin).toString();
+const HERO_BASE = '/public/hero/';
+function cacheBust(v?: string) {
+  return v || String(Date.now());
 }
 
-/** 히어로 후보들(1~7) – 절대경로로 강제 */
-const HERO_IMAGES: string[] = Array.from({ length: 7 }, (_, i) => heroUrl(i + 1));
-
-/** 문서 내 img들의 잘못된 상대경로(예: "1.jpg")를 절대경로로 즉시 보정 */
-function fixHeroImagePaths(scope: ParentNode = document) {
-  const imgs = Array.from(scope.querySelectorAll<HTMLImageElement>("img"));
-  const rx = /(?:^|\/)([1-7])\.jpg(?:\?.*)?$/i;
-
-  imgs.forEach((img) => {
-    const raw = img.getAttribute("src") || "";
-    const m = raw.match(rx);
+function fixHeroImagePaths() {
+  const ver = new URLSearchParams(location.search).get('v') || cacheBust();
+  const imgs = Array.from(document.querySelectorAll<HTMLImageElement>('img'));
+  imgs.forEach(img => {
+    const raw = img.getAttribute('src') || '';
+    const m = raw.match(/(?:^|\/)([1-7])\.jpg(?:\?.*)?$/i);
     if (!m) return;
-
-    const n = Number(m[1]);
-    const fixed = heroUrl(n);
+    const n = m[1];
+    const fixed = `${HERO_BASE}${n}.jpg?v=${ver}`;
     if (img.src !== fixed) img.src = fixed;
-
-    // 에러 시 캐시버스터 새로고침
-    img.onerror = () => (img.src = heroUrl(n));
+    img.onerror = () => (img.src = `${HERO_BASE}${n}.jpg?v=${cacheBust()}`);
   });
-}
 
-/** 초기에 히어로가 없다면 추가로 보정(선택) */
-function ensureHeroMounted() {
-  const host =
-    document.querySelector(".hero, .Hero, [data-hero], #hero, .hero-wrap") ??
-    undefined;
-  if (!host) return;
-
-  const hasImg = host.querySelector("img");
-  if (!hasImg) {
-    const img = document.createElement("img");
-    img.alt = "Flexcoin Hero";
-    img.decoding = "async";
-    img.loading = "eager";
-    img.src = HERO_IMAGES[0];
-    host.appendChild(img);
+  // Ensure one hero image exists inside .hero-wrap
+  const wrap = document.querySelector('.hero-wrap');
+  if (wrap && !wrap.querySelector('img')) {
+    const im = document.createElement('img');
+    im.alt = 'Flexcoin Hero';
+    im.src = `${HERO_BASE}1.jpg?v=${ver}`;
+    wrap.appendChild(im);
   }
 }
 
-/** 페이지 로드 훅 */
-document.addEventListener("DOMContentLoaded", () => {
-  ensureHeroMounted();
-  fixHeroImagePaths(document);
-});
+function rotateHero(intervalMs = 6000) {
+  const wrap = document.querySelector('.hero-wrap');
+  if (!wrap) return;
+  const im = wrap.querySelector('img') as HTMLImageElement | null;
+  if (!im) return;
+  let n = 1;
+  setInterval(() => {
+    n = (n % 7) + 1;
+    im.src = `${HERO_BASE}${n}.jpg?v=${cacheBust()}`;
+  }, intervalMs);
+}
 
-window.addEventListener("load", () => {
-  // 지연로딩/슬라이더로 동적으로 들어온 이미지 2차 보정
-  setTimeout(() => fixHeroImagePaths(document), 0);
-});
+async function loadPresale() {
+  try {
+    const res = await fetch('/config.presale.json', { cache: 'no-store' });
+    const conf = await res.json();
+    const target = new Date(conf.start).getTime();
+    const el = document.getElementById('countdown');
+    if (!el) return;
 
-/* ---------------------------------------------------------
-   아래는 기존 앱 부트스트랩 코드가 있었다면 유지
-   (만약 프레임워크 없이 DOM만 쓰는 경우 그대로 둬도 무방)
---------------------------------------------------------- */
-// 예시: 카운트다운 등 기존 코드가 이 파일 아래쪽에 있었다면 그대로 두세요.
+    function tick() {
+      const now = Date.now();
+      const diff = Math.max(0, target - now);
+      const s = Math.floor(diff / 1000);
+      const d = Math.floor(s / 86400);
+      const h = Math.floor((s % 86400) / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      el.textContent = `${d}d ${h}h ${m}m ${sec}s`;
+    }
+    tick();
+    setInterval(tick, 1000);
+  } catch (e) {
+    console.warn('presale config missing', e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  fixHeroImagePaths();
+  rotateHero();
+  loadPresale();
+});
+window.addEventListener('load', () => setTimeout(fixHeroImagePaths, 0));

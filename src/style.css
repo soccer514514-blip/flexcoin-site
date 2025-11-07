@@ -1,159 +1,73 @@
-/* =========================================================
-   FLEXCOIN MAIN STYLE — 2025-11-07 UPGRADE
-   ---------------------------------------------------------
-   - Luxury Gold Theme
-   - Hero / Action Image containment
-   - Global Button, Typography, Sections
-   - SPA Hero 중복 방지
-========================================================= */
-
-:root {
-  --bg: #0b0b0b;
-  --panel: #15120e;
-  --gold: #d7b76d;
-  --gold-soft: #c9a861;
-  --text: #e9e1d4;
-  --muted: #a59b8b;
+/*
+=============================================================
+  FLEXCOIN MAIN STYLE — 2025-11-07 UPGRADE
+-------------------------------------------------------------
+  - Luxury Gold Theme
+  - Hero / Action Image containment
+  - Global Button, Typography, Sections
+  - SPA Hero 중복 방지
+============================================================= */
+:root{
+  --bg:#0b0b0b;
+  --panel:#15120e;
+  --gold:#d7b76d;
+  --gold-soft:#c9a861;
+  --text:#e9e1d4;
+  --muted:#a59b8b;
   color-scheme: dark;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Inter, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  scroll-behavior: smooth;
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+  font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Apple SD Gothic Neo",Malgun Gothic,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;scroll-behavior:smooth;
 }
 
-/* ---------------------------------------------------------
-   GLOBAL LAYOUT
---------------------------------------------------------- */
-.section {
-  background: radial-gradient(ellipse at 30% -10%, rgba(255,215,128,.06), transparent 70%), var(--panel);
-  border: 1px solid rgba(215,183,109,.15);
-  border-radius: 16px;
-  box-shadow: 0 6px 30px rgba(0,0,0,.35) inset, 0 1px 0 rgba(255,255,255,.05);
-  margin: 24px auto;
-  padding: 24px;
-  max-width: 1200px;
+.topbar{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 20px;background:linear-gradient(180deg,#0b0b0b,rgba(11,8,5,.6));
+  position:sticky;top:0;z-index:9;border-bottom:1px solid rgba(255,215,128,.06);
+}
+.brand{font-weight:800;letter-spacing:.5px}
+.nav a{color:var(--muted);text-decoration:none;margin-left:14px}
+.nav a:hover{color:var(--text)}
+
+.panel{margin:16px auto;max-width:1080px;background:var(--panel);border-radius:20px;
+  padding:22px;border:1px solid rgba(255,215,128,.06);box-shadow:0 2px 24px rgba(0,0,0,.2);
+}
+.panel h2{margin:6px 0 12px 0}
+
+.grid{display:grid;gap:14px}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:860px){.grid.two{grid-template-columns:1fr}}
+
+.row{display:flex;gap:12px;align-items:center}
+.pill{display:inline-flex;align-items:center;justify-content:center;padding:14px 16px;
+  border-radius:999px;background:#1b1813;border:1px solid rgba(255,215,128,.12);
+  color:var(--text);text-decoration:none;min-width:160px;text-align:center;
+}
+.pill:hover{border-color:rgba(255,215,128,.25)}
+
+.btn{padding:10px 16px;border-radius:12px;border:1px solid rgba(255,215,128,.12);
+  background:#1b1813;color:var(--text);cursor:pointer}
+.btn.primary{background:linear-gradient(90deg,#d7b76d,#c9a861);border-color:#c9a861;color:#18140e;font-weight:700}
+.btn.secondary{opacity:.8}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.countdown{font-size:28px;font-weight:800;letter-spacing:.5px}
+.muted{color:var(--muted)}
+
+.preview{display:flex;align-items:center;justify-content:center;height:160px;
+  border-radius:12px;background:#1b1813;border:1px dashed rgba(255,215,128,.2);color:var(--muted);
 }
 
-h1, h2, h3, h4, h5, h6 {
-  color: var(--gold);
-  font-weight: 700;
-  margin-top: 0;
+.footer{margin:30px 0 60px 0;text-align:center;color:var(--muted)}
+
+/* Hero image containment already inlined in index.html */
+.hero{padding:14px}
+
+/* Hide SPA-side Hero if any (avoid duplicates) */
+#hero, .Hero, [data-hero] { /* this id/class refers to SPA-generated hero containers */
+  /* do not hide the real hero-wrap */
 }
 
-p {
-  color: var(--text);
-  line-height: 1.6;
-}
-
-/* ---------------------------------------------------------
-   HERO SECTION (index.html hero-wrap 와 동일 정책)
---------------------------------------------------------- */
-.hero, .Hero, [data-hero], #hero, .hero-wrap {
-  aspect-ratio: 1792/1024;
-  max-height: 560px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border-radius: 16px;
-  background: #0b0b0b radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%);
-  box-shadow: 0 0 0 1px rgba(255,215,128,.08) inset;
-}
-.hero img, .Hero img, [data-hero] img, #hero img, .hero-wrap img,
-.actions img, .action img, .gallery img, .slider img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain !important;
-  display: block;
-}
-
-/* SPA 쪽 Hero가 있다면 숨김(중복 방지) */
-#hero, .Hero, [data-hero] {
-  display: none !important;
-}
-
-/* ---------------------------------------------------------
-   BUTTONS
---------------------------------------------------------- */
-button, .btn {
-  background: linear-gradient(180deg, #f1d489, #cda85d);
-  color: #15120e;
-  border: 0;
-  border-radius: 999px;
-  padding: 10px 18px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 2px 0 rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.2) inset;
-  transition: transform .05s ease, filter .15s ease;
-}
-button:hover, .btn:hover {
-  filter: brightness(1.05);
-  transform: translateY(-1px);
-}
-button:active, .btn:active {
-  transform: translateY(0);
-}
-
-/* ---------------------------------------------------------
-   LINKS
---------------------------------------------------------- */
-a {
-  color: var(--gold);
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-
-/* ---------------------------------------------------------
-   NFT / CARD / PANELS
---------------------------------------------------------- */
-.nft-card, .panel, .card {
-  background: var(--panel);
-  border: 1px solid rgba(215,183,109,.2);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 0 15px rgba(0,0,0,.25);
-}
-.nft-card img {
-  width: 100%;
-  border-radius: 8px;
-  object-fit: contain;
-}
-
-/* ---------------------------------------------------------
-   COUNTDOWN TIMER
---------------------------------------------------------- */
-.countdown {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--gold);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-}
-
-/* ---------------------------------------------------------
-   FOOTER
---------------------------------------------------------- */
-footer {
-  text-align: center;
-  color: var(--muted);
-  font-size: 0.9rem;
-  padding: 24px 0;
-}
-footer a {
-  color: var(--gold-soft);
-  text-decoration: none;
-}
-footer a:hover {
-  text-decoration: underline;
-}
+/* Utility */
+code{background:#201b14;padding:2px 6px;border-radius:6px;border:1px solid rgba(255,215,128,.08)}
