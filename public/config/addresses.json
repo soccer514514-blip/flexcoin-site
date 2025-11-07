@@ -1,0 +1,8 @@
+{
+  "chain": "BSC Mainnet",
+  "chainId": 56,
+  "token": "0xBa29562241F0489504C493c47aCBA16d7a98998f",
+  "team_lock_wallet": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
+  "marketing_airdrop_wallet": "0xF3A2159474dCE4eF86F6eE56cE1b55C60E2C467e",
+  "receiving_wallet": "0xCDcA475e1C6D89A14158fB8d05fA8275Bf5A06Ea"
+}

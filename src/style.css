@@ -1,73 +1,29 @@
-/*
-=============================================================
-  FLEXCOIN MAIN STYLE — 2025-11-07 UPGRADE
--------------------------------------------------------------
-  - Luxury Gold Theme
-  - Hero / Action Image containment
-  - Global Button, Typography, Sections
-  - SPA Hero 중복 방지
-============================================================= */
-:root{
-  --bg:#0b0b0b;
-  --panel:#15120e;
-  --gold:#d7b76d;
-  --gold-soft:#c9a861;
-  --text:#e9e1d4;
-  --muted:#a59b8b;
-  color-scheme: dark;
-}
 
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
-  font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Apple SD Gothic Neo",Malgun Gothic,Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;scroll-behavior:smooth;
-}
-
-.topbar{display:flex;justify-content:space-between;align-items:center;
-  padding:12px 20px;background:linear-gradient(180deg,#0b0b0b,rgba(11,8,5,.6));
-  position:sticky;top:0;z-index:9;border-bottom:1px solid rgba(255,215,128,.06);
-}
-.brand{font-weight:800;letter-spacing:.5px}
-.nav a{color:var(--muted);text-decoration:none;margin-left:14px}
-.nav a:hover{color:var(--text)}
-
-.panel{margin:16px auto;max-width:1080px;background:var(--panel);border-radius:20px;
-  padding:22px;border:1px solid rgba(255,215,128,.06);box-shadow:0 2px 24px rgba(0,0,0,.2);
-}
-.panel h2{margin:6px 0 12px 0}
-
-.grid{display:grid;gap:14px}
-.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
-@media (max-width:860px){.grid.two{grid-template-columns:1fr}}
-
-.row{display:flex;gap:12px;align-items:center}
-.pill{display:inline-flex;align-items:center;justify-content:center;padding:14px 16px;
-  border-radius:999px;background:#1b1813;border:1px solid rgba(255,215,128,.12);
-  color:var(--text);text-decoration:none;min-width:160px;text-align:center;
-}
-.pill:hover{border-color:rgba(255,215,128,.25)}
-
-.btn{padding:10px 16px;border-radius:12px;border:1px solid rgba(255,215,128,.12);
-  background:#1b1813;color:var(--text);cursor:pointer}
-.btn.primary{background:linear-gradient(90deg,#d7b76d,#c9a861);border-color:#c9a861;color:#18140e;font-weight:700}
-.btn.secondary{opacity:.8}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-
-.countdown{font-size:28px;font-weight:800;letter-spacing:.5px}
-.muted{color:var(--muted)}
-
-.preview{display:flex;align-items:center;justify-content:center;height:160px;
-  border-radius:12px;background:#1b1813;border:1px dashed rgba(255,215,128,.2);color:var(--muted);
-}
-
-.footer{margin:30px 0 60px 0;text-align:center;color:var(--muted)}
-
-/* Hero image containment already inlined in index.html */
-.hero{padding:14px}
-
-/* Hide SPA-side Hero if any (avoid duplicates) */
-#hero, .Hero, [data-hero] { /* this id/class refers to SPA-generated hero containers */
-  /* do not hide the real hero-wrap */
-}
-
-/* Utility */
-code{background:#201b14;padding:2px 6px;border-radius:6px;border:1px solid rgba(255,215,128,.08)}
+:root{--bg:#0b0b0b;--panel:#15120e;--gold:#d7b76d;--text:#e9e1d4;--muted:#a59b8b;color-scheme:dark}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Inter,Apple SD Gothic Neo,Noto Sans KR,"Apple Color Emoji","Segoe UI Emoji"}
+.topbar{position:sticky;top:0;display:flex;gap:16px;align-items:center;justify-content:space-between;padding:12px 16px;background:#0b0b0b99;backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid #1d1a16}
+.topbar .brand{font-weight:800;letter-spacing:.5px}
+.topbar nav a{color:var(--muted);text-decoration:none;margin:0 8px}
+main{max-width:980px;margin:24px auto;padding:0 12px}
+.card{background:var(--panel);border:1px solid #1f1a14;border-radius:16px;margin:16px 0;padding:16px;box-shadow:0 1px 0 rgba(255,215,128,.08) inset}
+.hero-wrap{aspect-ratio:1792/1024;max-height:560px;width:100%;margin:0 auto;border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0b0b0b radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 30%)}
+.hero-wrap img{width:100%;height:100%;object-fit:contain}
+.donut-wrap{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.legend{list-style:none;padding-left:0;margin:0}
+.legend li{display:flex;align-items:center;gap:8px;margin:6px 0}
+.legend [data-swatch]{display:inline-block;width:12px;height:12px;border-radius:2px;background:#d7b76d}
+.legend [data-swatch="presale"]{background:#b2903f}
+.legend [data-swatch="mkt"]{background:#9e7a2c}
+.legend [data-swatch="team"]{background:#7a5d1f}
+.legend [data-swatch="burn"]{background:#e9cf8f}
+.countdown{font-size:20px;margin-top:8px;color:var(--gold)}
+.nft-box{border:1px dashed #3b3329;border-radius:12px;padding:12px}
+.nft-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.thumb{background:#0e0c0a;border:1px solid #1b1712;border-radius:8px;overflow:hidden}
+.thumb img{width:100%;display:block}
+.soon{text-align:center;color:var(--muted);margin-top:8px}
+.links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.btn{display:inline-block;text-align:center;padding:10px 14px;border-radius:10px;background:#1b1712;border:1px solid #2a231b;color:#e9e1d4;text-decoration:none}
+.wallets code{font-size:12px;color:#b7ac9b}
+.foot{padding:20px;text-align:center;color:#6f6658}
+@media (max-width:640px){ .nft-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
