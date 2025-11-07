@@ -1,30 +1,57 @@
-:root{
-  --bg:#0b0b0b; --panel:#14110e; --text:#e8dcb8; --muted:#b6a98a; --gold:#f4c34f;
-  --card:#17130f; --border:#2a251f;
+:root {
+  --bg: #0b0b0b;
+  --panel: #15120e;
+  --gold: #d7b76d;
+  --gold-soft: #c9a861;
+  --text: #e9e1d4;
+  --muted: #a59b8b;
+  color-scheme: dark;
 }
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Apple Color Emoji,Noto Color Emoji}
-a{color:var(--gold);text-decoration:none}
-.container{max-width:1200px;margin:0 auto;padding:16px}
-.section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin:16px 0;box-shadow:0 0 24px rgba(0,0,0,.35)}
-.section h2{margin:0 0 12px 0;color:var(--gold);letter-spacing:.02em}
-.grid{display:grid;gap:12px}
-.grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-.grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
-.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:999px;padding:6px 12px;background:#12100d}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:999px;border:1px solid var(--border);background:#1c1712;color:var(--text);cursor:pointer}
-.btn.gold{background:linear-gradient(180deg,#f7d46a,#e7b53e);color:#2a1e0c;font-weight:700}
-.btn:active{transform:translateY(1px)}
-.list{margin:0;padding-left:18px}
-.kv{display:grid;grid-template-columns:200px 1fr;gap:8px}
-.kv div{padding:6px 0;border-bottom:1px dashed var(--border)}
-.center{text-align:center}
-.small{color:var(--muted);font-size:.9rem}
 
-/* 모바일 */
-@media (max-width:860px){
-  .grid.cols-3{grid-template-columns:1fr}
-  .grid.cols-2{grid-template-columns:1fr}
-  .kv{grid-template-columns:1fr}
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Inter, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
+
+/* 카드/섹션 */
+.section {
+  background: radial-gradient(ellipse at 30% -10%, rgba(255,215,128,.06), transparent 70%), var(--panel);
+  border: 1px solid rgba(215,183,109,.15);
+  border-radius: 16px;
+  box-shadow: 0 6px 30px rgba(0,0,0,.35) inset, 0 1px 0 rgba(255,255,255,.05);
+}
+
+/* 히어로/이미지 박스 – index.html의 핫픽스와 동일 정책 */
+.hero, .Hero, [data-hero], #hero, .hero-wrap {
+  aspect-ratio: 1792/1024;
+  max-height: 560px;
+  width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%),
+    #0b0b0b;
+}
+.hero img, .Hero img, [data-hero] img, #hero img, .hero-wrap img,
+.actions img, .action img, .gallery img, .slider img {
+  width: 100%; height: 100%;
+  object-fit: contain !important;
+  display: block;
+}
+
+/* 버튼 */
+.btn {
+  background: linear-gradient(180deg, #f1d489, #cda85d);
+  color: #15120e; border: 0; border-radius: 999px;
+  padding: 10px 18px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 2px 0 rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.2) inset;
+  transition: transform .05s ease, filter .15s ease;
+}
+.btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+/* 링크 리스트 */
+.links a { color: var(--gold); text-decoration: none; }
+.links a:hover { text-decoration: underline; }
