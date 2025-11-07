@@ -1,3 +1,28 @@
+const __HERO_VER = new URLSearchParams(location.search).get('v') || String(Date.now());
+const __HERO_BASE = '/public/hero/';
+
+function fixHeroImagePaths() {
+  const scope = document;
+  const imgs = Array.from(scope.querySelectorAll<HTMLImageElement>('img'));
+
+  imgs.forEach(img => {
+    const raw = img.getAttribute('src') || '';
+    const m = raw.match(/(?:^|\/)([1-7])\.jpg(?:\?.*)?$/i);
+    if (!m) return;
+
+    const n = m[1];
+    const fixed = `${__HERO_BASE}${n}.jpg?v=${__HERO_VER}`;
+    if (raw !== fixed) img.src = fixed;
+
+    img.onerror = () => {
+      img.src = `${__HERO_BASE}${n}.jpg?v=${Date.now()}`;
+    };
+  });
+}
+
+document.addEventListener('DOMContentLoaded', fixHeroImagePaths);
+window.addEventListener('load', () => setTimeout(fixHeroImagePaths, 0));
+
 const $ = (sel:string, el:Document|HTMLElement=document)=>el.querySelector(sel)! as HTMLElement;
 const app = $('#app');
 
