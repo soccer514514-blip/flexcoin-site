@@ -5,55 +5,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>$FLEX — Flexcoin</title>
   <meta name="description" content="Flex your life. The ultimate luxury meme coin on BNB Smart Chain." />
+  <meta name="theme-color" content="#0b0b0b" />
+
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="/style.css" />
-  <!-- 기본 폰트 폴백 -->
   <style>
-    body{margin:0;background:#0e0c09;color:#f4e1b6;font-family:"Pretendard","Inter",system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,sans-serif;text-align:center}
+    body{margin:0;background:#0e0c09;color:#f4e1b6;font-family:system-ui,-apple-system,Segoe UI,Roboto,Pretendard,sans-serif;text-align:center}
     header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#0a0908;position:sticky;top:0;z-index:10}
-    header h1{font-size:1.2rem;color:#f1d48b}
+    header h1{font-size:1.2rem;color:#f1d48b;margin:0}
     nav a{color:#d7c087;text-decoration:none;margin:0 8px;font-weight:600}
-    section{padding:40px 16px;max-width:980px;margin:24px auto;background:#14110e;border-radius:16px;box-shadow:0 0 10px rgba(255,220,150,.05)}
-    h2{color:#f3d58c;margin:0 0 16px}
-    ul{list-style:none;padding:0;margin:0}
-    .tokenomics-chart{display:flex;flex-direction:column;align-items:center}
-    #tokenomics-donut{margin:20px 0}
-    .nft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+    section{padding:40px 16px;max-width:1000px;margin:24px auto;background:#14110e;border-radius:16px;box-shadow:0 0 10px rgba(255,220,150,.06)}
+    h2{color:#f3d58c;margin:0 0 14px}
+    .btn{display:inline-block;padding:10px 16px;border-radius:12px;margin:6px;background:#201b13;color:#f2d995;text-decoration:none;font-weight:600;border:1px solid #3b3225;transition:.2s}
+    .btn:hover{background:#3a2f21;color:#fff3c0;box-shadow:0 0 10px #c7a96350}
+    .wrap-list{list-style:none;padding:0;margin:0}
+    .wrap-list li{padding:4px 0}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    @media (max-width:800px){.grid{grid-template-columns:1fr}}
+    .nft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
     .nft-grid img{width:100%;height:180px;object-fit:cover;border-radius:12px;background:#1b1815;border:1px solid #2c261f}
     @media (max-width:640px){.nft-grid{grid-template-columns:repeat(2,1fr)}.nft-grid img{height:140px}}
-    footer{padding:32px;font-size:.85rem;opacity:.8}
-    a.btn{display:inline-block;padding:12px 20px;border-radius:12px;margin:6px;background:#201b13;color:#f2d995;text-decoration:none;font-weight:600;border:1px solid #3b3225;transition:all .2s}
-    a.btn:hover{background:#3a2f21;color:#fff3c0;box-shadow:0 0 10px #c7a96350}
-    .wallets{font-size:.95rem;margin-top:12px;line-height:1.5}
-    /* 히어로 이미지 카드 */
-    .hero-img{width:100%;border-radius:16px;margin-top:20px;display:block}
+    footer{padding:28px;font-size:.9rem;opacity:.8}
+    /* Hero 안전 비율 + 잘림방지 */
+    #hero img{width:100%;aspect-ratio:1792/1024;object-fit:contain;border-radius:16px;background:
+      radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%), #0b0b0b}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #2c261f;text-align:left}
+    td.num{text-align:right}
   </style>
 </head>
+
 <body>
   <header>
     <h1>$FLEX</h1>
-    <nav aria-label="Primary">
+    <nav>
+      <a href="#hero">Hero</a>
       <a href="#roadmap">Roadmap</a>
       <a href="#tokenomics">Tokenomics</a>
       <a href="#presale">Presale</a>
       <a href="#nft">NFT</a>
       <a href="#links">Links</a>
+      <a href="#onchain">On-chain</a>
     </nav>
   </header>
 
   <main>
     <!-- Hero -->
-    <section id="hero" aria-labelledby="hero-title">
-      <h2 id="hero-title">Flex your life with $FLEX</h2>
-      <p>The luxury memecoin for those who live large.</p>
-      <!-- ✅ 런타임 경로는 /hero/1.jpg (public 빼기) -->
-      <img class="hero-img" src="/hero/1.jpg" alt="Flexcoin hero" />
+    <section id="hero">
+      <h2>Flex your life with $FLEX</h2>
+      <p>The Meme Coin of Luxury Flex, Lifestyle Flex</p>
+      <!-- 런타임에서 자동 교정됨(1.jpg → /hero/1.jpg?v=...) -->
+      <img src="/hero/1.jpg" alt="Hero" />
     </section>
 
     <!-- Roadmap -->
-    <section id="roadmap" aria-labelledby="roadmap-title">
-      <h2 id="roadmap-title">Roadmap</h2>
-      <ul>
+    <section id="roadmap">
+      <h2>Roadmap</h2>
+      <ul class="wrap-list">
         <li>Phase 1 — Memecoin 섹터에서 살아남기</li>
         <li>Phase 2 — Community growth + listings</li>
         <li>Phase 3 — NFT utilities + more</li>
@@ -61,29 +69,27 @@
     </section>
 
     <!-- Tokenomics -->
-    <section id="tokenomics" aria-labelledby="tokenomics-title">
-      <h2 id="tokenomics-title">Tokenomics</h2>
-      <div class="tokenomics-chart">
-        <div id="tokenomics-donut"></div>
-        <ul style="text-align:left;display:inline-block;margin-top:8px">
-          <li>LP — 69%</li>
-          <li>Presale — 10%</li>
-          <li>Marketing — 10%</li>
-          <li>Team — 10%</li>
-          <li>Burn — 1%</li>
-        </ul>
-      </div>
+    <section id="tokenomics">
+      <h2>Tokenomics</h2>
+      <div id="tokenomics-donut" style="margin:14px auto;max-width:420px"></div>
+      <ul class="wrap-list" style="display:inline-block;text-align:left;margin-top:8px">
+        <li>LP — 69%</li>
+        <li>Presale — 10%</li>
+        <li>Marketing — 10%</li>
+        <li>Team — 10%</li>
+        <li>Burn — 1%</li>
+      </ul>
     </section>
 
     <!-- Presale -->
-    <section id="presale" aria-labelledby="presale-title">
-      <h2 id="presale-title">Presale</h2>
-      <p id="presaleText">Loading...</p>
+    <section id="presale">
+      <h2>Presale</h2>
+      <p id="presaleText">Loading…</p>
     </section>
 
     <!-- NFT -->
-    <section id="nft" aria-labelledby="nft-title">
-      <h2 id="nft-title">NFT 민팅 (Demo)</h2>
+    <section id="nft">
+      <h2>NFT 민팅 (Preview)</h2>
       <div class="nft-grid">
         <img data-nft="1" alt="NFT Preview 1" />
         <img data-nft="2" alt="NFT Preview 2" />
@@ -96,24 +102,69 @@
     </section>
 
     <!-- Links -->
-    <section id="links" aria-labelledby="links-title">
-      <h2 id="links-title">Links</h2>
-      <a id="btnPancake" class="btn" href="#" target="_blank" rel="noopener">Buy on PancakeSwap</a>
-      <a id="btnTelegram" class="btn" href="#" target="_blank" rel="noopener">Telegram</a>
-      <a id="btnX" class="btn" href="#" target="_blank" rel="noopener">X / Twitter</a>
-      <a id="btnBscScan" class="btn" href="#" target="_blank" rel="noopener">BscScan</a>
+    <section id="links">
+      <h2>Links</h2>
+      <a id="btnPancake"  class="btn" href="#" target="_blank">Buy on PancakeSwap</a>
+      <a id="btnTelegram" class="btn" href="#" target="_blank">Telegram</a>
+      <a id="btnX"        class="btn" href="#" target="_blank">X / Twitter</a>
+      <a id="btnBscScan"  class="btn" href="#" target="_blank">BscScan</a>
 
-      <div class="wallets">
-        <p>팀/락 지갑: <span id="teamWallet"></span></p>
-        <p>마케팅/에어드랍: <span id="marketingWallet"></span></p>
-        <p>수령 지갑: <span id="userWallet"></span></p>
+      <div style="margin-top:10px;text-align:left;max-width:680px;margin-inline:auto" class="grid">
+        <div>
+          <h3 style="margin:0 0 8px;color:#f3d58c">Team / Lock</h3>
+          <div id="teamWallet" style="word-break:break-all;opacity:.9"></div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px;color:#f3d58c">Marketing / Airdrop</h3>
+          <div id="marketingWallet" style="word-break:break-all;opacity:.9"></div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px;color:#f3d58c">User (Receiving)</h3>
+          <div id="userWallet" style="word-break:break-all;opacity:.9"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- On-chain Status (신규 섹션) -->
+    <section id="onchain">
+      <h2>On-chain Status</h2>
+      <div id="onchain-status" style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Label</th>
+              <th>Address</th>
+              <th class="num">Balance ($FLEX)</th>
+              <th>Explorer</th>
+            </tr>
+          </thead>
+          <tbody id="onchain-rows">
+            <tr><td colspan="4" style="padding:16px;opacity:.7">Loading on-chain balances…</td></tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total Supply</td>
+              <td style="color:#9a8b60">—</td>
+              <td id="onchain-total" class="num">—</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div style="margin-top:12px">
+        <a id="ql-holders"  class="btn" href="#" target="_blank">Holders</a>
+        <a id="ql-dead"     class="btn" href="#" target="_blank">Dead(0x…dEaD)</a>
+        <a id="ql-pairs"    class="btn" href="#" target="_blank">Token Pairs</a>
+        <a id="ql-user-out" class="btn" href="#" target="_blank">Your OUT Txns</a>
       </div>
     </section>
   </main>
 
-  <footer>Flexcoin Multi-Path Loader (Static) — 2025 Mainnet Edition</footer>
+  <footer>
+    Flexcoin Static • Mainnet Edition • © 2025
+  </footer>
 
-  <!-- Vite가 빌드 시 해시된 자산으로 치환 -->
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
