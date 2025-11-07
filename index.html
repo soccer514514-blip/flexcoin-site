@@ -8,29 +8,76 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/src/style.css" />
 
-    <!-- Hero / 액션 이미지 안보임·잘림 핫픽스 (빌드 전에도 즉시 적용) -->
-    <style id="hero-hotfix">
-      .hero, .Hero, [data-hero], #hero, .hero-wrap {
-        aspect-ratio: 1792 / 1024;       /* 1792×1024 비율 */
-        max-height: 560px;                /* 모바일 과대 확장 방지 */
+    <!-- HERO: 보이는/안잘리는/절대경로 강제 핫픽스 -->
+    <style>
+      .hero-wrap {
+        aspect-ratio: 1792/1024;
+        max-height: 560px;
         width: 100%;
-        display: flex; align-items: center; justify-content: center;
-        overflow: hidden;
-        background:
-          radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%),
-          #0b0b0b;
+        margin: 0 auto;
         border-radius: 16px;
+        background: #0b0b0b radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px rgba(255,215,128,.08) inset;
       }
-      .hero img, .Hero img, [data-hero] img, #hero img, .hero-wrap img,
-      .actions img, .action img, .gallery img, .slider img {
-        width: 100%; height: 100%;
-        object-fit: contain !important;   /* 잘림 방지 */
+      .hero-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
         display: block;
+      }
+      /* 앱이 아래로 따라 나오도록 여백 */
+      .app-wrap {
+        max-width: 1200px;
+        margin: 24px auto 0;
+        padding: 0 12px;
       }
     </style>
   </head>
+
   <body>
-    <div id="app"></div>
+    <!-- ① SPA 밖에 독립 히어로 고정: 이미지가 무조건 뜹니다 -->
+    <div class="hero-wrap">
+      <img id="hero-img" src="/public/hero/1.jpg" alt="Flexcoin Hero" loading="eager" />
+    </div>
+
+    <!-- ② 나머지 사이트는 기존처럼 SPA가 #app에 마운트 -->
+    <div class="app-wrap">
+      <div id="app"></div>
+    </div>
+
+    <!-- ③ 히어로 로테이션/캐시버스트: 절대경로만 사용 -->
+    <script>
+      (function () {
+        const ver = new URLSearchParams(location.search).get('v') || Date.now();
+        const list = [1,2,3,4,5,6,7].map(n => `/public/hero/${n}.jpg?v=${ver}`);
+        const img = document.getElementById('hero-img');
+
+        // 최초 src에 버전쿼리 부여
+        img.src = list[0];
+
+        // 프리로드(사용자 체감 향상)
+        list.slice(1).forEach(src => { const i = new Image(); i.src = src; });
+
+        // 4초 로테이션(원하면 값 조절)
+        let idx = 0;
+        setInterval(() => {
+          idx = (idx + 1) % list.length;
+          img.src = list[idx];
+        }, 4000);
+
+        // 에러시 즉시 새 버전으로 재시도
+        img.addEventListener('error', () => {
+          const noCache = `/public/hero/${((idx+1)%7)+1}.jpg?v=${Date.now()}`;
+          img.src = noCache;
+        });
+      })();
+    </script>
+
+    <!-- 기존 번들 로드 -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
