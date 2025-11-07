@@ -1,4 +1,4 @@
-import './style.css';
+﻿import './style.css';
 
 /** 배포 후 강새로고침 쿼리 (?v=...) 가 있으면 그대로, 없으면 현시각으로 생성 */
 const VERSION =
@@ -10,7 +10,7 @@ const HERO_FILES = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg
 
 /** 절대 경로 + 캐시버스터 */
 const HERO_IMAGES: string[] = HERO_FILES.map(
-  (f) => `/public/hero/${f}?v=${VERSION}`
+  (f) => `/hero/${f}?v=${VERSION}`
 );
 
 /** 히어로를 장착할 대상 셀렉터(있으면 사용, 없으면 자동 생성) */
