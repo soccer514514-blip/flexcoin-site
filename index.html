@@ -2,33 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b0b0b" />
     <title>$FLEX — Flexcoin</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/style.css" />
 
-    <!-- Hero 보임/잘림 핫픽스 -->
+    <!-- Hero / 액션 이미지 안보임·잘림 핫픽스 (빌드 전에도 즉시 적용) -->
     <style id="hero-hotfix">
       .hero, .Hero, [data-hero], #hero, .hero-wrap {
-        aspect-ratio: 1792 / 1024;
-        max-height: 560px;
+        aspect-ratio: 1792 / 1024;       /* 1792×1024 비율 */
+        max-height: 560px;                /* 모바일 과대 확장 방지 */
         width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: flex; align-items: center; justify-content: center;
         overflow: hidden;
         background:
           radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%),
           #0b0b0b;
+        border-radius: 16px;
       }
-      .hero img, .Hero img, [data-hero] img, #hero img, .hero-wrap img {
+      .hero img, .Hero img, [data-hero] img, #hero img, .hero-wrap img,
+      .actions img, .action img, .gallery img, .slider img {
         width: 100%; height: 100%;
-        object-fit: contain !important;  /* 잘림 방지 */
+        object-fit: contain !important;   /* 잘림 방지 */
         display: block;
       }
     </style>
-
-    <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <div id="app"></div>
