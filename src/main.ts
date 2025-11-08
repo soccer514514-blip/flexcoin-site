@@ -198,3 +198,11 @@ function drawDonut(canvas:HTMLCanvasElement, items:{label:string,value:number}[]
   ctx.fillStyle = '#f5e6b3'; ctx.font = `${16*DPR}px system-ui`; ctx.textAlign = 'center';
   ctx.fillText('Tokenomics', cx, cy + 6*DPR);
 }
+/* === H4-1) 안내문/헬퍼 노드 전부 제거 (겹침 근본 차단) === */
+(function cleanPlaceholders(){
+  const sel = '.placeholder,.helper,[data-placeholder],[data-helper]';
+  document.querySelectorAll(sel).forEach(n=>n.remove());
+})();
+
+/* === H4-2) 히어로/갤러리 이미지 선로딩(플리커 감소) === */
+// 이미 이전에 preload([...heroImgs, ...actionImgs, ...nftImgs])를 넣었다면 유지하세요.
