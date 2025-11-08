@@ -1,13 +1,9 @@
 {
   "chainId": 56,
-  "name": "BNB Smart Chain",
-  "symbol": "BNB",
   "token": "0xBa29562241F0489504C493c47aCBA16d7a98998f",
-  "team_wallet": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
-  "marketing_wallet": "0xF3A2159474dCE4eF86F6eE56cE1b55C60E2C467e",
-  "presale_wallet": "0x66F4cEb1C3dEb2084cdc02Aa3c318CF680E0A672",
-  "burn_wallet": "0x388a9106d392937938721d6dd09cf1f331c2860f",
-  "receiver_wallet": "0xCDcA475e1C6D89A14158fB8D05fA8275Bf5A06Ea",
-  "explorer": "https://bscscan.com",
-  "pancakeswap_buy": "https://pancakeswap.finance/swap?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f&chain=bsc"
+  "team": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
+  "marketing": "0xF3A2159474dCE4eF86F6eE56cE1b55C60E2C467e",
+  "receiver": "0xCDcA475e1C6D89A14158fB8D05fA8275Bf5A06Ea",
+  "presale": "0x66F4cEb1C3dEb2084cdc02Aa3c318CF680E0A672",
+  "burn": "0x388a9106d392937938721d6dd09cf1f331c2860f"
 }
