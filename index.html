@@ -1,170 +1,130 @@
-<!DOCTYPE html>
-<html lang="ko">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>$FLEX — Flexcoin</title>
-  <meta name="description" content="Flex your life. The ultimate luxury meme coin on BNB Smart Chain." />
-  <meta name="theme-color" content="#0b0b0b" />
-
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="stylesheet" href="/style.css" />
-  <style>
-    body{margin:0;background:#0e0c09;color:#f4e1b6;font-family:system-ui,-apple-system,Segoe UI,Roboto,Pretendard,sans-serif;text-align:center}
-    header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#0a0908;position:sticky;top:0;z-index:10}
-    header h1{font-size:1.2rem;color:#f1d48b;margin:0}
-    nav a{color:#d7c087;text-decoration:none;margin:0 8px;font-weight:600}
-    section{padding:40px 16px;max-width:1000px;margin:24px auto;background:#14110e;border-radius:16px;box-shadow:0 0 10px rgba(255,220,150,.06)}
-    h2{color:#f3d58c;margin:0 0 14px}
-    .btn{display:inline-block;padding:10px 16px;border-radius:12px;margin:6px;background:#201b13;color:#f2d995;text-decoration:none;font-weight:600;border:1px solid #3b3225;transition:.2s}
-    .btn:hover{background:#3a2f21;color:#fff3c0;box-shadow:0 0 10px #c7a96350}
-    .wrap-list{list-style:none;padding:0;margin:0}
-    .wrap-list li{padding:4px 0}
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-    @media (max-width:800px){.grid{grid-template-columns:1fr}}
-    .nft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
-    .nft-grid img{width:100%;height:180px;object-fit:cover;border-radius:12px;background:#1b1815;border:1px solid #2c261f}
-    @media (max-width:640px){.nft-grid{grid-template-columns:repeat(2,1fr)}.nft-grid img{height:140px}}
-    footer{padding:28px;font-size:.9rem;opacity:.8}
-    /* Hero 안전 비율 + 잘림방지 */
-    #hero img{width:100%;aspect-ratio:1792/1024;object-fit:contain;border-radius:16px;background:
-      radial-gradient(ellipse at 50% 10%, rgba(255,215,128,.08), transparent 60%), #0b0b0b}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border-bottom:1px solid #2c261f;text-align:left}
-    td.num{text-align:right}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flexcoin v3.7</title>
+<link rel="icon" href="/hero/1.jpg">
+<style>
+:root { --gold:#e4c562; --bg:#0b0e12; --ink:#e9e9ea; }
+body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui, Segoe UI, Roboto, sans-serif; }
+header { padding:24px 16px; text-align:center }
+.hero { position:relative; max-width:1200px; margin:0 auto; border-radius:18px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.5) }
+.hero img { display:block; width:100%; height:auto; aspect-ratio:16/9; object-fit:cover }
+.grid { max-width:1200px; margin:24px auto; padding:0 16px; display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)) }
+.card { background:#12161c; border:1px solid #1c2330; border-radius:14px; padding:16px }
+h2 { color:var(--gold) }
+.btns a { display:inline-block; margin:6px 8px; padding:10px 14px; border-radius:10px; background:#1b2330; border:1px solid #263044; color:var(--ink); text-decoration:none }
+.btns a.primary { border-color:#5b4a1a; background:#17160d; color:var(--gold) }
+.onchain td, .onchain th { padding:6px 10px; border-bottom:1px solid #222a36; font-size:14px }
+.row { display:flex; align-items:center; gap:12px; flex-wrap:wrap }
+footer { text-align:center; padding:40px 16px; color:#9aa4b2 }
+img.preview { width:180px; height:180px; object-fit:cover; border-radius:12px; border:1px solid #2a3446 }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
 </head>
-
 <body>
-  <header>
-    <h1>$FLEX</h1>
-    <nav>
-      <a href="#hero">Hero</a>
-      <a href="#roadmap">Roadmap</a>
-      <a href="#tokenomics">Tokenomics</a>
-      <a href="#presale">Presale</a>
-      <a href="#nft">NFT</a>
-      <a href="#links">Links</a>
-      <a href="#onchain">On-chain</a>
-    </nav>
-  </header>
+<header>
+  <h1>FLEX - The Meme Coin of Luxury</h1>
+  <div class="btns">
+    <a class="primary" id="buy">Buy on PancakeSwap</a>
+    <a id="telegram">Telegram</a>
+    <a id="x">X / Twitter</a>
+    <a id="scan">BscScan</a>
+  </div>
+</header>
 
-  <main>
-    <!-- Hero -->
-    <section id="hero">
-      <h2>Flex your life with $FLEX</h2>
-      <p>The Meme Coin of Luxury Flex, Lifestyle Flex</p>
-      <!-- 런타임에서 자동 교정됨(1.jpg → /hero/1.jpg?v=...) -->
-      <img src="/hero/1.jpg" alt="Hero" />
-    </section>
+<section class="hero">
+  <img id="hero-img" alt="Flex hero" src="/hero/main-hero.jpg">
+</section>
 
-    <!-- Roadmap -->
-    <section id="roadmap">
-      <h2>Roadmap</h2>
-      <ul class="wrap-list">
-        <li>Phase 1 — Memecoin 섹터에서 살아남기</li>
-        <li>Phase 2 — Community growth + listings</li>
-        <li>Phase 3 — NFT utilities + more</li>
-      </ul>
-    </section>
+<section class="grid">
+  <div class="card">
+    <h2>Tokenomics</h2>
+    <canvas id="donut" width="300" height="300"></canvas>
+  </div>
+  <div class="card">
+    <h2>Roadmap - Phase 4</h2>
+    <ul>
+      <li>AI trading insights and risk dashboards</li>
+      <li>AI image/NFT generators for community</li>
+      <li>On-chain analytics and anti-bot screening</li>
+      <li>Scalability improvements and multi-CDN</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Ecosystem</h2>
+    <ul>
+      <li>Website + Whitepaper (8 languages)</li>
+      <li>NFT previews and mint (soon)</li>
+      <li>Community: Telegram and X</li>
+      <li>Exchange: PancakeSwap</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Whitepaper (PDF)</h2>
+    <div class="btns" id="wp"></div>
+  </div>
+</section>
 
-    <!-- Tokenomics -->
-    <section id="tokenomics">
-      <h2>Tokenomics</h2>
-      <div id="tokenomics-donut" style="margin:14px auto;max-width:420px"></div>
-      <ul class="wrap-list" style="display:inline-block;text-align:left;margin-top:8px">
-        <li>LP — 69%</li>
-        <li>Presale — 10%</li>
-        <li>Marketing — 10%</li>
-        <li>Team — 10%</li>
-        <li>Burn — 1%</li>
-      </ul>
-    </section>
+<section class="grid">
+  <div class="card" style="grid-column:1/-1">
+    <h2>Action Preview</h2>
+    <div class="row" id="preview"></div>
+  </div>
+  <div class="card" style="grid-column:1/-1">
+    <h2>On-chain Status</h2>
+    <table class="onchain" id="chain"></table>
+  </div>
+</section>
 
-    <!-- Presale -->
-    <section id="presale">
-      <h2>Presale</h2>
-      <p id="presaleText">Loading…</p>
-    </section>
+<footer>FLEXCOIN v3.7 - Luxury never sleeps.</footer>
 
-    <!-- NFT -->
-    <section id="nft">
-      <h2>NFT 민팅 (Preview)</h2>
-      <div class="nft-grid">
-        <img data-nft="1" alt="NFT Preview 1" />
-        <img data-nft="2" alt="NFT Preview 2" />
-        <img data-nft="3" alt="NFT Preview 3" />
-        <img data-nft="4" alt="NFT Preview 4" />
-        <img data-nft="5" alt="NFT Preview 5" />
-        <img data-nft="6" alt="NFT Preview 6" />
-      </div>
-      <p style="opacity:.8;margin-top:10px">flex-your-nft-coming-soon</p>
-    </section>
+<script>
+const HERO = [1,2,3,4,5,6,7].map(i=>`/hero/${i}.jpg`);
+const PREV = [1,2,3,4,5,6,7,8].map(i=>`/nft-preview/${i}.jpg`);
 
-    <!-- Links -->
-    <section id="links">
-      <h2>Links</h2>
-      <a id="btnPancake"  class="btn" href="#" target="_blank">Buy on PancakeSwap</a>
-      <a id="btnTelegram" class="btn" href="#" target="_blank">Telegram</a>
-      <a id="btnX"        class="btn" href="#" target="_blank">X / Twitter</a>
-      <a id="btnBscScan"  class="btn" href="#" target="_blank">BscScan</a>
+// Hero rotation
+let k=0;
+const hero = document.getElementById('hero-img');
+setInterval(()=>{ k=(k+1)%HERO.length; hero.src = HERO[k]; }, 6000);
 
-      <div style="margin-top:10px;text-align:left;max-width:680px;margin-inline:auto" class="grid">
-        <div>
-          <h3 style="margin:0 0 8px;color:#f3d58c">Team / Lock</h3>
-          <div id="teamWallet" style="word-break:break-all;opacity:.9"></div>
-        </div>
-        <div>
-          <h3 style="margin:0 0 8px;color:#f3d58c">Marketing / Airdrop</h3>
-          <div id="marketingWallet" style="word-break:break-all;opacity:.9"></div>
-        </div>
-        <div>
-          <h3 style="margin:0 0 8px;color:#f3d58c">User (Receiving)</h3>
-          <div id="userWallet" style="word-break:break-all;opacity:.9"></div>
-        </div>
-      </div>
-    </section>
+// Build previews
+const prev = document.getElementById('preview');
+prev.innerHTML = PREV.map(p=>`<img class="preview" src="${p}" alt="preview" loading="lazy">`).join("");
 
-    <!-- On-chain Status (신규 섹션) -->
-    <section id="onchain">
-      <h2>On-chain Status</h2>
-      <div id="onchain-status" style="overflow:auto">
-        <table>
-          <thead>
-            <tr>
-              <th>Label</th>
-              <th>Address</th>
-              <th class="num">Balance ($FLEX)</th>
-              <th>Explorer</th>
-            </tr>
-          </thead>
-          <tbody id="onchain-rows">
-            <tr><td colspan="4" style="padding:16px;opacity:.7">Loading on-chain balances…</td></tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td>Total Supply</td>
-              <td style="color:#9a8b60">—</td>
-              <td id="onchain-total" class="num">—</td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+async function wire(){
+  const res = await fetch('/config/addresses.json');
+  const a = await res.json();
+  document.getElementById('buy').href = a.pancake_buy_url;
+  document.getElementById('telegram').href = a.telegram_url;
+  document.getElementById('x').href = a.x_url;
+  document.getElementById('scan').href = a.bscscan_url;
 
-      <div style="margin-top:12px">
-        <a id="ql-holders"  class="btn" href="#" target="_blank">Holders</a>
-        <a id="ql-dead"     class="btn" href="#" target="_blank">Dead(0x…dEaD)</a>
-        <a id="ql-pairs"    class="btn" href="#" target="_blank">Token Pairs</a>
-        <a id="ql-user-out" class="btn" href="#" target="_blank">Your OUT Txns</a>
-      </div>
-    </section>
-  </main>
+  // On-chain static table
+  const rows = [
+    ["Token", a.token],
+    ["Team / Lock", a.team_lock],
+    ["Marketing / Airdrop", a.marketing_airdrop],
+    ["User (Receiving)", a.user_receiving],
+    ["Burn", a.burn],
+    ["Dead (Blackhole)", a.dead]
+  ];
+  const t = document.getElementById('chain');
+  t.innerHTML = '<tr><th>Label</th><th>Address / Link</th></tr>' + rows.map(([k,v]) => `<tr><td>${k}</td><td><a target="_blank" href="https://bscscan.com/address/${v}" style="color:var(--gold)">${v}</a></td></tr>`).join('');
 
-  <footer>
-    Flexcoin Static • Mainnet Edition • © 2025
-  </footer>
+  // Tokenomics donut
+  const ctx = document.getElementById('donut');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels: ['LP 69%','Presale 10%','Marketing 10%','Team 10%','Burn 1%'], datasets: [{ data: [69,10,10,10,1] }] },
+    options: { plugins: { legend: { labels: { color: '#e9e9ea' } } } }
+  });
 
-  <script type="module" src="/src/main.ts"></script>
-</body>
-</html>
+  // Whitepapers
+  const wp = document.getElementById('wp');
+  const list = [['English','en'],['Korean','ko'],['Japanese','ja'],['Chinese','zh'],['Spanish','es'],['German','de'],['Portuguese','pt'],['Italian','it']];
+  wp.innerHTML = list.map(([label,code]) => `<a class="primary" href="/whitepaper/whitepaper-${code}.pdf" download>PDF — ${label}</a>`).join('');
+}
+wire();
+</script>
+</body></html>
