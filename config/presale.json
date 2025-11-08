@@ -1,0 +1,30 @@
+{
+  "presale_start_kst": "2025-12-01T21:00:00+09:00",
+  "presale_end_kst": "2026-01-01T21:00:00+09:00",
+  "tokenomics": [
+    {
+      "label": "Liquidity Pool",
+      "value": 69
+    },
+    {
+      "label": "Presale",
+      "value": 10
+    },
+    {
+      "label": "Marketing",
+      "value": 10
+    },
+    {
+      "label": "Team (Lock 6m + 6m linear)",
+      "value": 10
+    },
+    {
+      "label": "Burn",
+      "value": 1
+    }
+  ],
+  "socials": {
+    "telegram": "https://t.me/+p1BMrdypmDFmNTA1",
+    "twitter": "https://x.com/Flexcoinmeme"
+  }
+}
