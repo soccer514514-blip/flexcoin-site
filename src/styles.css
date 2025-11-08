@@ -54,3 +54,31 @@ button:hover, .btn:hover { filter: brightness(1.08); transform: translateY(-1px)
 /* Footer & scrollbar */
 footer{ padding:40px 0; border-top:1px solid rgba(255,215,0,.25); font-size:.9rem; color:#cfcfcf; }
 ::-webkit-scrollbar{ width:8px; } ::-webkit-scrollbar-thumb{ background:rgba(255,215,0,.4); border-radius:4px; }
+/* === Layout base (gap/ratio) === */
+.row{display:grid;gap:20px}
+.row.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1200px){.row.cols-4{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:900px){.row.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.row.cols-4{grid-template-columns:1fr}}
+
+/* === HERO === */
+.hero{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;margin-bottom:28px}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .6s ease;display:block}
+.hero *[data-placeholder],.hero *[data-helper],.hero .placeholder,.hero .helper{display:none!important}
+
+/* 히어로 하단 겹침 제거 */
+.hero + p{display:none!important}
+
+/* === 카드 공통(액션/NFT) === */
+.card{position:relative;background:#111;border:1px solid rgba(255,215,0,.35);border-radius:14px;overflow:hidden;aspect-ratio:1/1}
+.card img{display:block;width:100%;height:100%;object-fit:contain;background:#0b0b0b}
+
+/* 카드 내부 도우미/안내문 숨김(겹침 원인 제거) */
+.card .placeholder,.card .helper,.card *[data-placeholder],.card *[data-helper]{display:none!important}
+
+/* 캔버스(도넛) */
+#donut-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+#donut{width:260px;height:260px}
+@media (max-width:768px){
+#donut{width:220px;height:220px}
+}
