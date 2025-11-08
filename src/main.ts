@@ -98,6 +98,9 @@ async function main(){
     const actionImgs = Array.from({length:8}, (_,i)=>`/action/${i+1}.jpg`);
     const nftImgs = Array.from({length:8}, (_,i)=>`/nft-preview/${i+1}.jpg`);
 
+    // Preload to reduce flicker
+    preload([...heroImgs, ...actionImgs, ...nftImgs]);
+
     app.innerHTML = `
       <div class="container">
         <h1 class="h1">Flexcoin — The Meme Coin of Luxury</h1>
@@ -118,6 +121,7 @@ async function main(){
         <div class="row cols-4" id="nft"></div>
 
         <h2 class="h2">Tokenomics</h2>
+        <div id="donut-wrap"><canvas id="donut"></canvas><div id="legend" style="display:flex;flex-direction:column;gap:6px;"></div></div>
         <div class="tokenomics">${(pre.tokenomics||[]).map(t=>`<span class="chip">${t.label}: <b>${t.value}%</b></span>`).join('')}</div>
 
         <div class="h2" style="margin-top:18px">Whitepaper (8 Languages)</div>
@@ -148,6 +152,17 @@ async function main(){
       card.innerHTML = `<img src="${src}" alt="NFT Preview"/>`;
       nft.appendChild(card);
     });
+
+    const canvas = document.getElementById('donut') as HTMLCanvasElement | null;
+    if (canvas) {
+      drawDonut(canvas, pre.tokenomics || []);
+      const legend = document.getElementById('legend');
+      if (legend) legend.innerHTML = (pre.tokenomics||[]).map((t,i)=>`
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="width:12px;height:12px;border-radius:50%;background:hsl(${[50,120,190,260,320][i%5]} 80% 58%)"></span>
+          <span>${t.label}: <b>${t.value}%</b></span>
+        </div>`).join('');
+    }
   } catch(e){
     const app = document.getElementById('app')!;
     app.innerHTML = `<div class="container"><div class="card" style="padding:16px">
@@ -158,3 +173,28 @@ async function main(){
 }
 
 main();
+
+
+/* === 1) 이미지 선로딩으로 플리커 줄이기 === */
+function preload(urls:string[]){ urls.forEach(u=>{ const i = new Image(); i.src = u; }); }
+
+/* === 2) 토크노믹스 도넛 그래프(순정 캔버스) === */
+function drawDonut(canvas:HTMLCanvasElement, items:{label:string,value:number}[]){
+  const ctx = canvas.getContext('2d')!;
+  const DPR = (window as any).devicePixelRatio || 1;
+  const W = canvas.clientWidth * DPR, H = canvas.clientHeight * DPR;
+  canvas.width = W; canvas.height = H;
+  const cx = W/2, cy = H/2, R = Math.min(W,H)/2 - 8*DPR, r = R*0.62;
+  const total = (items||[]).reduce((a,b)=>a+(b?.value||0),0) || 1;
+  let a0 = -Math.PI/2;
+  const base = [50,120,190,260,320];
+  (items||[]).forEach((it:any,idx:number)=>{
+    const val = it?.value || 0;
+    const a1 = a0 + 2*Math.PI*(val/total);
+    const hue = base[idx%base.length];
+    ctx.beginPath(); ctx.arc(cx,cy,R,a0,a1); ctx.arc(cx,cy,r,a1,a0,true); ctx.closePath();
+    ctx.fillStyle = `hsl(${hue} 80% 58%)`; ctx.fill(); a0 = a1;
+  });
+  ctx.fillStyle = '#f5e6b3'; ctx.font = `${16*DPR}px system-ui`; ctx.textAlign = 'center';
+  ctx.fillText('Tokenomics', cx, cy + 6*DPR);
+}
