@@ -11,16 +11,18 @@ type Presale = {
   socials?:{telegram?:string; twitter?:string};
 };
 
-async function loadJSONFlexible<T>(paths:string[]):Promise<T>{
+async function loadJSONFlexible<T>(paths:string[], defaults?:Partial<T>):Promise<T>{
   let lastErr:any;
   for (const p of paths){
     try {
       const url = p.startsWith('http') ? p : (p.startsWith('/') ? p : `/${p}`);
       const res = await fetch(url + `?v=${Date.now()}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const obj = await res.json();
+      return { ...(defaults as any || {}), ...(obj||{}) };
     } catch(e){ lastErr = e; }
   }
+  if (defaults) return defaults as T;
   throw lastErr ?? new Error('All paths failed');
 }
 
@@ -64,23 +66,37 @@ function rotator(images:string[], mount:HTMLElement){
 async function main(){
   const app = document.getElementById('app')!;
   try {
-    const addr = await loadJSONFlexible<Addr>(['/config/addresses.json','addresses.json']);
-    const preRaw = await loadJSONFlexible<Presale>(['/config/presale.json','presale.json']);
-    const preDefaults: Required<Pick<Presale,'socials'>> & Pick<Presale,'presale_start_kst'|'presale_end_kst'|'tokenomics'> = {
+    const addrDefaults: Addr = {
+      chainId:56, name:'BNB Smart Chain', symbol:'BNB',
+      token:'0xBa29562241F0489504C493c47aCBA16d7a98998f',
+      team_wallet:'0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30',
+      marketing_wallet:'0xF3A2159474dCE4eF86F6eE56cE1b55C60E2C467e',
+      presale_wallet:'0x66F4cEb1C3dEb2084cdc02Aa3c318CF680E0A672',
+      burn_wallet:'0x388a9106d392937938721d6dd09cf1f331c2860f',
+      receiver_wallet:'0xCDcA475e1C6D89A14158fB8D05fA8275Bf5A06Ea',
+      explorer:'https://bscscan.com',
+      pancakeswap_buy:'https://pancakeswap.finance/swap?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f&chain=bsc'
+    };
+    const addr = await loadJSONFlexible<Addr>(['/config/addresses.json','config/addresses.json','addresses.json'], addrDefaults);
+
+    const preDefaults: Presale = {
       presale_start_kst: '2025-12-01T21:00:00+09:00',
       presale_end_kst: '2026-01-01T21:00:00+09:00',
-      tokenomics: [],
-      socials: { telegram: '#', twitter: '#' }
+      tokenomics: [
+        {label:'Liquidity Pool', value:69},
+        {label:'Presale', value:10},
+        {label:'Marketing', value:10},
+        {label:'Team (Lock 6m + 6m linear)', value:10},
+        {label:'Burn', value:1},
+      ],
+      socials: { telegram: 'https://t.me/+p1BMrdypmDFmNTA1', twitter: 'https://x.com/Flexcoinmeme' }
     };
-    const pre = {
-      ...preDefaults,
-      ...preRaw,
-      socials: { ...preDefaults.socials, ...(preRaw.socials||{}) }
-    };
+    const pre = await loadJSONFlexible<Presale>(['/config/presale.json','config/presale.json','presale.json'], preDefaults);
 
-    const heroImgs = Array.from({length:7}, (_,i)=>`/public/hero/${i+1}.jpg`);
-    const actionImgs = Array.from({length:8}, (_,i)=>`/public/action/${i+1}.jpg`);
-    const nftImgs = Array.from({length:8}, (_,i)=>`/public/nft-preview/${i+1}.jpg`);
+    // IMPORTANT: Vite copies /public/* to root. So production paths must NOT include /public.
+    const heroImgs = Array.from({length:7}, (_,i)=>`/hero/${i+1}.jpg`);
+    const actionImgs = Array.from({length:8}, (_,i)=>`/action/${i+1}.jpg`);
+    const nftImgs = Array.from({length:8}, (_,i)=>`/nft-preview/${i+1}.jpg`);
 
     app.innerHTML = `
       <div class="container">
@@ -103,6 +119,11 @@ async function main(){
 
         <h2 class="h2">Tokenomics</h2>
         <div class="tokenomics">${(pre.tokenomics||[]).map(t=>`<span class="chip">${t.label}: <b>${t.value}%</b></span>`).join('')}</div>
+
+        <div class="h2" style="margin-top:18px">Whitepaper (8 Languages)</div>
+        <div class="row cols-4">
+          ${['en','ko','ja','zh','es','de','pt','it'].map(l=>`<a class="card btn" style="text-align:center;padding:18px" href="/whitepaper/whitepaper_${l}.pdf" target="_blank">${l.toUpperCase()} PDF</a>`).join('')}
+        </div>
 
         <div class="footer">
           Team/Lock: ${addr.team_wallet} • Marketing: ${addr.marketing_wallet} • Receiver: ${addr.receiver_wallet} • Burn: ${addr.burn_wallet}
@@ -128,6 +149,7 @@ async function main(){
       nft.appendChild(card);
     });
   } catch(e){
+    const app = document.getElementById('app')!;
     app.innerHTML = `<div class="container"><div class="card" style="padding:16px">
       <b>Boot error</b><br/>${String(e)}
     </div></div>`;
