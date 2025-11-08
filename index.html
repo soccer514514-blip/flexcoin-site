@@ -1,179 +1,130 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FLEX — The Meme Coin of Luxury</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>💎</text></svg>">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flexcoin v3.7</title>
+<link rel="icon" href="/hero/1.jpg">
 <style>
-:root{--bg:#0c0f14;--card:#131823;--txt:#e8e8ea;--gold:#f0c05a;--muted:#93a1b0}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.5 system-ui,Segoe UI,Roboto,Apple Color Emoji}
-.wrap{max-width:1100px;margin:0 auto;padding:24px}
-h1{margin:8px 0 16px;font-weight:800}
-.btn{background:#1b2230;border:1px solid #2a3346;color:#fff;padding:10px 14px;border-radius:12px;cursor:pointer;margin-right:8px}
-.btn:hover{filter:brightness(1.1)}
-.btn.gold{background:linear-gradient(180deg,#2b2110,#1b1408);border-color:#59421d;color:var(--gold)}
-.grid{display:grid;gap:16px}
-.hero{border-radius:14px;overflow:hidden;border:1px solid #1e2636;background:#0d1117}
-.hero img{display:block;width:100%;height:auto}
-.section{margin:28px 0;padding:18px;border-radius:14px;background:var(--card);border:1px solid #1e2636}
-.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-@media(min-width:880px){.cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.card{background:#0f141d;border:1px solid #1f2a3b;border-radius:12px;padding:12px;min-height:120px}
-.small{font-size:13px;color:var(--muted)}
-.table{width:100%;border-collapse:collapse}
-.table th,.table td{border-bottom:1px dashed #263248;padding:10px;text-align:left;font-size:14px}
-.badge{font-size:12px;color:#10141c;background:var(--gold);padding:2px 8px;border-radius:8px;margin-left:8px}
-.lang{float:right}
-a{color:var(--gold);text-decoration:none}
-a:hover{text-decoration:underline}
-canvas{max-width:260px!important}
+:root { --gold:#e4c562; --bg:#0b0e12; --ink:#e9e9ea; }
+body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui, Segoe UI, Roboto, sans-serif; }
+header { padding:24px 16px; text-align:center }
+.hero { position:relative; max-width:1200px; margin:0 auto; border-radius:18px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.5) }
+.hero img { display:block; width:100%; height:auto; aspect-ratio:16/9; object-fit:cover }
+.grid { max-width:1200px; margin:24px auto; padding:0 16px; display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)) }
+.card { background:#12161c; border:1px solid #1c2330; border-radius:14px; padding:16px }
+h2 { color:var(--gold) }
+.btns a { display:inline-block; margin:6px 8px; padding:10px 14px; border-radius:10px; background:#1b2330; border:1px solid #263044; color:var(--ink); text-decoration:none }
+.btns a.primary { border-color:#5b4a1a; background:#17160d; color:var(--gold) }
+.onchain td, .onchain th { padding:6px 10px; border-bottom:1px solid #222a36; font-size:14px }
+.row { display:flex; align-items:center; gap:12px; flex-wrap:wrap }
+footer { text-align:center; padding:40px 16px; color:#9aa4b2 }
+img.preview { width:180px; height:180px; object-fit:cover; border-radius:12px; border:1px solid #2a3446 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
 </head>
 <body>
-<div class="wrap">
-  <div>
-    <button id="btn-ko" class="btn lang">한국어</button>
-    <button id="btn-en" class="btn lang">English</button>
-    <h1 id="title">FLEX — The Meme Coin of Luxury</h1>
-    <div>
-      <a class="btn gold" id="btn-buy" target="_blank">Buy on PancakeSwap</a>
-      <a class="btn" id="btn-telegram" target="_blank">Telegram</a>
-      <a class="btn" id="btn-twitter" target="_blank">X / Twitter</a>
-      <a class="btn" id="btn-bsc" target="_blank">BscScan</a>
-    </div>
+<header>
+  <h1>FLEX - The Meme Coin of Luxury</h1>
+  <div class="btns">
+    <a class="primary" id="buy">Buy on PancakeSwap</a>
+    <a id="telegram">Telegram</a>
+    <a id="x">X / Twitter</a>
+    <a id="scan">BscScan</a>
   </div>
+</header>
 
-  <div class="hero section">
-    <img id="hero" src="./public/hero/main-hero.jpg" alt="hero">
+<section class="hero">
+  <img id="hero-img" alt="Flex hero" src="/hero/main-hero.jpg">
+</section>
+
+<section class="grid">
+  <div class="card">
+    <h2>Tokenomics</h2>
+    <canvas id="donut" width="300" height="300"></canvas>
   </div>
+  <div class="card">
+    <h2>Roadmap - Phase 4</h2>
+    <ul>
+      <li>AI trading insights and risk dashboards</li>
+      <li>AI image/NFT generators for community</li>
+      <li>On-chain analytics and anti-bot screening</li>
+      <li>Scalability improvements and multi-CDN</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Ecosystem</h2>
+    <ul>
+      <li>Website + Whitepaper (8 languages)</li>
+      <li>NFT previews and mint (soon)</li>
+      <li>Community: Telegram and X</li>
+      <li>Exchange: PancakeSwap</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Whitepaper (PDF)</h2>
+    <div class="btns" id="wp"></div>
+  </div>
+</section>
 
-  <div class="section">
+<section class="grid">
+  <div class="card" style="grid-column:1/-1">
     <h2>Action Preview</h2>
-    <div class="grid cards" id="preview"></div>
-    <div class="small">/public/nft-preview/1..8.jpg 파일을 교체하면 즉시 반영됩니다.</div>
+    <div class="row" id="preview"></div>
   </div>
-
-  <div class="section">
+  <div class="card" style="grid-column:1/-1">
     <h2>On-chain Status</h2>
-    <table class="table" id="ontable"><thead><tr><th>항목</th><th>주소 / 링크</th></tr></thead><tbody></tbody></table>
+    <table class="onchain" id="chain"></table>
   </div>
+</section>
 
-  <div class="section grid cards">
-    <div class="card">
-      <h3>토큰경제학</h3>
-      <canvas id="donut"></canvas>
-    </div>
-    <div class="card">
-      <h3>로드맵 · 4단계<span class="badge">AI</span></h3>
-      <ul id="roadmap"></ul>
-    </div>
-    <div class="card">
-      <h3>생태계</h3>
-      <ul>
-        <li>웹사이트 + 백서(8개 언어)</li>
-        <li>NFT 미리보기 및 민트(준비)</li>
-        <li>커뮤니티, Telegram 및 X</li>
-        <li>교환: PancakeSwap</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>백서 (PDF)</h3>
-      <div id="pdfs"></div>
-    </div>
-  </div>
-
-  <div class="small">FLEXCOIN v3.9 — 럭셔리는 잠들지 않습니다.</div>
-</div>
+<footer>FLEXCOIN v3.7 - Luxury never sleeps.</footer>
 
 <script>
-const cfgPath = "./config/addresses.json";
-const heroList = ["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg","7.jpg"];
-let heroIdx = 0;
-function nextHero(){ 
-  heroIdx=(heroIdx+1)%heroList.length; 
-  const el=document.getElementById('hero');
-  el.src = "./public/hero/"+heroList[heroIdx];
-}
-setInterval(nextHero, 5000);
+const HERO = [1,2,3,4,5,6,7].map(i=>`/hero/${i}.jpg`);
+const PREV = [1,2,3,4,5,6,7,8].map(i=>`/nft-preview/${i}.jpg`);
 
-function el(tag, attrs={}, children=[]){
-  const e = document.createElement(tag);
-  Object.entries(attrs).forEach(([k,v])=>{ if(k==='class') e.className=v; else if(k==='html') e.innerHTML=v; else e.setAttribute(k,v); });
-  children.forEach(c=>e.appendChild(c));
-  return e;
-}
+// Hero rotation
+let k=0;
+const hero = document.getElementById('hero-img');
+setInterval(()=>{ k=(k+1)%HERO.length; hero.src = HERO[k]; }, 6000);
 
-fetch(cfgPath).then(r=>r.json()).then(cfg=>{
-  // Buttons
-  document.getElementById('btn-buy').href = cfg.links.pancake;
-  document.getElementById('btn-telegram').href = cfg.links.telegram;
-  document.getElementById('btn-twitter').href = cfg.links.twitter;
-  document.getElementById('btn-bsc').href = cfg.links.bscscan;
+// Build previews
+const prev = document.getElementById('preview');
+prev.innerHTML = PREV.map(p=>`<img class="preview" src="${p}" alt="preview" loading="lazy">`).join("");
 
-  // On-chain table
+async function wire(){
+  const res = await fetch('/config/addresses.json');
+  const a = await res.json();
+  document.getElementById('buy').href = a.pancake_buy_url;
+  document.getElementById('telegram').href = a.telegram_url;
+  document.getElementById('x').href = a.x_url;
+  document.getElementById('scan').href = a.bscscan_url;
+
+  // On-chain static table
   const rows = [
-    ["토큰", cfg.token],
-    ["팀/락", cfg.team],
-    ["마케팅/에어드롭", cfg.marketing],
-    ["사용자(수신)", cfg.user],
-    ["번(Burn)", cfg.burn],
-    ["데드(블랙홀)", cfg.dead]
+    ["Token", a.token],
+    ["Team / Lock", a.team_lock],
+    ["Marketing / Airdrop", a.marketing_airdrop],
+    ["User (Receiving)", a.user_receiving],
+    ["Burn", a.burn],
+    ["Dead (Blackhole)", a.dead]
   ];
-  const tb = document.querySelector("#ontable tbody");
-  rows.forEach(([label,addr])=>{
-    const scan = `https://bscscan.com/address/${addr}`;
-    const tr = el("tr",{},[
-      el("td",{html:label}),
-      el("td",{html:`<a href="${scan}" target="_blank">${addr}</a>`})
-    ]);
-    tb.appendChild(tr);
-  });
+  const t = document.getElementById('chain');
+  t.innerHTML = '<tr><th>Label</th><th>Address / Link</th></tr>' + rows.map(([k,v]) => `<tr><td>${k}</td><td><a target="_blank" href="https://bscscan.com/address/${v}" style="color:var(--gold)">${v}</a></td></tr>`).join('');
 
-  // Donut
+  // Tokenomics donut
   const ctx = document.getElementById('donut');
-  const tk = cfg.tokenomics;
   new Chart(ctx, {
-    type:'doughnut',
-    data:{ 
-      labels:Object.keys(tk), 
-      datasets:[{ data:Object.values(tk), borderWidth:0 }] 
-    },
-    options:{ plugins:{legend:{position:'bottom'}}, cutout:'60%' }
+    type: 'doughnut',
+    data: { labels: ['LP 69%','Presale 10%','Marketing 10%','Team 10%','Burn 1%'], datasets: [{ data: [69,10,10,10,1] }] },
+    options: { plugins: { legend: { labels: { color: '#e9e9ea' } } } }
   });
 
-  // Roadmap
-  const rm = document.getElementById('roadmap');
-  cfg.roadmap.forEach(t=> rm.appendChild(el('li',{html:t})) );
-
-  // PDFs
-  const pdfs = [
-    ["영어","en"],["한국어","ko"],["일본어","ja"],["중국어","zh"],
-    ["스페인어","es"],["독일어","de"],["포르투갈어","pt"],["이탈리아어","it"]
-  ];
-  const pdfBox=document.getElementById('pdfs');
-  pdfs.forEach(([label,code])=>{
-    const a = el('a',{href:`./whitepaper/whitepaper-${code}.pdf`,target:'_blank',class:'btn',html:`PDF — ${label}`});
-    pdfBox.appendChild(a);
-  });
-
-  // Preview grid
-  const grid = document.getElementById('preview');
-  for(let i=1;i<=8;i++){
-    const img = el('img',{src:`./public/nft-preview/${i}.jpg`, alt:`preview-${i}`, style:"width:100%;border-radius:10px;display:block"});
-    const card = el('div',{class:'card'},[img]);
-    grid.appendChild(card);
-  }
-});
-
-// Language toggle (simple demo text)
-document.getElementById('btn-en').onclick = ()=>{
-  document.getElementById('title').innerText = "FLEX — The Meme Coin of Luxury";
-};
-document.getElementById('btn-ko').onclick = ()=>{
-  document.getElementById('title').innerText = "FLEX — 럭셔리 밈코인";
-};
+  // Whitepapers
+  const wp = document.getElementById('wp');
+  const list = [['English','en'],['Korean','ko'],['Japanese','ja'],['Chinese','zh'],['Spanish','es'],['German','de'],['Portuguese','pt'],['Italian','it']];
+  wp.innerHTML = list.map(([label,code]) => `<a class="primary" href="/whitepaper/whitepaper-${code}.pdf" download>PDF — ${label}</a>`).join('');
+}
+wire();
 </script>
 </body></html>
