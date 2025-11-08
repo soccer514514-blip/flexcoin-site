@@ -1,0 +1,9 @@
+
+Flexcoin v3.9 Deploy Kit
+- 한국어/영어 토글 버튼
+- Pancake / Telegram / X / BscScan 버튼 활성화
+- /public/hero 1..7.jpg 슬라이드 + main-hero.jpg 폴백
+- /public/nft-preview 1..8.jpg 미리보기
+- On-chain 주소 6종(BscScan 링크) 테이블
+- 토크노믹스 도넛, 로드맵 4단계(AI/생태계)
+- 백서 PDF 8개 언어(교체 가능)

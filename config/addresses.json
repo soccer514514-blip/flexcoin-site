@@ -1,32 +1,30 @@
 {
+  "network": "bsc-mainnet",
   "chainId": 56,
+  "rpc": "https://bsc-dataseed.binance.org",
   "token": "0xBa29562241F0489504C493c47aCBA16d7a98998f",
-  "teamLock": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
+  "team": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
   "marketing": "0xF3A2159474dC4eF86F6eE56cE1b55C60E2C467e",
-  "userReceiving": "0xCDcA475e1C6D89A14158fB8D05fA8275Bf5A06Ea",
+  "user": "0xCDcA475e1C6D89A14158fB8D05fA8275Bf5A06Ea",
   "burn": "0x388a9106d392937938721d6dd09cf1f331c2860f",
   "dead": "0x000000000000000000000000000000000000dEaD",
   "links": {
-    "pancake": "https://pancakeswap.finance/?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f",
+    "pancake": "https://pancakeswap.finance/swap?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f&chainId=56",
     "telegram": "https://t.me/+p1BMrdypmDFmNTA1",
-    "x": "https://x.com/Flexcoinmeme",
+    "twitter": "https://x.com/Flexcoinmeme",
     "bscscan": "https://bscscan.com/token/0xBa29562241F0489504C493c47aCBA16d7a98998f"
   },
   "tokenomics": {
-    "lp": 69,
-    "presale": 10,
-    "marketing": 10,
-    "team": 10,
-    "burn": 1
-  },
-  "presale": {
-    "startKST": "2025-12-01 21:00",
-    "endKST": "2026-01-01 21:00"
+    "LP": 69,
+    "Presale": 10,
+    "Marketing": 10,
+    "Team": 10,
+    "Burn": 1
   },
   "roadmap": [
     "1단계: Memecoin 섹터에서 살아남기",
-    "2단계: 홀더 1,000+ 및 커뮤니티 활성화",
-    "3단계: DEX 및 CEX 상장",
-    "4단계: 생태계 확장 – AI 및 Meme 시장 연계"
+    "2단계: 홀더수 1,000+ 및 커뮤니티 활성화",
+    "3단계: DEX 상장 및 CEX 거래소 진출",
+    "4단계: 생태계 확장 — AI 및 Meme 시장 연계"
   ]
 }

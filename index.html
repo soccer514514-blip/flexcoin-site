@@ -1,39 +1,179 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FLEX – The Meme Coin of Luxury</title>
-<link rel="stylesheet" href="assets/style.css">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FLEX — The Meme Coin of Luxury</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>💎</text></svg>">
+<style>
+:root{--bg:#0c0f14;--card:#131823;--txt:#e8e8ea;--gold:#f0c05a;--muted:#93a1b0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.5 system-ui,Segoe UI,Roboto,Apple Color Emoji}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+h1{margin:8px 0 16px;font-weight:800}
+.btn{background:#1b2230;border:1px solid #2a3346;color:#fff;padding:10px 14px;border-radius:12px;cursor:pointer;margin-right:8px}
+.btn:hover{filter:brightness(1.1)}
+.btn.gold{background:linear-gradient(180deg,#2b2110,#1b1408);border-color:#59421d;color:var(--gold)}
+.grid{display:grid;gap:16px}
+.hero{border-radius:14px;overflow:hidden;border:1px solid #1e2636;background:#0d1117}
+.hero img{display:block;width:100%;height:auto}
+.section{margin:28px 0;padding:18px;border-radius:14px;background:var(--card);border:1px solid #1e2636}
+.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:880px){.cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.card{background:#0f141d;border:1px solid #1f2a3b;border-radius:12px;padding:12px;min-height:120px}
+.small{font-size:13px;color:var(--muted)}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{border-bottom:1px dashed #263248;padding:10px;text-align:left;font-size:14px}
+.badge{font-size:12px;color:#10141c;background:var(--gold);padding:2px 8px;border-radius:8px;margin-left:8px}
+.lang{float:right}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+canvas{max-width:260px!important}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div>
-        <h1>FLEX - The Meme Coin of Luxury</h1>
-        <div class="small">v3.9A • BSC Mainnet</div>
-      </div>
-      <div class="nav">
-        <a id="btn-pancake" class="btn" target="_blank" rel="noopener">Buy on PancakeSwap</a>
-        <a id="btn-telegram" class="btn" target="_blank" rel="noopener">Telegram</a>
-        <a id="btn-x" class="btn" target="_blank" rel="noopener">X / Twitter</a>
-        <a id="btn-bscscan" class="btn" target="_blank" rel="noopener">BscScan</a>
-      </div>
+<div class="wrap">
+  <div>
+    <button id="btn-ko" class="btn lang">한국어</button>
+    <button id="btn-en" class="btn lang">English</button>
+    <h1 id="title">FLEX — The Meme Coin of Luxury</h1>
+    <div>
+      <a class="btn gold" id="btn-buy" target="_blank">Buy on PancakeSwap</a>
+      <a class="btn" id="btn-telegram" target="_blank">Telegram</a>
+      <a class="btn" id="btn-twitter" target="_blank">X / Twitter</a>
+      <a class="btn" id="btn-bsc" target="_blank">BscScan</a>
     </div>
-    <div class="hero"><img id="hero-img" src="public/hero/main-hero.jpg" alt="hero"></div>
-    <div class="grid" style="margin-top:14px">
-      <div class="card"><h3>액션 미리보기</h3><div id="preview" class="grid preview" style="grid-template-columns:repeat(4,1fr)"></div></div>
-      <div class="card"><h3>토큰경제학</h3><canvas id="chart" class="chart"></canvas></div>
-      <div class="card"><h3>로드맵 · 4단계</h3><ul id="roadmap"></ul></div>
-      <div class="card"><h3>백서 (PDF)</h3><div id="wplist"></div></div>
-    </div>
-    <div class="card" style="margin-top:14px">
-      <h3>온체인 상태</h3>
-      <table class="table"><thead><tr><th>항목</th><th>주소 / 링크</th></tr></thead><tbody id="onchain-tbody"></tbody></table>
-    </div>
-    <div class="footer small">FLEXCOIN v3.9A — 럭셔리는 잠들지 않습니다. · 2025-11-08</div>
   </div>
-<script src="assets/app.js"></script>
-</body>
-</html>
+
+  <div class="hero section">
+    <img id="hero" src="./public/hero/main-hero.jpg" alt="hero">
+  </div>
+
+  <div class="section">
+    <h2>Action Preview</h2>
+    <div class="grid cards" id="preview"></div>
+    <div class="small">/public/nft-preview/1..8.jpg 파일을 교체하면 즉시 반영됩니다.</div>
+  </div>
+
+  <div class="section">
+    <h2>On-chain Status</h2>
+    <table class="table" id="ontable"><thead><tr><th>항목</th><th>주소 / 링크</th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <div class="section grid cards">
+    <div class="card">
+      <h3>토큰경제학</h3>
+      <canvas id="donut"></canvas>
+    </div>
+    <div class="card">
+      <h3>로드맵 · 4단계<span class="badge">AI</span></h3>
+      <ul id="roadmap"></ul>
+    </div>
+    <div class="card">
+      <h3>생태계</h3>
+      <ul>
+        <li>웹사이트 + 백서(8개 언어)</li>
+        <li>NFT 미리보기 및 민트(준비)</li>
+        <li>커뮤니티, Telegram 및 X</li>
+        <li>교환: PancakeSwap</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>백서 (PDF)</h3>
+      <div id="pdfs"></div>
+    </div>
+  </div>
+
+  <div class="small">FLEXCOIN v3.9 — 럭셔리는 잠들지 않습니다.</div>
+</div>
+
+<script>
+const cfgPath = "./config/addresses.json";
+const heroList = ["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg","7.jpg"];
+let heroIdx = 0;
+function nextHero(){ 
+  heroIdx=(heroIdx+1)%heroList.length; 
+  const el=document.getElementById('hero');
+  el.src = "./public/hero/"+heroList[heroIdx];
+}
+setInterval(nextHero, 5000);
+
+function el(tag, attrs={}, children=[]){
+  const e = document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v])=>{ if(k==='class') e.className=v; else if(k==='html') e.innerHTML=v; else e.setAttribute(k,v); });
+  children.forEach(c=>e.appendChild(c));
+  return e;
+}
+
+fetch(cfgPath).then(r=>r.json()).then(cfg=>{
+  // Buttons
+  document.getElementById('btn-buy').href = cfg.links.pancake;
+  document.getElementById('btn-telegram').href = cfg.links.telegram;
+  document.getElementById('btn-twitter').href = cfg.links.twitter;
+  document.getElementById('btn-bsc').href = cfg.links.bscscan;
+
+  // On-chain table
+  const rows = [
+    ["토큰", cfg.token],
+    ["팀/락", cfg.team],
+    ["마케팅/에어드롭", cfg.marketing],
+    ["사용자(수신)", cfg.user],
+    ["번(Burn)", cfg.burn],
+    ["데드(블랙홀)", cfg.dead]
+  ];
+  const tb = document.querySelector("#ontable tbody");
+  rows.forEach(([label,addr])=>{
+    const scan = `https://bscscan.com/address/${addr}`;
+    const tr = el("tr",{},[
+      el("td",{html:label}),
+      el("td",{html:`<a href="${scan}" target="_blank">${addr}</a>`})
+    ]);
+    tb.appendChild(tr);
+  });
+
+  // Donut
+  const ctx = document.getElementById('donut');
+  const tk = cfg.tokenomics;
+  new Chart(ctx, {
+    type:'doughnut',
+    data:{ 
+      labels:Object.keys(tk), 
+      datasets:[{ data:Object.values(tk), borderWidth:0 }] 
+    },
+    options:{ plugins:{legend:{position:'bottom'}}, cutout:'60%' }
+  });
+
+  // Roadmap
+  const rm = document.getElementById('roadmap');
+  cfg.roadmap.forEach(t=> rm.appendChild(el('li',{html:t})) );
+
+  // PDFs
+  const pdfs = [
+    ["영어","en"],["한국어","ko"],["일본어","ja"],["중국어","zh"],
+    ["스페인어","es"],["독일어","de"],["포르투갈어","pt"],["이탈리아어","it"]
+  ];
+  const pdfBox=document.getElementById('pdfs');
+  pdfs.forEach(([label,code])=>{
+    const a = el('a',{href:`./whitepaper/whitepaper-${code}.pdf`,target:'_blank',class:'btn',html:`PDF — ${label}`});
+    pdfBox.appendChild(a);
+  });
+
+  // Preview grid
+  const grid = document.getElementById('preview');
+  for(let i=1;i<=8;i++){
+    const img = el('img',{src:`./public/nft-preview/${i}.jpg`, alt:`preview-${i}`, style:"width:100%;border-radius:10px;display:block"});
+    const card = el('div',{class:'card'},[img]);
+    grid.appendChild(card);
+  }
+});
+
+// Language toggle (simple demo text)
+document.getElementById('btn-en').onclick = ()=>{
+  document.getElementById('title').innerText = "FLEX — The Meme Coin of Luxury";
+};
+document.getElementById('btn-ko').onclick = ()=>{
+  document.getElementById('title').innerText = "FLEX — 럭셔리 밈코인";
+};
+</script>
+</body></html>
