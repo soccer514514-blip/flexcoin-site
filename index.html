@@ -1,130 +1,39 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flexcoin v3.7</title>
-<link rel="icon" href="/hero/1.jpg">
-<style>
-:root { --gold:#e4c562; --bg:#0b0e12; --ink:#e9e9ea; }
-body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui, Segoe UI, Roboto, sans-serif; }
-header { padding:24px 16px; text-align:center }
-.hero { position:relative; max-width:1200px; margin:0 auto; border-radius:18px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.5) }
-.hero img { display:block; width:100%; height:auto; aspect-ratio:16/9; object-fit:cover }
-.grid { max-width:1200px; margin:24px auto; padding:0 16px; display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)) }
-.card { background:#12161c; border:1px solid #1c2330; border-radius:14px; padding:16px }
-h2 { color:var(--gold) }
-.btns a { display:inline-block; margin:6px 8px; padding:10px 14px; border-radius:10px; background:#1b2330; border:1px solid #263044; color:var(--ink); text-decoration:none }
-.btns a.primary { border-color:#5b4a1a; background:#17160d; color:var(--gold) }
-.onchain td, .onchain th { padding:6px 10px; border-bottom:1px solid #222a36; font-size:14px }
-.row { display:flex; align-items:center; gap:12px; flex-wrap:wrap }
-footer { text-align:center; padding:40px 16px; color:#9aa4b2 }
-img.preview { width:180px; height:180px; object-fit:cover; border-radius:12px; border:1px solid #2a3446 }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FLEX – The Meme Coin of Luxury</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<header>
-  <h1>FLEX - The Meme Coin of Luxury</h1>
-  <div class="btns">
-    <a class="primary" id="buy">Buy on PancakeSwap</a>
-    <a id="telegram">Telegram</a>
-    <a id="x">X / Twitter</a>
-    <a id="scan">BscScan</a>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>FLEX - The Meme Coin of Luxury</h1>
+        <div class="small">v3.9A • BSC Mainnet</div>
+      </div>
+      <div class="nav">
+        <a id="btn-pancake" class="btn" target="_blank" rel="noopener">Buy on PancakeSwap</a>
+        <a id="btn-telegram" class="btn" target="_blank" rel="noopener">Telegram</a>
+        <a id="btn-x" class="btn" target="_blank" rel="noopener">X / Twitter</a>
+        <a id="btn-bscscan" class="btn" target="_blank" rel="noopener">BscScan</a>
+      </div>
+    </div>
+    <div class="hero"><img id="hero-img" src="public/hero/main-hero.jpg" alt="hero"></div>
+    <div class="grid" style="margin-top:14px">
+      <div class="card"><h3>액션 미리보기</h3><div id="preview" class="grid preview" style="grid-template-columns:repeat(4,1fr)"></div></div>
+      <div class="card"><h3>토큰경제학</h3><canvas id="chart" class="chart"></canvas></div>
+      <div class="card"><h3>로드맵 · 4단계</h3><ul id="roadmap"></ul></div>
+      <div class="card"><h3>백서 (PDF)</h3><div id="wplist"></div></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>온체인 상태</h3>
+      <table class="table"><thead><tr><th>항목</th><th>주소 / 링크</th></tr></thead><tbody id="onchain-tbody"></tbody></table>
+    </div>
+    <div class="footer small">FLEXCOIN v3.9A — 럭셔리는 잠들지 않습니다. · 2025-11-08</div>
   </div>
-</header>
-
-<section class="hero">
-  <img id="hero-img" alt="Flex hero" src="/hero/main-hero.jpg">
-</section>
-
-<section class="grid">
-  <div class="card">
-    <h2>Tokenomics</h2>
-    <canvas id="donut" width="300" height="300"></canvas>
-  </div>
-  <div class="card">
-    <h2>Roadmap - Phase 4</h2>
-    <ul>
-      <li>AI trading insights and risk dashboards</li>
-      <li>AI image/NFT generators for community</li>
-      <li>On-chain analytics and anti-bot screening</li>
-      <li>Scalability improvements and multi-CDN</li>
-    </ul>
-  </div>
-  <div class="card">
-    <h2>Ecosystem</h2>
-    <ul>
-      <li>Website + Whitepaper (8 languages)</li>
-      <li>NFT previews and mint (soon)</li>
-      <li>Community: Telegram and X</li>
-      <li>Exchange: PancakeSwap</li>
-    </ul>
-  </div>
-  <div class="card">
-    <h2>Whitepaper (PDF)</h2>
-    <div class="btns" id="wp"></div>
-  </div>
-</section>
-
-<section class="grid">
-  <div class="card" style="grid-column:1/-1">
-    <h2>Action Preview</h2>
-    <div class="row" id="preview"></div>
-  </div>
-  <div class="card" style="grid-column:1/-1">
-    <h2>On-chain Status</h2>
-    <table class="onchain" id="chain"></table>
-  </div>
-</section>
-
-<footer>FLEXCOIN v3.7 - Luxury never sleeps.</footer>
-
-<script>
-const HERO = [1,2,3,4,5,6,7].map(i=>`/hero/${i}.jpg`);
-const PREV = [1,2,3,4,5,6,7,8].map(i=>`/nft-preview/${i}.jpg`);
-
-// Hero rotation
-let k=0;
-const hero = document.getElementById('hero-img');
-setInterval(()=>{ k=(k+1)%HERO.length; hero.src = HERO[k]; }, 6000);
-
-// Build previews
-const prev = document.getElementById('preview');
-prev.innerHTML = PREV.map(p=>`<img class="preview" src="${p}" alt="preview" loading="lazy">`).join("");
-
-async function wire(){
-  const res = await fetch('/config/addresses.json');
-  const a = await res.json();
-  document.getElementById('buy').href = a.pancake_buy_url;
-  document.getElementById('telegram').href = a.telegram_url;
-  document.getElementById('x').href = a.x_url;
-  document.getElementById('scan').href = a.bscscan_url;
-
-  // On-chain static table
-  const rows = [
-    ["Token", a.token],
-    ["Team / Lock", a.team_lock],
-    ["Marketing / Airdrop", a.marketing_airdrop],
-    ["User (Receiving)", a.user_receiving],
-    ["Burn", a.burn],
-    ["Dead (Blackhole)", a.dead]
-  ];
-  const t = document.getElementById('chain');
-  t.innerHTML = '<tr><th>Label</th><th>Address / Link</th></tr>' + rows.map(([k,v]) => `<tr><td>${k}</td><td><a target="_blank" href="https://bscscan.com/address/${v}" style="color:var(--gold)">${v}</a></td></tr>`).join('');
-
-  // Tokenomics donut
-  const ctx = document.getElementById('donut');
-  new Chart(ctx, {
-    type: 'doughnut',
-    data: { labels: ['LP 69%','Presale 10%','Marketing 10%','Team 10%','Burn 1%'], datasets: [{ data: [69,10,10,10,1] }] },
-    options: { plugins: { legend: { labels: { color: '#e9e9ea' } } } }
-  });
-
-  // Whitepapers
-  const wp = document.getElementById('wp');
-  const list = [['English','en'],['Korean','ko'],['Japanese','ja'],['Chinese','zh'],['Spanish','es'],['German','de'],['Portuguese','pt'],['Italian','it']];
-  wp.innerHTML = list.map(([label,code]) => `<a class="primary" href="/whitepaper/whitepaper-${code}.pdf" download>PDF — ${label}</a>`).join('');
-}
-wire();
-</script>
-</body></html>
+<script src="assets/app.js"></script>
+</body>
+</html>
