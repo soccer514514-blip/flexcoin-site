@@ -1,9 +1,5 @@
 {
-  "chain": {
-    "name": "BSC",
-    "chainId": 56,
-    "explorer": "https://bscscan.com/address/"
-  },
+  "chain": { "name": "BSC", "chainId": 56, "explorer": "https://bscscan.com/address/" },
   "token": "0xBa29562241F0489504C493c47aCBA16d7a98998f",
   "team_lock": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
   "marketing": "0xF3A2159474dCE4eF86F6eE56cE1b55C60E2C467e",
