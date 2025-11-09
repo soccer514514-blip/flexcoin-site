@@ -1,4 +1,3 @@
-// src/utils/heroLoader.ts
 export async function resolveHeroMain(): Promise<string> {
   const tryOne = (url: string) => new Promise<boolean>((res)=>{
     const img = new Image();
@@ -6,7 +5,7 @@ export async function resolveHeroMain(): Promise<string> {
     img.onerror = () => res(false);
     img.src = url;
   });
-  const main = "/hero/main.jpg";
+  const main = '/hero/main.jpg';
   const ok = await tryOne(main);
-  return ok ? main : "/hero/1.jpg";
+  return ok ? main : '/hero/1.jpg';
 }

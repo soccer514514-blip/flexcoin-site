@@ -1,10 +1,12 @@
 {
-  "chain": "BSC Mainnet",
-  "chainId": 56,
+  "chain": {
+    "name": "BSC",
+    "chainId": 56
+  },
   "token": "0xBa29562241F0489504C493c47aCBA16d7a98998f",
-  "team_lock_wallet": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
-  "marketing_wallet": "0xF3A2159474dCE4eF86F6eE56cE1b55C60E2C467e",
+  "team_lock": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
+  "marketing": "0xF3A2159474dCE4eF86F6eE56cE1b55C60E2C467e",
   "presale_wallet": "0x66F4cEb1C3dEb2084cdc02Aa3c318CF680E0A672",
   "burn_wallet": "0x388a9106d392937938721d6dd09cf1f331c2860f",
-  "user_receiving_wallet": "0xCDcA475e1C6D89A14158fB8D05fA8275Bf5A06Ea"
+  "user_wallet": "0xCDcA475e1C6D89A14158fB8D05fA8275Bf5A06Ea"
 }

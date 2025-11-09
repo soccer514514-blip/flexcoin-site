@@ -1,16 +1,18 @@
 {
   "tokenomics": {
-    "LP": 54,
-    "Presale": 20,
-    "Team": 15,
-    "Marketing": 10,
-    "Burn": 1
+    "lp": 54,
+    "presale": 20,
+    "team": 15,
+    "marketing": 10,
+    "burn": 1
   },
-  "presale_rate_per_BNB": 2000000,
-  "listing_rate_per_BNB": 1600000,
-  "softcap_BNB": 30,
-  "hardcap_BNB": 100,
-  "schedule_KST": {
+  "presale": {
+    "rate_flex_per_bnb": 2000000,
+    "listing_rate": 1600000,
+    "softcap_bnb": 30,
+    "hardcap_bnb": 100
+  },
+  "schedule_kst": {
     "start": "2025-12-01 21:00",
     "end": "2026-01-01 21:00"
   }
