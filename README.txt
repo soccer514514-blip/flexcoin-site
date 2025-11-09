@@ -1,15 +1,6 @@
 # Flexcoin V4.9 All-in-One (GitHub Pages Ready)
 
-- Place everything at repo root (main branch).
-- Uses `.github/workflows/pages.yml` to auto build & deploy.
-- Folders (match your screenshot):
-  • public/hero/main.jpg, 1..8.jpg
-  • public/action/1..8.jpg
-  • public/nft-preview/1..8.jpg
-  • public/whitepaper/en.pdf … it.pdf
-  • config/allocations.json, config/addresses.json
-  • src/utils/heroLoader.ts, src/utils/runtimeConfig.ts
-  • src/constants/images.ts
-  • index.html, src/main.ts
-- `resolveHeroMain()` falls back to `/hero/1.jpg` when `/hero/main.jpg` is missing.
-- Built at: 2025-11-09T10:13:43.290726
+- 덮어쓰기 경로는 레포 루트입니다.
+- `public/` 이미지와 `public/whitepaper/*.pdf`는 빌드 없이도 자동 포함됩니다.
+- `/config/*.json`만 바꾸면 토크노믹스/주소가 즉시 갱신됩니다.
+- `hero/main.jpg`가 없으면 자동으로 `/hero/1.jpg`를 사용합니다.

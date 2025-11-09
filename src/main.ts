@@ -1,10 +1,9 @@
-import { resolveHeroMain } from './utils/heroLoader'
-import { fetchAllocations, fetchAddresses, applyTokenomics, applyAddresses } from './utils/runtimeConfig'
+import { resolveHeroMain } from "/src/utils/heroLoader";
+import { fetchAllocations, fetchAddresses, applyTokenomics, applyAddresses } from "/src/utils/runtimeConfig";
 
 (async ()=>{
   const heroMain = await resolveHeroMain();
-  const heroEl = document.querySelector('#hero-img') as HTMLImageElement | null;
-  if(heroEl){ heroEl.src = heroMain; }
+  document.querySelector("#hero-img")?.setAttribute("src", heroMain);
 
   const alloc = await fetchAllocations();
   const addr  = await fetchAddresses();

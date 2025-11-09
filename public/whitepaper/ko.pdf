@@ -1,43 +1,80 @@
-%PDF-1.4
+%PDF-1.3
+%“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R
+>>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >> >> >>
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
 endobj
 4 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+<<
+/BaseFont /Symbol /Name /F3 /Subtype /Type1 /Type /Font
+>>
 endobj
 5 0 obj
-<< /Length 956 >>
-stream
-BT /F1 18 Tf 72 770 Td (Flexcoin Whitepaper V4.9 \(KO\)) Tj ET
-BT /F1 12 Tf 72 730 Td (Flex your NFT, Flex your life.) Tj ET
-BT /F1 11 Tf 72 708 Td (Presale on Pinksale -> PancakeSwap LP Creation -> LP Farming enabled.) Tj ET
-BT /F1 11 Tf 72 692 Td (Tokenomics: LP 54%, Presale 20%, Team 15%, Marketing 10%, Burn 1%) Tj ET
-BT /F1 11 Tf 72 676 Td (Softcap 30 BNB / Hardcap 100 BNB) Tj ET
-BT /F1 11 Tf 72 660 Td (1 BNB = 2,000,000 FLEX \(Presale\)) Tj ET
-BT /F1 11 Tf 72 644 Td (1 BNB = 1,600,000 FLEX \(Listing\)) Tj ET
-BT /F1 11 Tf 72 628 Td (KST: 2025-12-01 21:00 -> 2026-01-01 21:00) Tj ET
-BT /F1 11 Tf 72 612 Td (Contract: 0xBa29562241F0489504C493c47aCBA16d7a98998f) Tj ET
-BT /F1 11 Tf 72 596 Td (Team/Lock: 0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30  Marketing: 0xF3A2159474dCE4eF86F6eE56cE1b55C60E2C467e) Tj ET
-BT /F1 11 Tf 72 580 Td (Presale Wallet: 0x66F4cEb1C3dEb2084cdc02Aa3c318CF680E0A672  Burn: 0x388a9106d392937938721d6dd09cf1f331c2860f) Tj ET
+<<
+/Contents 9 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 8 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
 
-endstream
+>> 
+  /Type /Page
+>>
+endobj
+6 0 obj
+<<
+/PageMode /UseNone /Pages 8 0 R /Type /Catalog
+>>
+endobj
+7 0 obj
+<<
+/Author (anonymous) /CreationDate (D:20251109103037+00'00') /Creator (ReportLab PDF Library - www.reportlab.com) /Keywords () /ModDate (D:20251109103037+00'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
+  /Subject (unspecified) /Title (untitled) /Trapped /False
+>>
+endobj
+8 0 obj
+<<
+/Count 1 /Kids [ 5 0 R ] /Type /Pages
+>>
+endobj
+9 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 784
+>>
+stream
+Gat=g?Z4CI'ZJu*'_c0:LFUp-J$/014>\2n&nP$G"?c=q9cOFUP:>h9q"?[Mg";%8KVCm)NUo6Pa4CSZ?8t-l"$fc","Fm!71H2_JmnmdnS5-55T8sKM8qZK&;Du6KF3YbAi5Xa*ak<&_d1qQ/U[QK*5f2!%R#2;be[obro</=*/a2]]RGrudPsk?^I^gI3T6]u&Bma8%heB<]C"Q40BVa`gc'@`:DI3!\7!Sg*(fH[h"Z;JY(_#Im`,"ks$\Q4)4PJrVUN$;VJ!.,D<Z9'lA*-/eJck"pgXu:rrn=2h"QT$r<f7kgO6#t(.D7Z<,RZX?dhP$aj'e<Mf'?bma.1W(K5E%RA*XTd@=6MF8-cHi,MQrIfS!gm=XkOiAar[iBqY?[t&*i!^\XT@`gj#bS[6J)cp<n/7[=q6ZSU1!oEae)@FR+b(QLLJN7F6'TRi*+Qf3ciJ)`FI>RoK>2o.NI0h.;\5W51%HmAJ[VB]7>c)4-0qkM^cm#(3-ou)i=(rAqZoNo$&-gRc4ncTP:2Of0ZV2%Ca*tMuI[><<FPI@[3EOeN8Z?a9<5tiX&udYC=m'Ta!EW;V,LjEETg9HpY1sHferl=3laLK:Ud24\1$*)NaEa=*^>,U>DA1-i"Cg`Kik>5E^)I2q\J2!519*r&'llr-KhPF5iE#9/GU?<W-;4^oc+#lIHtnB::R%n8gL;Y5Cb*"qAQ<cUoWj]pe!qu8pl^T'_@+W8S^JSib.s=oHAA"?)<XQNUbr3(W[dGZ)XA5E.4k!R_hV=.!*7'Gb5~>endstream
 endobj
 xref
-0 6
+0 10
 0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000241 00000 n 
-0000000311 00000 n 
+0000000073 00000 n 
+0000000124 00000 n 
+0000000231 00000 n 
+0000000343 00000 n 
+0000000420 00000 n 
+0000000623 00000 n 
+0000000691 00000 n 
+0000000987 00000 n 
+0000001046 00000 n 
 trailer
-<< /Size 6 /Root 1 0 R >>
+<<
+/ID 
+[<5ac45aeb4caca5d9627f66b214de22e5><5ac45aeb4caca5d9627f66b214de22e5>]
+% ReportLab generated PDF document -- digest (http://www.reportlab.com)
+
+/Info 7 0 R
+/Root 6 0 R
+/Size 10
+>>
 startxref
-1318
+1920
 %%EOF

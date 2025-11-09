@@ -1,34 +1,66 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flexcoin V4.9</title>
-    <meta name="description" content="Flexcoin — The Meme Coin of Luxury" />
-    <link rel="icon" href="/favicon.ico" />
-  </head>
-  <body style="background:#0b0b0b;color:#f6f6f6;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
-    <div style="padding:24px;max-width:1100px;margin:0 auto">
-      <h1 style="margin:0 0 16px 0">Flexcoin — The Meme Coin of Luxury</h1>
-      <div style="border:1px solid #c9a227;border-radius:16px;padding:12px;margin-bottom:20px;">
-        <img id="hero-img" alt="Hero image" style="width:100%;border-radius:12px;display:block" />
-      </div>
-      <h2>Tokenomics & Presale</h2>
-      <div id="tokenomics" style="line-height:1.6"></div>
-      <h2 style="margin-top:24px">Addresses</h2>
-      <div id="addresses" style="line-height:1.6"></div>
-      <h2 style="margin-top:24px">Whitepaper (8 Languages)</h2>
-      <ul>
-        <li><a href="/whitepaper/en.pdf" target="_blank">EN</a></li>
-        <li><a href="/whitepaper/ko.pdf" target="_blank">KO</a></li>
-        <li><a href="/whitepaper/ja.pdf" target="_blank">JA</a></li>
-        <li><a href="/whitepaper/zh.pdf" target="_blank">ZH</a></li>
-        <li><a href="/whitepaper/es.pdf" target="_blank">ES</a></li>
-        <li><a href="/whitepaper/de.pdf" target="_blank">DE</a></li>
-        <li><a href="/whitepaper/pt.pdf" target="_blank">PT</a></li>
-        <li><a href="/whitepaper/it.pdf" target="_blank">IT</a></li>
-      </ul>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flexcoin V4.9</title>
+  <style>
+    body{background:#0b0b0b;color:#f6f6f6;font-family:system-ui,Segoe UI,Roboto,Apple SD Gothic Neo,sans-serif;padding:24px}
+    .card{border:1px solid #555;border-radius:12px;padding:16px;margin:12px 0}
+    a{color:#e7c34b}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .hero{border:2px solid #8a6f2a;border-radius:16px;overflow:hidden;height:320px;display:flex;align-items:center;justify-content:center;background:#111}
+    .hero img{width:100%;height:100%;object-fit:cover}
+    small{opacity:.75}
+  </style>
+</head>
+<body>
+  <h1>Flexcoin V4.9</h1>
+  <div class="card hero"><img id="hero-img" alt="Hero image" /></div>
+
+  <div class="card">
+    <h2>Tokenomics & Presale</h2>
+    <ul>
+      <li>LP: <b data-tok-lp></b></li>
+      <li>Presale: <b data-tok-presale></b></li>
+      <li>Team: <b data-tok-team></b></li>
+      <li>Marketing: <b data-tok-mkt></b></li>
+      <li>Burn: <b data-tok-burn></b></li>
+    </ul>
+    <ul>
+      <li data-presale-rate></li>
+      <li data-listing-rate></li>
+      <li>Softcap: <span data-softcap></span></li>
+      <li>Hardcap: <span data-hardcap></span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Addresses</h2>
+    <ul>
+      <li><a data-addr-token target="_blank">Token</a></li>
+      <li><a data-addr-team target="_blank">Team Lock</a></li>
+      <li><a data-addr-mkt target="_blank">Marketing</a></li>
+      <li><a data-addr-presale target="_blank">Presale</a></li>
+      <li><a data-addr-burn target="_blank">Burn</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Whitepaper (8 Languages)</h2>
+    <div class="grid">
+      <a href="/whitepaper/en.pdf" target="_blank">EN</a>
+      <a href="/whitepaper/ko.pdf" target="_blank">KO</a>
+      <a href="/whitepaper/ja.pdf" target="_blank">JA</a>
+      <a href="/whitepaper/zh.pdf" target="_blank">ZH</a>
+      <a href="/whitepaper/es.pdf" target="_blank">ES</a>
+      <a href="/whitepaper/de.pdf" target="_blank">DE</a>
+      <a href="/whitepaper/pt.pdf" target="_blank">PT</a>
+      <a href="/whitepaper/it.pdf" target="_blank">IT</a>
     </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+    <p><small>파일만 교체하면 자동 반영됩니다.</small></p>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
 </html>
