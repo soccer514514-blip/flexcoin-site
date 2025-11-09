@@ -11,13 +11,4 @@ import { fetchAllocations, fetchAddresses, applyTokenomics, applyAddresses } fro
   const addr  = await fetchAddresses();
   applyTokenomics(alloc);
   applyAddresses(addr);
-
-  // Populate galleries
-  const put = (id:string, folder:string)=>{
-    const el=document.getElementById(id);
-    if(!el) return;
-    el.innerHTML = Array.from({length:8},(_,i)=>`<img class="resp" src="/${folder}/${i+1}.jpg" loading="lazy" alt="${folder} ${i+1}"/>`).join("");
-  };
-  put("action-grid","action");
-  put("nft-grid","nft-preview");
 })();

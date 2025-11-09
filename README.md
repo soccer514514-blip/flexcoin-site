@@ -1,11 +1,10 @@
-# Flexcoin V5.3 All-in-One
+# Flexcoin V5.3-1 All-in-One
 
-- Upload everything to the repository root (main branch).
-- GitHub Pages workflow included (builds `dist/`).
-- Public assets:
-  - `/public/hero/1..8.jpg` (auto-rotate; `/hero/main.jpg` optional)
-  - `/public/action/1..8.jpg`
-  - `/public/nft-preview/1..8.jpg`
-  - `/public/whitepaper/*.pdf` (8 languages, high-contrast)
-- Runtime config from `/config/allocations.json` and `/config/addresses.json`.
-- Hero fallback: if `/hero/main.jpg` is missing, loader uses `/hero/1.jpg`.
+- Upload the **contents** of this folder to the repo **root** (main branch).
+- GitHub Actions will build with Vite 5 and deploy `dist/` to Pages.
+- Runtime config: `/config/allocations.json`, `/config/addresses.json`.
+- Images: `/public/hero|action|nft-preview/1..8.jpg` (hero has `main.jpg` fallback).
+- Whitepapers (high-contrast): `/public/whitepaper/*.pdf`.
+- CNAME: `flexcoin.io.kr`.
+- Hero rotates automatically every 6s; Pinksale button auto-toggles by `pinksale_url`.
+- Version: v5.3-1 (2025-11-09T12:55:09.858339).

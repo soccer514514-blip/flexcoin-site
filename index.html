@@ -1,87 +1,88 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Flexcoin V5.3</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Flexcoin V5.3-1</title>
   <style>
-    body{margin:0;background:#0b0b0b;color:#f8f3e0;font-family:system-ui,Segoe UI,Roboto,Apple SD Gothic Neo,Arial}
-    .wrap{max-width:1100px;margin:20px auto;padding:0 16px}
-    h1,h2,h3{color:#f4d03f;text-shadow:0 0 8px rgba(244,208,63,.35)}
-    .panel{border:1px solid #cb9f1a33;border-radius:14px;padding:18px;margin:24px 0;background:#111}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid #f4d03f33}
-    .btn.disabled{opacity:.6;pointer-events:none}
-    a{color:#ffd76a}
-    ul{padding-left:18px}
-    .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-    .card{border:1px solid #554215;border-radius:12px;padding:10px;background:#0f0f0f}
-    img.resp{width:100%;display:block;border-radius:12px}
-    .papers a{display:inline-block;margin:4px 8px 0 0}
+    body{background:#0a0a0a;color:#f7f7f7;font-family:system-ui,Segoe UI,Roboto,Apple SD Gothic Neo,Malgun Gothic,sans-serif;line-height:1.6}
+    h1,h2,h3{color:#ffeaa7;text-shadow:0 0 8px rgba(255,215,0,.25)}
+    .panel{border:1px solid #7d6b00;border-radius:16px;padding:24px;margin:24px 0;background:linear-gradient(180deg,#121212,#0e0e0e)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .btn{display:inline-block;padding:10px 16px;border-radius:12px;border:1px solid #c7a600;background:#1a1400;color:#ffd764;text-decoration:none}
+    .btn.disabled{pointer-events:none;opacity:.6}
+    .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .cards img{width:100%;border:1px solid #7d6b00;border-radius:12px;display:block}
+    a{color:#ffd764}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Flexcoin — The Meme Coin of Luxury</h1>
+  <h1>Flexcoin — The Meme Coin of Luxury</h1>
 
-    <img id="hero-img" class="resp" alt="Hero"/>
+  <img id="hero-img" alt="Hero" style="width:100%;border-radius:16px;display:block"/>
 
-    <section class="panel">
-      <h2>Tokenomics & Presale</h2>
-      <div class="grid">
-        <div class="card">
-          <svg id="donut" viewBox="0 0 120 120" width="180" height="180"></svg>
-          <ul>
-            <li>LP: <b data-tok-lp>—</b></li>
-            <li>Presale: <b data-tok-presale>—</b></li>
-            <li>Team: <b data-tok-team>—</b></li>
-            <li>Marketing: <b data-tok-mkt>—</b></li>
-            <li>Burn: <b data-tok-burn>—</b></li>
-          </ul>
-          <div>
-            <div data-presale-rate>—</div>
-            <div data-listing-rate>—</div>
-            <div>Softcap: <b data-softcap>—</b> / Hardcap: <b data-hardcap>—</b></div>
-          </div>
-          <p><a id="btn-pinksale" class="btn disabled">Pinksale (coming soon)</a></p>
+  <section class="panel">
+    <h2>Tokenomics & Presale</h2>
+    <div class="grid">
+      <div>
+        <svg id="donut" viewBox="0 0 120 120" width="180" height="180"></svg>
+        <ul>
+          <li>LP: <b data-tok-lp>—</b></li>
+          <li>Presale: <b data-tok-presale>—</b></li>
+          <li>Team: <b data-tok-team>—</b></li>
+          <li>Marketing: <b data-tok-mkt>—</b></li>
+          <li>Burn: <b data-tok-burn>—</b></li>
+        </ul>
+        <div class="rates">
+          <div data-presale-rate>—</div>
+          <div data-listing-rate>—</div>
+          <div>Softcap: <b data-softcap>—</b> / Hardcap: <b data-hardcap>—</b></div>
         </div>
-        <div class="card">
-          <h3>Addresses</h3>
-          <ul>
-            <li><a data-addr-token target="_blank" rel="noopener">Token</a></li>
-            <li><a data-addr-team target="_blank" rel="noopener">Team/Lock</a></li>
-            <li><a data-addr-mkt target="_blank" rel="noopener">Marketing</a></li>
-            <li><a data-addr-presale target="_blank" rel="noopener">Presale</a></li>
-            <li><a data-addr-burn target="_blank" rel="noopener">Burn</a></li>
-          </ul>
-        </div>
+        <p><a id="btn-pinksale" class="btn disabled">Pinksale (coming soon)</a></p>
       </div>
-    </section>
-
-    <section class="panel">
-      <h2>Action Preview</h2>
-      <div class="gallery" id="action-grid"></div>
-    </section>
-
-    <section class="panel">
-      <h2>NFT Preview — Flex Your NFT</h2>
-      <div class="gallery" id="nft-grid"></div>
-    </section>
-
-    <section class="panel">
-      <h2>Whitepaper (8 Languages)</h2>
-      <div class="papers">
-        <a href="/whitepaper/en.pdf" target="_blank">EN</a>
-        <a href="/whitepaper/ko.pdf" target="_blank">KO</a>
-        <a href="/whitepaper/ja.pdf" target="_blank">JA</a>
-        <a href="/whitepaper/zh.pdf" target="_blank">ZH</a>
-        <a href="/whitepaper/es.pdf" target="_blank">ES</a>
-        <a href="/whitepaper/de.pdf" target="_blank">DE</a>
-        <a href="/whitepaper/pt.pdf" target="_blank">PT</a>
-        <a href="/whitepaper/it.pdf" target="_blank">IT</a>
+      <div>
+        <h3>Addresses</h3>
+        <ul>
+          <li><a data-addr-token>Token</a></li>
+          <li><a data-addr-team>Team/Lock</a></li>
+          <li><a data-addr-mkt>Marketing</a></li>
+          <li><a data-addr-presale>Presale</a></li>
+          <li><a data-addr-burn>Burn</a></li>
+        </ul>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Action Preview</h2>
+    <div class="cards">
+      <img src="/action/1.jpg"><img src="/action/2.jpg"><img src="/action/3.jpg"><img src="/action/4.jpg">
+      <img src="/action/5.jpg"><img src="/action/6.jpg"><img src="/action/7.jpg"><img src="/action/8.jpg">
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>NFT Preview — Flex Your NFT</h2>
+    <div class="cards">
+      <img src="/nft-preview/1.jpg"><img src="/nft-preview/2.jpg"><img src="/nft-preview/3.jpg"><img src="/nft-preview/4.jpg">
+      <img src="/nft-preview/5.jpg"><img src="/nft-preview/6.jpg"><img src="/nft-preview/7.jpg"><img src="/nft-preview/8.jpg">
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Whitepaper (8 languages)</h2>
+    <ul>
+      <li><a href="/whitepaper/en.pdf" target="_blank">EN</a></li>
+      <li><a href="/whitepaper/ko.pdf" target="_blank">KO</a></li>
+      <li><a href="/whitepaper/ja.pdf" target="_blank">JA</a></li>
+      <li><a href="/whitepaper/zh.pdf" target="_blank">ZH</a></li>
+      <li><a href="/whitepaper/es.pdf" target="_blank">ES</a></li>
+      <li><a href="/whitepaper/de.pdf" target="_blank">DE</a></li>
+      <li><a href="/whitepaper/pt.pdf" target="_blank">PT</a></li>
+      <li><a href="/whitepaper/it.pdf" target="_blank">IT</a></li>
+    </ul>
+  </section>
+
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

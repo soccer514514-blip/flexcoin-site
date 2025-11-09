@@ -13,7 +13,7 @@ const DEFAULTS:Allocations={
     rate_flex_per_bnb:2000000,listing_rate_flex_per_bnb:1600000,
     start_kst:"2025-12-01T21:00:00+09:00",end_kst:"2026-01-01T21:00:00+09:00",
     pinksale_url:""
-  },version:"v5.3"
+  },version:"v5.3-1"
 };
 
 export async function fetchAllocations():Promise<Allocations>{
@@ -54,6 +54,7 @@ export function applyTokenomics(a:Allocations){
     else { btn.href="#"; btn.textContent="Pinksale (coming soon)"; btn.classList.add("disabled"); }
   }
 
+  // donut chart
   const total=a.tokenomics.lp+a.tokenomics.presale+a.tokenomics.team+a.tokenomics.marketing+a.tokenomics.burn;
   const parts=[
     {k:"LP",v:a.tokenomics.lp},
@@ -64,7 +65,8 @@ export function applyTokenomics(a:Allocations){
   ];
   const svg=document.getElementById("donut") as SVGSVGElement|null;
   if(svg){
-    const C=60, R=45, P=2*Math.PI*R; svg.innerHTML="";
+    const C=60, R=45, P=2*Math.PI*R;
+    svg.innerHTML="";
     let off=0;
     const colors=["#f4d03f","#2ecc71","#9b59b6","#3498db","#e67e22"];
     parts.forEach((p,i)=>{
@@ -72,19 +74,20 @@ export function applyTokenomics(a:Allocations){
       const ring=document.createElementNS("http://www.w3.org/2000/svg","circle");
       ring.setAttribute("cx",String(C)); ring.setAttribute("cy",String(C)); ring.setAttribute("r",String(R));
       ring.setAttribute("fill","none"); ring.setAttribute("stroke-width","18");
-      ring.setAttribute("stroke-dasharray",`${len} ${P-len}`);
+      ring.setAttribute("stroke-dasharray",f"{len} {P-len}");
       ring.setAttribute("stroke-dashoffset", String(-off));
       ring.setAttribute("stroke", colors[i%colors.length]);
-      svg.appendChild(ring); off+=len;
+      svg.appendChild(ring);
+      off+=len;
     });
   }
 }
 
 export function applyAddresses(addr:Addresses){
-  const ex=addr.chain.explorer.replace(/\/+$/,"")+"/";
+  const ex=addr.chain.explorer.replace(/\/+$/,'/') ;
   const set=(sel:string,hash:string)=>{
     const a=document.querySelector(sel) as HTMLAnchorElement|null;
-    if(a){ a.href=ex+hash; a.setAttribute("target","_blank"); }
+    if(a){ a.href = ex+hash; a.setAttribute("target","_blank"); }
   };
   set("[data-addr-token]",addr.token);
   set("[data-addr-team]",addr.team_lock);
