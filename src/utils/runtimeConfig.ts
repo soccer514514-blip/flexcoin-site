@@ -5,7 +5,8 @@ export type Presale = {
   rate_flex_per_bnb:number; listing_rate_flex_per_bnb:number;
   start_kst:string; end_kst:string; pinksale_url?:string;
 };
-export type Allocations = { tokenomics:Tokenomics; presale:Presale; version?:string };
+export type UIFlags = { hide_team?: boolean };
+export type Allocations = { tokenomics:Tokenomics; presale:Presale; ui?:UIFlags; version?:string };
 
 const DEFAULTS: Allocations = {
   tokenomics: { lp:54, presale:20, team:15, marketing:10, burn:1 },
@@ -15,6 +16,7 @@ const DEFAULTS: Allocations = {
     start_kst:"2025-12-01T21:00:00+09:00", end_kst:"2026-01-01T21:00:00+09:00",
     pinksale_url:""
   },
+  ui: { hide_team: true },  // 👈 팀지갑 링크 UI에서 숨김(주소는 유지)
   version: "v5.7"
 };
 
@@ -24,6 +26,7 @@ export async function fetchAllocations(): Promise<Allocations> {
     return {
       tokenomics: { ...DEFAULTS.tokenomics, ...(raw?.tokenomics || {}) },
       presale:    { ...DEFAULTS.presale,    ...(raw?.presale    || {}) },
+      ui:         { ...DEFAULTS.ui,         ...(raw?.ui         || {}) },
       version:     raw?.version ?? DEFAULTS.version
     };
   } catch {
@@ -41,7 +44,6 @@ export async function fetchAddresses(): Promise<Addresses> {
 
 export function applyTokenomics(a: Allocations) {
   const q = (sel:string) => document.querySelector(sel) as HTMLElement | null;
-
   q("[data-tok-lp]")?.replaceChildren(`${a.tokenomics.lp}%`);
   q("[data-tok-presale]")?.replaceChildren(`${a.tokenomics.presale}%`);
   q("[data-tok-team]")?.replaceChildren(`${a.tokenomics.team}%`);
@@ -66,7 +68,7 @@ export function applyTokenomics(a: Allocations) {
     }
   }
 
-  // donut chart
+  // 간단 도넛(SVG)
   const total = a.tokenomics.lp + a.tokenomics.presale + a.tokenomics.team + a.tokenomics.marketing + a.tokenomics.burn;
   const parts = [
     { k: "LP",        v: a.tokenomics.lp,        color: "#f1c40f" },
@@ -100,8 +102,11 @@ export function applyAddresses(addr: Addresses) {
     const a = document.querySelector(sel) as HTMLAnchorElement | null;
     if (a) { a.href = ex + hash; a.setAttribute("target", "_blank"); }
   };
-  // show only public-facing links (token/presale/burn)
   set("[data-addr-token]",   addr.token);
+  // 팀지갑 UI 숨김
+  const team = document.querySelector("[data-addr-team]") as HTMLElement | null;
+  if (team) team.style.display = "none";
+  set("[data-addr-mkt]",     addr.marketing);
   set("[data-addr-presale]", addr.presale);
   set("[data-addr-burn]",    addr.burn);
 }
