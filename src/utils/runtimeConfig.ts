@@ -15,7 +15,7 @@ const DEFAULTS: Allocations = {
     start_kst:"2025-12-01T21:00:00+09:00", end_kst:"2026-01-01T21:00:00+09:00",
     pinksale_url:""
   },
-  version: "v5.6"
+  version: "v5.7"
 };
 
 export async function fetchAllocations(): Promise<Allocations> {
@@ -66,7 +66,7 @@ export function applyTokenomics(a: Allocations) {
     }
   }
 
-  // 간단 도넛(SVG)
+  // donut chart
   const total = a.tokenomics.lp + a.tokenomics.presale + a.tokenomics.team + a.tokenomics.marketing + a.tokenomics.burn;
   const parts = [
     { k: "LP",        v: a.tokenomics.lp,        color: "#f1c40f" },
@@ -100,9 +100,8 @@ export function applyAddresses(addr: Addresses) {
     const a = document.querySelector(sel) as HTMLAnchorElement | null;
     if (a) { a.href = ex + hash; a.setAttribute("target", "_blank"); }
   };
+  // show only public-facing links (token/presale/burn)
   set("[data-addr-token]",   addr.token);
-  set("[data-addr-team]",    addr.team_lock);
-  set("[data-addr-mkt]",     addr.marketing);
   set("[data-addr-presale]", addr.presale);
   set("[data-addr-burn]",    addr.burn);
 }

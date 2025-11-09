@@ -1,87 +1,94 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flexcoin</title>
-    <style>
-      body{background:#0f0d0a;color:#f7e7b7;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Noto Sans',sans-serif;margin:0}
-      .container{max-width:1100px;margin:24px auto;padding:0 16px}
-      h1,h2,h3{color:#f7d559;margin:12px 0}
-      .panel{background:#18130e;border:1px solid #3a2e1e;border-radius:16px;padding:20px;margin:24px 0;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-      .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-      .btn{display:inline-block;padding:10px 14px;border-radius:12px;background:#2b2417;color:#f7d559;border:1px solid #5a482b;text-decoration:none}
-      .btn.disabled{pointer-events:none;opacity:.6}
-      img.card{width:100%;display:block;border-radius:16px}
-      .thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-      .thumbs img{width:100%;border-radius:14px;display:block}
-      a{color:#f7d559}
-      ul{padding-left:18px}
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <img id="hero-img" class="card" alt="Hero"/>
-      <section class="panel">
-        <h2>Tokenomics & Presale</h2>
-        <div class="grid">
-          <div>
-            <svg id="donut" viewBox="0 0 120 120" width="180" height="180"></svg>
-            <ul>
-              <li>LP: <b data-tok-lp>—</b></li>
-              <li>Presale: <b data-tok-presale>—</b></li>
-              <li>Team: <b data-tok-team>—</b></li>
-              <li>Marketing: <b data-tok-mkt>—</b></li>
-              <li>Burn: <b data-tok-burn>—</b></li>
-            </ul>
-            <div class="rates">
-              <div data-presale-rate>—</div>
-              <div data-listing-rate>—</div>
-              <div>Softcap: <b data-softcap>—</b> / Hardcap: <b data-hardcap>—</b></div>
-            </div>
-            <p><a id="btn-pinksale" class="btn disabled">Pinksale (coming soon)</a></p>
-          </div>
-          <div>
-            <h3>Addresses</h3>
-            <ul>
-              <li><a data-addr-token target="_blank">Token</a></li>
-              <li><a data-addr-team target="_blank">Team/Lock</a></li>
-              <li><a data-addr-mkt target="_blank">Marketing</a></li>
-              <li><a data-addr-presale target="_blank">Presale</a></li>
-              <li><a data-addr-burn target="_blank">Burn</a></li>
-            </ul>
-          </div>
-        </div>
-      </section>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flexcoin — $FLEX</title>
+  <meta name="theme-color" content="#14110b"/>
+  <style>
+    body{background:#0e0b07;color:#f6e9c0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Noto Sans',sans-serif;margin:0}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    h1,h2,h3{color:#f4d03f;margin:12px 0}
+    .panel{background:#13100b;border:1px solid #312b1f;border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 0 0 1px rgba(255,255,255,.02) inset}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .btn{display:inline-block;border-radius:12px;padding:10px 14px;background:#6b5b2b;color:#fff;text-decoration:none;font-weight:700}
+    .btn.disabled{pointer-events:none;opacity:.55;filter:grayscale(.3)}
+    ul{list-style:none;padding:0;margin:8px 0}
+    li{margin:6px 0}
+    .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .tile{border-radius:16px;overflow:hidden;background:#1b160e}
+    .tile img{display:block;width:100%;height:160px;object-fit:cover}
+    .muted{opacity:.85}
+    a{color:#f0da80}
+    footer{opacity:.6;font-size:.9rem;padding:24px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Flexcoin — $FLEX</h1>
+    <img id="hero-img" alt="Hero" style="width:100%;border-radius:16px;display:block" />
 
-      <section class="panel">
-        <h2>Action Preview</h2>
-        <div class="thumbs">
-          <img src="/action/1.jpg" alt="a1"/>
-          <img src="/action/2.jpg" alt="a2"/>
-          <img src="/action/3.jpg" alt="a3"/>
-          <img src="/action/4.jpg" alt="a4"/>
-          <img src="/action/5.jpg" alt="a5"/>
-          <img src="/action/6.jpg" alt="a6"/>
-          <img src="/action/7.jpg" alt="a7"/>
-          <img src="/action/8.jpg" alt="a8"/>
+    <section class="panel">
+      <h2>Tokenomics &amp; Presale</h2>
+      <div class="grid">
+        <div>
+          <svg id="donut" viewBox="0 0 120 120" width="180" height="180"></svg>
+          <ul class="muted">
+            <li>LP: <b data-tok-lp>—</b></li>
+            <li>Presale: <b data-tok-presale>—</b></li>
+            <li>Team: <b data-tok-team>—</b></li>
+            <li>Marketing: <b data-tok-mkt>—</b></li>
+            <li>Burn: <b data-tok-burn>—</b></li>
+          </ul>
+          <div class="rates muted">
+            <div data-presale-rate>—</div>
+            <div data-listing-rate>—</div>
+            <div>Softcap: <b data-softcap>—</b> / Hardcap: <b data-hardcap>—</b></div>
+          </div>
+          <p><a id="btn-pinksale" class="btn disabled">Pinksale (coming soon)</a></p>
         </div>
-      </section>
+        <div>
+          <h3>Addresses</h3>
+          <ul>
+            <li><a data-addr-token target="_blank" rel="noopener">Token</a></li>
+            <li><a data-addr-presale target="_blank" rel="noopener">Presale</a></li>
+            <li><a data-addr-burn target="_blank" rel="noopener">Burn</a></li>
+          </ul>
+          <p class="muted">* Team/Marketing wallets are configured but hidden from UI.</p>
+        </div>
+      </div>
+    </section>
 
-      <section class="panel">
-        <h2>Whitepaper</h2>
-        <p>
-          <a href="/whitepaper/en.pdf" target="_blank">EN</a> ·
-          <a href="/whitepaper/ko.pdf" target="_blank">KO</a> ·
-          <a href="/whitepaper/ja.pdf" target="_blank">JA</a> ·
-          <a href="/whitepaper/zh.pdf" target="_blank">ZH</a> ·
-          <a href="/whitepaper/es.pdf" target="_blank">ES</a> ·
-          <a href="/whitepaper/de.pdf" target="_blank">DE</a> ·
-          <a href="/whitepaper/pt.pdf" target="_blank">PT</a> ·
-          <a href="/whitepaper/it.pdf" target="_blank">IT</a>
-        </p>
-      </section>
-    </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+    <section class="panel">
+      <h2>Action Preview</h2>
+      <div class="gallery">
+        <div class="tile"><img src="/action/1.jpg" alt=""></div>
+        <div class="tile"><img src="/action/2.jpg" alt=""></div>
+        <div class="tile"><img src="/action/3.jpg" alt=""></div>
+        <div class="tile"><img src="/action/4.jpg" alt=""></div>
+        <div class="tile"><img src="/action/5.jpg" alt=""></div>
+        <div class="tile"><img src="/action/6.jpg" alt=""></div>
+        <div class="tile"><img src="/action/7.jpg" alt=""></div>
+        <div class="tile"><img src="/action/8.jpg" alt=""></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Whitepaper</h2>
+      <ul class="gallery" style="grid-template-columns:repeat(4,1fr)">
+        <li class="tile"><a href="/whitepaper/en.pdf" class="btn" download>English</a></li>
+        <li class="tile"><a href="/whitepaper/ko.pdf" class="btn" download>Korean</a></li>
+        <li class="tile"><a href="/whitepaper/ja.pdf" class="btn" download>Japanese</a></li>
+        <li class="tile"><a href="/whitepaper/zh.pdf" class="btn" download>Chinese</a></li>
+        <li class="tile"><a href="/whitepaper/es.pdf" class="btn" download>Spanish</a></li>
+        <li class="tile"><a href="/whitepaper/de.pdf" class="btn" download>German</a></li>
+        <li class="tile"><a href="/whitepaper/pt.pdf" class="btn" download>Portuguese</a></li>
+        <li class="tile"><a href="/whitepaper/it.pdf" class="btn" download>Italian</a></li>
+      </ul>
+    </section>
+
+    <footer class="muted">Flexcoin V5.7 • Runtime JSON • Vite • GitHub Pages</footer>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
 </html>

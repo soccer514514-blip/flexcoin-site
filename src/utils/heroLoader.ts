@@ -12,7 +12,7 @@ export async function resolveHeroMain(): Promise<string> {
   return (await tryOne(main)) ? main : "/hero/1.jpg";
 }
 
-// 반드시 export (이게 없어서 빌드가 터졌음)
+// rotate hero images
 export function startHeroRotate(el: HTMLImageElement, total = 8, ms = 6000) {
   const list = Array.from({ length: total }, (_, i) => `/hero/${i + 1}.jpg`);
   let idx = 0;

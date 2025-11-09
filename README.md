@@ -1,10 +1,11 @@
-# Flexcoin Site v5.6 (All-In-One)
+# Flexcoin V5.7 — All-In-One
 
-- Vite + TS, GitHub Pages workflow included
-- Runtime config: `/config/allocations.json`, `/config/addresses.json`
-- Images:
-  - `/public/hero/main.jpg` + `1..8.jpg` (currently mapped from action set to avoid 404)
-  - `/public/action/1..8.jpg` (locked set — as provided)
-  - `/public/nft-preview/1..8.jpg` (mapped from action for now)
-  - `/public/whitepaper/*.pdf` (8 languages; dark text for readability)
-- Pinksale button auto toggles via `pinksale_url` (empty => "coming soon").
+- Vite + TypeScript
+- Runtime JSON: `/config/allocations.json`, `/config/addresses.json`
+- Images: `/public/hero`, `/public/action`, `/public/nft-preview`
+- Whitepapers: `/public/whitepaper/*.pdf`
+- Auto-rotate hero, donut chart, presale button auto-toggle
+- Team/Marketing addresses **configured** but **hidden from UI** (token/presale/burn only)
+
+### Deploy
+Just push to `main`. GitHub Actions builds to `dist` and deploys to Pages.
