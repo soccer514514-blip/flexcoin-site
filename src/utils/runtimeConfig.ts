@@ -1,66 +1,9 @@
-// /src/utils/runtimeConfig.ts
-export type Tokenomics = { lp:number; presale:number; team:number; marketing:number; burn:number };
-export type Presale    = {
-  softcap_bnb:number; hardcap_bnb:number;
-  rate_flex_per_bnb:number; listing_rate_flex_per_bnb:number;
-  start_kst:string; end_kst:string;
-};
-export type Allocations = { tokenomics:Tokenomics; presale:Presale; version?:string };
-
-const DEFAULTS: Allocations = {
-  tokenomics: { lp:54, presale:20, team:15, marketing:10, burn:1 },
-  presale: {
-    softcap_bnb:30, hardcap_bnb:100,
-    rate_flex_per_bnb:2000000, listing_rate_flex_per_bnb:1600000,
-    start_kst:"2025-12-01T21:00:00+09:00", end_kst:"2026-01-01T21:00:00+09:00"
-  },
-  version:"v4.9"
-};
-
-export async function fetchAllocations(): Promise<Allocations> {
-  try {
-    const res = await fetch("/config/allocations.json", { cache: "no-cache" });
-    const raw = await res.json();
-    return {
-      tokenomics: { ...DEFAULTS.tokenomics, ...(raw?.tokenomics||{}) },
-      presale:    { ...DEFAULTS.presale,    ...(raw?.presale||{}) },
-      version:    raw?.version ?? DEFAULTS.version
-    };
-  } catch {
-    return DEFAULTS;
-  }
-}
-
-export type Addresses = {
-  chain: { name:string; chainId:number; explorer:string };
-  token:string; team_lock:string; marketing:string; presale:string; burn:string; user?:string;
-};
-
-export async function fetchAddresses(): Promise<Addresses> {
-  const res = await fetch("/config/addresses.json", { cache: "no-cache" });
-  return await res.json();
-}
-
-export function applyTokenomics(a: Allocations) {
-  (document.querySelector("[data-tok-lp]") as HTMLElement)?.innerText = `${a.tokenomics.lp}%`;
-  (document.querySelector("[data-tok-presale]") as HTMLElement)?.innerText = `${a.tokenomics.presale}%`;
-  (document.querySelector("[data-tok-team]") as HTMLElement)?.innerText = `${a.tokenomics.team}%`;
-  (document.querySelector("[data-tok-mkt]") as HTMLElement)?.innerText = `${a.tokenomics.marketing}%`;
-  (document.querySelector("[data-tok-burn]") as HTMLElement)?.innerText = `${a.tokenomics.burn}%`;
-
-  (document.querySelector("[data-presale-rate]") as HTMLElement)?.innerText =
-    `1 BNB = ${a.presale.rate_flex_per_bnb.toLocaleString()} FLEX`;
-  (document.querySelector("[data-listing-rate]") as HTMLElement)?.innerText =
-    `1 BNB = ${a.presale.listing_rate_flex_per_bnb.toLocaleString()} FLEX`;
-  (document.querySelector("[data-softcap]") as HTMLElement)?.innerText = `${a.presale.softcap_bnb} BNB`;
-  (document.querySelector("[data-hardcap]") as HTMLElement)?.innerText = `${a.presale.hardcap_bnb} BNB`;
-}
-
-export function applyAddresses(addr: any) {
-  const ex = String(addr?.chain?.explorer||"https://bscscan.com/address/").replace(/\/+$/,"") + "/";
-  (document.querySelector("[data-addr-token]") as HTMLAnchorElement)?.setAttribute("href", ex + addr.token);
-  (document.querySelector("[data-addr-team]")  as HTMLAnchorElement)?.setAttribute("href", ex + addr.team_lock);
-  (document.querySelector("[data-addr-mkt]")   as HTMLAnchorElement)?.setAttribute("href", ex + addr.marketing);
-  (document.querySelector("[data-addr-presale]") as HTMLAnchorElement)?.setAttribute("href", ex + addr.presale);
-  (document.querySelector("[data-addr-burn]")  as HTMLAnchorElement)?.setAttribute("href", ex + addr.burn);
-}
+export type Tokenomics={lp:number;presale:number;team:number;marketing:number;burn:number};
+export type Presale={softcap_bnb:number;hardcap_bnb:number;rate_flex_per_bnb:number;listing_rate_flex_per_bnb:number;start_kst:string;end_kst:string;pinksale_url?:string;};
+export type Allocations={tokenomics:Tokenomics;presale:Presale;version?:string};
+const DEFAULTS:Allocations={tokenomics:{lp:54,presale:20,team:15,marketing:10,burn:1},presale:{softcap_bnb:30,hardcap_bnb:100,rate_flex_per_bnb:2000000,listing_rate_flex_per_bnb:1600000,start_kst:"2025-12-01T21:00:00+09:00",end_kst:"2026-01-01T21:00:00+09:00",pinksale_url:""},version:"v5.2"};
+export async function fetchAllocations():Promise<Allocations>{try{const raw=await (await fetch("/config/allocations.json",{cache:"no-cache"})).json();return{tokenomics:{...DEFAULTS.tokenomics,...(raw?.tokenomics||{})},presale:{...DEFAULTS.presale,...(raw?.presale||{})},version:raw?.version??DEFAULTS.version};}catch{return DEFAULTS;}}
+export type Addresses={chain:{name:string;chainId:number;explorer:string};token:string;team_lock:string;marketing:string;presale:string;burn:string;user?:string;};
+export async function fetchAddresses():Promise<Addresses>{return await (await fetch("/config/addresses.json",{cache:"no-cache"})).json();}
+export function applyTokenomics(a:Allocations){const q=(s:string)=>document.querySelector(s) as HTMLElement|null;q("[data-tok-lp]")?.replaceChildren(`${a.tokenomics.lp}%`);q("[data-tok-presale]")?.replaceChildren(`${a.tokenomics.presale}%`);q("[data-tok-team]")?.replaceChildren(`${a.tokenomics.team}%`);q("[data-tok-mkt]")?.replaceChildren(`${a.tokenomics.marketing}%`);q("[data-tok-burn]")?.replaceChildren(`${a.tokenomics.burn}%`);q("[data-presale-rate]")?.replaceChildren(`1 BNB = ${a.presale.rate_flex_per_bnb.toLocaleString()} FLEX`);q("[data-listing-rate]")?.replaceChildren(`1 BNB = ${a.presale.listing_rate_flex_per_bnb.toLocaleString()} FLEX`);q("[data-softcap]")?.replaceChildren(`${a.presale.softcap_bnb} BNB`);q("[data-hardcap]")?.replaceChildren(`${a.presale.hardcap_bnb} BNB`);const btn=document.getElementById("btn-pinksale") as HTMLAnchorElement|null;if(btn){if(a.presale.pinksale_url){btn.href=a.presale.pinksale_url;btn.textContent="Buy FLEX (Pinksale)";btn.classList.remove("disabled");}else{btn.href="#";btn.textContent="Pinksale (coming soon)";btn.classList.add("disabled");}}const total=a.tokenomics.lp+a.tokenomics.presale+a.tokenomics.team+a.tokenomics.marketing+a.tokenomics.burn;const parts=[{k:"LP",v=a.tokenomics.lp},{k:"Presale",v=a.tokenomics.presale},{k:"Team",v=a.tokenomics.team},{k:"Marketing",v=a.tokenomics.marketing},{k:"Burn",v=a.tokenomics.burn},];const svg=document.getElementById("donut") as SVGSVGElement|null;if(svg){const C=60,R=45,P=2*Math.PI*R;svg.innerHTML="";let off=0;parts.forEach((p,i)=>{const len=P*(p.v/total);const ring=document.createElementNS("http://www.w3.org/2000/svg","circle");ring.setAttribute("cx",String(C));ring.setAttribute("cy",String(C));ring.setAttribute("r",String(R));ring.setAttribute("fill","none");ring.setAttribute("stroke-width","18");ring.setAttribute("stroke-dasharray",`${len} ${P-len}`);ring.setAttribute("stroke-dashoffset",String(-off));ring.setAttribute("stroke",["#f4d03f","#2ecc71","#9b59b6","#3498db","#e67e22"][i]);svg.appendChild(ring);off+=len;});}}
+export function applyAddresses(addr:Addresses){const ex=addr.chain.explorer.replace(/\/+$/,"")+"/";const set=(sel:string,hash:string)=>{const a=document.querySelector(sel) as HTMLAnchorElement|null;if(a){a.href=ex+hash;a.setAttribute("target","_blank");}};set("[data-addr-token]",addr.token);set("[data-addr-team]",addr.team_lock);set("[data-addr-mkt]",addr.marketing);set("[data-addr-presale]",addr.presale);set("[data-addr-burn]",addr.burn);}

@@ -1,75 +1,29 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Flexcoin V5.2</title><link rel="icon" href="/favicon.ico" />
-  <style>
-    body{background:#0b0b0b;color:#f4f4f4;font-family:system-ui,Segoe UI,Roboto,Arial}
-    .wrap{max-width:1100px;margin:36px auto;padding:0 16px}
-    .card{border:1px solid #69521a66;border-radius:16px;padding:16px;margin-bottom:16px}
-    img.hero{width:100%;height:420px;object-fit:cover;border-radius:16px;background:#000}
-    a{color:#ffda6a}.btn{padding:12px 16px;border-radius:12px;border:1px solid #6a530e;background:#1c1400;color:#ffda6a}
-    .btn[disabled]{opacity:.55;pointer-events:none}
-    .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    ul.grid{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0}
-    .grid img{width:100%;height:140px;object-fit:cover;border-radius:12px;background:#111}
-    h1,h2{color:#ffda6a;text-shadow:0 0 8px #ffda6a55}
-  </style>
-</head>
+<!DOCTYPE html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Flexcoin V5.2</title>
+<style>body{background:#0b0b0b;color:#efe7c5;font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,Arial}h1,h2,h3{color:#f6e27a;text-shadow:0 0 12px rgba(246,226,122,.35)}.panel{border:1px solid #6b5500;border-radius:16px;padding:16px;margin:24px 0;background:#111}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.btn{display:inline-block;margin-top:12px;padding:10px 16px;border-radius:12px;background:#f6e27a;color:#111;text-decoration:none;font-weight:700}.btn.disabled{pointer-events:none;opacity:.55;filter:grayscale(1)}.small{opacity:.85}a{color:#ffd86b}.hero{border-radius:16px;box-shadow:0 0 0 1px #6b5500}.white-list a{display:inline-block;margin:4px}</style></head>
 <body>
-  <div class="wrap">
-    <h1>Flexcoin — The Meme Coin of Luxury</h1>
-    <div class="card"><img id="hero-img" class="hero" alt="Hero"></div>
-    <div class="card cols">
-      <div>
-        <h2>Tokenomics & Presale</h2>
-        <div>
-          <div>LP: <b data-tok-lp>—</b></div>
-          <div>Presale: <b data-tok-presale>—</b></div>
-          <div>Team: <b data-tok-team>—</b></div>
-          <div>Marketing: <b data-tok-mkt>—</b></div>
-          <div>Burn: <b data-tok-burn>—</b></div>
-          <hr/>
-          <div data-presale-rate>—</div>
-          <div data-listing-rate>—</div>
-          <div>Softcap: <b data-softcap>—</b> / Hardcap: <b data-hardcap>—</b></div>
-        </div>
-        <p style="margin-top:12px;"><button id="pinksale-btn" class="btn" disabled>Pinksale (coming soon)</button></p>
-      </div>
-      <div>
-        <h2>Addresses</h2>
-        <ul>
-          <li><a data-addr-token target="_blank">Token</a></li>
-          <li><a data-addr-team target="_blank">Team/Lock</a></li>
-          <li><a data-addr-mkt target="_blank">Marketing</a></li>
-          <li><a data-addr-presale target="_blank">Presale</a></li>
-          <li><a data-addr-burn target="_blank">Burn</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="card"><h2>Action Preview</h2><ul class="grid" id="action-grid"></ul></div>
-    <div class="card"><h2>NFT Preview — Flex Your NFT</h2><ul class="grid" id="nft-grid"></ul></div>
-    <div class="card"><h2>Whitepaper (8 Languages)</h2>
-      <ul>
-        <li><a href="/whitepaper/en.pdf" target="_blank">EN</a></li>
-        <li><a href="/whitepaper/ko.pdf" target="_blank">KO</a></li>
-        <li><a href="/whitepaper/ja.pdf" target="_blank">JA</a></li>
-        <li><a href="/whitepaper/zh.pdf" target="_blank">ZH</a></li>
-        <li><a href="/whitepaper/es.pdf" target="_blank">ES</a></li>
-        <li><a href="/whitepaper/de.pdf" target="_blank">DE</a></li>
-        <li><a href="/whitepaper/pt.pdf" target="_blank">PT</a></li>
-        <li><a href="/whitepaper/it.pdf" target="_blank">IT</a></li>
-      </ul>
-    </div>
-  </div>
-  <script type="module">
-    import { resolveHeroMain } from './src/utils/heroLoader.js';
-    import { fetchAllocations, fetchAddresses, applyTokenomics, applyAddresses } from './src/utils/runtimeConfig.js';
-    import { ACTION_IMAGES, NFT_PREVIEW_IMAGES } from './src/constants/images.js';
-    (async()=>{ const src=await resolveHeroMain(); const img=document.getElementById('hero-img'); if(img) img.src=src; })();
-    (async()=>{ const alloc=await fetchAllocations(); const addr=await fetchAddresses(); applyTokenomics(alloc); applyAddresses(addr); })();
-    const ag=document.getElementById('action-grid'); const ng=document.getElementById('nft-grid');
-    ACTION_IMAGES.forEach(u=>{ const li=document.createElement('li'); const i=new Image(); i.src=u; li.appendChild(i); ag.appendChild(li); });
-    NFT_PREVIEW_IMAGES.forEach(u=>{ const li=document.createElement('li'); const i=new Image(); i.src=u; li.appendChild(i); ng.appendChild(li); });
-  </script>
+<h1>Flexcoin — The Meme Coin of Luxury</h1>
+<img id="hero-img" class="hero" alt="Hero" style="width:100%;max-height:420px;object-fit:cover"/>
+<section class="panel"><h2>Tokenomics & Presale</h2><div class="grid"><div>
+<svg id="donut" viewBox="0 0 120 120" width="180" height="180"></svg>
+<ul class="small"><li>LP: <b data-tok-lp>—</b></li><li>Presale: <b data-tok-presale>—</b></li><li>Team: <b data-tok-team>—</b></li><li>Marketing: <b data-tok-mkt>—</b></li><li>Burn: <b data-tok-burn>—</b></li></ul>
+<div class="small"><div data-presale-rate>—</div><div data-listing-rate>—</div><div>Softcap: <b data-softcap>—</b> / Hardcap: <b data-hardcap>—</b></div></div>
+<a id="btn-pinksale" class="btn disabled">Pinksale (coming soon)</a>
+</div><div><h3>Addresses</h3><ul>
+<li><a data-addr-token href="#">Token</a></li>
+<li><a data-addr-team href="#">Team/Lock</a></li>
+<li><a data-addr-mkt href="#">Marketing</a></li>
+<li><a data-addr-presale href="#">Presale</a></li>
+<li><a data-addr-burn href="#">Burn</a></li>
+</ul></div></div></section>
+<section class="panel"><h2>Whitepaper (8 Languages)</h2><div class="white-list">
+<a href="/whitepaper/en.pdf" target="_blank">EN</a>
+<a href="/whitepaper/ko.pdf" target="_blank">KO</a>
+<a href="/whitepaper/ja.pdf" target="_blank">JA</a>
+<a href="/whitepaper/zh.pdf" target="_blank">ZH</a>
+<a href="/whitepaper/es.pdf" target="_blank">ES</a>
+<a href="/whitepaper/de.pdf" target="_blank">DE</a>
+<a href="/whitepaper/pt.pdf" target="_blank">PT</a>
+<a href="/whitepaper/it.pdf" target="_blank">IT</a>
+</div></section>
+<script type="module" src="/src/main.ts"></script>
 </body></html>
