@@ -5,6 +5,7 @@ export async function resolveHeroMain(): Promise<string> {
   const main = "/hero/main.jpg";
   return (await tryOne(main)) ? main : "/hero/1.jpg";
 }
+
 export function startHeroRotate(el: HTMLImageElement, total=8, ms=6000) {
   const list = Array.from({length: total}, (_,i)=>`/hero/${i+1}.jpg`);
   let idx = 0;
