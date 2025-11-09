@@ -1,3 +1,4 @@
+// src/utils/heroLoader.ts
 export async function resolveHeroMain(): Promise<string> {
   const tryOne = (url: string) => new Promise<boolean>((res)=>{
     const img = new Image();
