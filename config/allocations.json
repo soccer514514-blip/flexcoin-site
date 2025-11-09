@@ -12,7 +12,8 @@
     "rate_flex_per_bnb": 2000000,
     "listing_rate_flex_per_bnb": 1600000,
     "start_kst": "2025-12-01T21:00:00+09:00",
-    "end_kst": "2026-01-01T21:00:00+09:00"
+    "end_kst": "2026-01-01T21:00:00+09:00",
+    "pinksale_url": ""
   },
-  "version": "v4.9"
+  "version": "v5.2"
 }
