@@ -1,0 +1,6 @@
+{
+  "chainId": 56,
+  "contract": "0xYOUR_NFT_CONTRACT_ADDRESS",
+  "priceEth": "0.02",
+  "maxPerTx": 3
+}
