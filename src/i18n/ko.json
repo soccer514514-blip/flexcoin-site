@@ -9,5 +9,10 @@
   "section_nft": "NFT 뽐내기",
   "mint": "민팅",
   "connect": "지갑 연결",
-  "footer": "© Flexcoin — 모든 권리 보유."
+  "footer": "© Flexcoin — 모든 권리 보유.",
+
+  "community.title": "커뮤니티 합류",
+  "community.desc": "팔로우하고 소통하세요:",
+  "nft.title": "NFT 프리뷰",
+  "nft.note": "/public/nft-preview/ 폴더에 1..8.jpg (1600×900) 업로드"
 }
