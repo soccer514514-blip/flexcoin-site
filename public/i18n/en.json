@@ -3,5 +3,11 @@
   "t-hero-sub": "Survive the memecoin sector",
   "t-tokenomics-title": "Tokenomics",
   "t-roadmap-title": "Roadmap",
-  "t-nft-title": "NFT Mint"
+  "t-nft-title": "NFT Mint",
+
+  "community.title": "Join Community",
+  "community.desc": "Follow and chat with us:",
+  "nft.title": "NFT Preview",
+  "nft.note": "Upload 1..8.jpg (1600×900) to /public/nft-preview/",
+  "section_tokenomics": "Tokenomics"
 }
