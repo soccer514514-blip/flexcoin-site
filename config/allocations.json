@@ -9,6 +9,6 @@
     "end_kst":   "2026-01-01T21:00:00+09:00",
     "pinksale_url": ""
   },
-  "ui": { "hide_team": true },
-  "version": "v5.7"
+  "ui": { "hide_team": false },
+  "version": "v5.8B"
 }
