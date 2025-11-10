@@ -6,32 +6,63 @@
   <title>Flexcoin — $FLEX</title>
   <meta name="theme-color" content="#14110b"/>
   <style>
+    /* ===== Base ===== */
     body{background:#0e0b07;color:#f6e9c0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Noto Sans',sans-serif;margin:0}
     .wrap{max-width:1100px;margin:0 auto;padding:24px}
     h1,h2,h3{color:#f4d03f;margin:12px 0}
     .panel{background:#13100b;border:1px solid #312b1f;border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 0 0 1px rgba(255,255,255,.02) inset}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
     .btn{display:inline-block;border-radius:12px;padding:10px 14px;background:#6b5b2b;color:#fff;text-decoration:none;font-weight:700}
-    .btn.disabled{pointer-events:none;opacity:.55;filter:grayscale(.3)}
-    .btn[disabled]{opacity:.5;pointer-events:none} /* ← 보조 스타일 */
+    .btn[disabled]{opacity:.5;pointer-events:none}
     ul{list-style:none;padding:0;margin:8px 0}
     li{margin:6px 0}
     .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
     .tile{border-radius:16px;overflow:hidden;background:#1b160e}
-    .tile img{display:block;width:100%;height:160px;object-fit:cover}
+    .tile img{display:block;width:100%;height:160px;object-fit:cover;cursor:zoom-in}
     .muted{opacity:.85}
     a{color:#f0da80}
     footer{opacity:.6;font-size:.9rem;padding:24px 0}
+
+    /* ===== Topbar (fixed) ===== */
+    .site-topbar{
+      position:fixed; top:10px; left:0; right:0; z-index:50;
+      display:flex; align-items:center; gap:8px; padding:0 14px;
+    }
+    .site-topbar .spacer{flex:1}
+    .site-topbar .btn{padding:8px 12px}
+
+    /* 페이지 내용이 Topbar랑 겹치지 않게 */
+    body{padding-top:56px;}
+
+    /* ===== Lightbox ===== */
+    #lightbox{
+      display:none; position:fixed; inset:0; z-index:60;
+      background:rgba(0,0,0,.85); align-items:center; justify-content:center;
+    }
+    #lightbox img{max-width:92vw;max-height:88vh;border-radius:16px}
   </style>
 </head>
 <body>
+
+  <!-- ===== Fixed Topbar: 커뮤니티 + 언어 ===== -->
+  <div class="site-topbar">
+    <div class="spacer"></div>
+    <a class="btn" href="https://x.com/Flexcoinmeme" target="_blank" rel="noopener">X</a>
+    <a class="btn" href="https://t.me/+p1BMrdypmDFmNTA1" target="_blank" rel="noopener">TG</a>
+    <a class="btn" href="https://pancakeswap.finance/swap?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f&chainId=56" target="_blank" rel="noopener">Buy $FLEX</a>
+    <div class="lang-switch">
+      <button class="btn" data-lang="en">EN</button>
+      <button class="btn" data-lang="ko">KR</button>
+    </div>
+  </div>
+
   <div class="wrap">
     <h1>Flexcoin — $FLEX</h1>
     <img id="hero-img" alt="Hero" style="width:100%;border-radius:16px;display:block" />
 
-    <!-- Tokenomics & Presale (기존 유지) -->
+    <!-- ===== Tokenomics & Presale ===== -->
     <section class="panel">
-      <h2>Tokenomics &amp; Presale</h2>
+      <h2 data-i18n="section_tokenomics">Tokenomics</h2>
       <div class="grid">
         <div>
           <svg id="donut" viewBox="0 0 120 120" width="180" height="180"></svg>
@@ -63,7 +94,7 @@
       </div>
     </section>
 
-    <!-- Action Preview (기존 유지) -->
+    <!-- ===== Action Preview ===== -->
     <section class="panel">
       <h2>Action Preview</h2>
       <div class="gallery">
@@ -78,7 +109,24 @@
       </div>
     </section>
 
-    <!-- Whitepaper (기존 유지) -->
+    <!-- ===== NFT Preview + Mint ===== -->
+    <section class="panel">
+      <h2 data-i18n="nft.title">NFT Preview</h2>
+      <div class="gallery">
+        <div class="tile"><img src="/nft-preview/1.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/2.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/3.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/4.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/5.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/6.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/7.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/8.jpg" alt=""></div>
+      </div>
+      <p class="muted" data-i18n="nft.note">Upload 1..8.jpg (1600×900) to /public/nft-preview/</p>
+      <p><button id="btn-mint" class="btn">Mint NFT</button></p>
+    </section>
+
+    <!-- ===== Whitepaper ===== -->
     <section class="panel">
       <h2>Whitepaper</h2>
       <ul class="gallery" style="grid-template-columns:repeat(4,1fr)">
@@ -93,49 +141,32 @@
       </ul>
     </section>
 
-    <!-- ========== Community Buttons (X / Telegram / PancakeSwap) ========== -->
-    <section class="panel">
-      <h2 data-i18n="community.title">Join Community</h2>
-      <p class="muted" data-i18n="community.desc">Follow and chat with us:</p>
-      <p style="display:flex;gap:12px;flex-wrap:wrap">
-        <a id="btn-x" class="btn" href="https://x.com/Flexcoinmeme" target="_blank" rel="noopener">X (Twitter)</a>
-        <a id="btn-telegram" class="btn" href="https://t.me/+p1BMrdypmDFmNTA1" target="_blank" rel="noopener">Telegram</a>
-        <a id="btn-swap" class="btn" href="https://pancakeswap.finance/swap?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f&chainId=56" target="_blank" rel="noopener">
-          Buy $FLEX on PancakeSwap
-        </a>
-      </p>
-    </section>
-
-    <!-- ========== NFT Preview (images: /nft-preview/1..8.jpg) ========== -->
-    <section class="panel">
-      <h2 data-i18n="nft.title">NFT Preview</h2>
-      <div class="gallery">
-        <div class="tile"><img src="/nft-preview/1.jpg" alt=""></div>
-        <div class="tile"><img src="/nft-preview/2.jpg" alt=""></div>
-        <div class="tile"><img src="/nft-preview/3.jpg" alt=""></div>
-        <div class="tile"><img src="/nft-preview/4.jpg" alt=""></div>
-        <div class="tile"><img src="/nft-preview/5.jpg" alt=""></div>
-        <div class="tile"><img src="/nft-preview/6.jpg" alt=""></div>
-        <div class="tile"><img src="/nft-preview/7.jpg" alt=""></div>
-        <div class="tile"><img src="/nft-preview/8.jpg" alt=""></div>
-      </div>
-      <p class="muted" data-i18n="nft.note">Upload 1..8.jpg (1600×900) to /public/nft-preview/</p>
-    </section>
-
-    <!-- ========== Language Switch (EN/KR) ========== -->
-    <section class="panel">
-      <h2>Language</h2>
-      <div class="lang-switch" style="display:flex;gap:8px">
-        <button class="btn" data-lang="en">EN</button>
-        <button class="btn" data-lang="ko">KR</button>
-      </div>
-      <p class="muted">Current: <b id="lang-now">—</b></p>
-    </section>
-
-    <footer class="muted">Flexcoin V5.8B • Runtime JSON • Vite • GitHub Pages</footer>
+    <footer class="muted">Flexcoin V5.88 • Runtime JSON • Vite • GitHub Pages</footer>
   </div>
 
-  <!-- Vite entry -->
+  <!-- Lightbox -->
+  <div id="lightbox"><img id="lightbox-img" alt="preview"></div>
+  <script>
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+    function openLB(src){ lbImg.src = src; lb.style.display='flex'; }
+    function closeLB(){ lb.style.display='none'; lbImg.src=''; }
+    lb.addEventListener('click', closeLB);
+    addEventListener('DOMContentLoaded',()=>{
+      document.querySelectorAll('.gallery img').forEach(img=>{
+        img.addEventListener('click', ()=> openLB(img.src));
+      });
+    });
+  </script>
+
+  <!-- 기존 메인 로직 (토크노믹스/주소/히어로 로더 등) -->
   <script type="module" src="/src/main.ts"></script>
+
+  <!-- Mint 버튼 연결 -->
+  <script type="module">
+    import { mintNft } from "/src/modules/mint.ts";
+    const btn = document.getElementById('btn-mint');
+    if (btn) btn.addEventListener('click', ()=> mintNft(1));
+  </script>
 </body>
 </html>
