@@ -1,4 +1,3 @@
-// src/main.ts
 import { resolveHeroMain, startHeroRotate } from "./utils/heroLoader";
 import { fetchAllocations, fetchAddresses, applyTokenomics, applyAddresses } from "./utils/runtimeConfig";
 
