@@ -13,6 +13,7 @@
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
     .btn{display:inline-block;border-radius:12px;padding:10px 14px;background:#6b5b2b;color:#fff;text-decoration:none;font-weight:700}
     .btn.disabled{pointer-events:none;opacity:.55;filter:grayscale(.3)}
+    .btn[disabled]{opacity:.5;pointer-events:none} /* ← 보조 스타일 */
     ul{list-style:none;padding:0;margin:8px 0}
     li{margin:6px 0}
     .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
@@ -28,6 +29,7 @@
     <h1>Flexcoin — $FLEX</h1>
     <img id="hero-img" alt="Hero" style="width:100%;border-radius:16px;display:block" />
 
+    <!-- Tokenomics & Presale (기존 유지) -->
     <section class="panel">
       <h2>Tokenomics &amp; Presale</h2>
       <div class="grid">
@@ -61,6 +63,7 @@
       </div>
     </section>
 
+    <!-- Action Preview (기존 유지) -->
     <section class="panel">
       <h2>Action Preview</h2>
       <div class="gallery">
@@ -75,6 +78,7 @@
       </div>
     </section>
 
+    <!-- Whitepaper (기존 유지) -->
     <section class="panel">
       <h2>Whitepaper</h2>
       <ul class="gallery" style="grid-template-columns:repeat(4,1fr)">
@@ -89,8 +93,49 @@
       </ul>
     </section>
 
+    <!-- ========== Community Buttons (X / Telegram / PancakeSwap) ========== -->
+    <section class="panel">
+      <h2 data-i18n="community.title">Join Community</h2>
+      <p class="muted" data-i18n="community.desc">Follow and chat with us:</p>
+      <p style="display:flex;gap:12px;flex-wrap:wrap">
+        <a id="btn-x" class="btn" href="https://x.com/Flexcoinmeme" target="_blank" rel="noopener">X (Twitter)</a>
+        <a id="btn-telegram" class="btn" href="https://t.me/+p1BMrdypmDFmNTA1" target="_blank" rel="noopener">Telegram</a>
+        <a id="btn-swap" class="btn" href="https://pancakeswap.finance/swap?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f&chainId=56" target="_blank" rel="noopener">
+          Buy $FLEX on PancakeSwap
+        </a>
+      </p>
+    </section>
+
+    <!-- ========== NFT Preview (images: /nft-preview/1..8.jpg) ========== -->
+    <section class="panel">
+      <h2 data-i18n="nft.title">NFT Preview</h2>
+      <div class="gallery">
+        <div class="tile"><img src="/nft-preview/1.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/2.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/3.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/4.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/5.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/6.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/7.jpg" alt=""></div>
+        <div class="tile"><img src="/nft-preview/8.jpg" alt=""></div>
+      </div>
+      <p class="muted" data-i18n="nft.note">Upload 1..8.jpg (1600×900) to /public/nft-preview/</p>
+    </section>
+
+    <!-- ========== Language Switch (EN/KR) ========== -->
+    <section class="panel">
+      <h2>Language</h2>
+      <div class="lang-switch" style="display:flex;gap:8px">
+        <button class="btn" data-lang="en">EN</button>
+        <button class="btn" data-lang="ko">KR</button>
+      </div>
+      <p class="muted">Current: <b id="lang-now">—</b></p>
+    </section>
+
     <footer class="muted">Flexcoin V5.8B • Runtime JSON • Vite • GitHub Pages</footer>
   </div>
+
+  <!-- Vite entry -->
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
