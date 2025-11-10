@@ -1,4 +1,3 @@
-// src/utils/runtimeConfig.ts
 export type Tokenomics = { lp:number; presale:number; team:number; marketing:number; burn:number };
 export type Presale = {
   softcap_bnb:number; hardcap_bnb:number;
@@ -16,8 +15,8 @@ const DEFAULTS: Allocations = {
     start_kst:"2025-12-01T21:00:00+09:00", end_kst:"2026-01-01T21:00:00+09:00",
     pinksale_url:""
   },
-  ui: { hide_team: true },  // 👈 팀지갑 링크 UI에서 숨김(주소는 유지)
-  version: "v5.7"
+  ui: { hide_team: false },   // 필요 시 true로 바꾸면 UI에서 팀지갑 항목 숨김
+  version: "v5.8B"
 };
 
 export async function fetchAllocations(): Promise<Allocations> {
@@ -44,6 +43,7 @@ export async function fetchAddresses(): Promise<Addresses> {
 
 export function applyTokenomics(a: Allocations) {
   const q = (sel:string) => document.querySelector(sel) as HTMLElement | null;
+
   q("[data-tok-lp]")?.replaceChildren(`${a.tokenomics.lp}%`);
   q("[data-tok-presale]")?.replaceChildren(`${a.tokenomics.presale}%`);
   q("[data-tok-team]")?.replaceChildren(`${a.tokenomics.team}%`);
@@ -68,7 +68,7 @@ export function applyTokenomics(a: Allocations) {
     }
   }
 
-  // 간단 도넛(SVG)
+  // 도넛 그래프
   const total = a.tokenomics.lp + a.tokenomics.presale + a.tokenomics.team + a.tokenomics.marketing + a.tokenomics.burn;
   const parts = [
     { k: "LP",        v: a.tokenomics.lp,        color: "#f1c40f" },
@@ -98,15 +98,21 @@ export function applyTokenomics(a: Allocations) {
 
 export function applyAddresses(addr: Addresses) {
   const ex = addr.chain.explorer.replace(/\/+$/, "") + "/";
-  const set = (sel: string, hash: string) => {
+  const short = (h: string) => h ? (h.slice(0,6) + "…" + h.slice(-4)) : "";
+  const setPretty = (sel: string, hash?: string, label?: string) => {
     const a = document.querySelector(sel) as HTMLAnchorElement | null;
-    if (a) { a.href = ex + hash; a.setAttribute("target", "_blank"); }
+    if (a && hash) {
+      a.textContent = label || short(hash);
+      a.title = hash;
+      a.href = ex + hash;
+      a.target = "_blank"; a.rel = "noopener";
+    }
   };
-  set("[data-addr-token]",   addr.token);
-  // 팀지갑 UI 숨김
-  const team = document.querySelector("[data-addr-team]") as HTMLElement | null;
-  if (team) team.style.display = "none";
-  set("[data-addr-mkt]",     addr.marketing);
-  set("[data-addr-presale]", addr.presale);
-  set("[data-addr-burn]",    addr.burn);
+
+  setPretty("[data-addr-token]",   addr.token,    "Token / " + short(addr.token));
+  setPretty("[data-addr-team]",    addr.team_lock,"Team / " + short(addr.team_lock));
+  setPretty("[data-addr-mkt]",     addr.marketing,"Marketing / " + short(addr.marketing));
+  setPretty("[data-addr-presale]", addr.presale,  "Presale / " + short(addr.presale));
+  setPretty("[data-addr-burn]",    addr.burn,     "Burn / " + short(addr.burn));
+  setPretty("[data-addr-user]",    addr.user,     "User / " + short(addr.user||""));
 }
