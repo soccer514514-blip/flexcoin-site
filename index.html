@@ -6,8 +6,7 @@
   <title>Flexcoin — $FLEX</title>
   <meta name="theme-color" content="#14110b"/>
   <style>
-    /* ===== Base ===== */
-    body{background:#0e0b07;color:#f6e9c0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Noto Sans',sans-serif;margin:0}
+    body{background:#0e0b07;color:#f6e9c0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Noto Sans',sans-serif;margin:0; padding-top:56px}
     .wrap{max-width:1100px;margin:0 auto;padding:24px}
     h1,h2,h3{color:#f4d03f;margin:12px 0}
     .panel{background:#13100b;border:1px solid #312b1f;border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 0 0 1px rgba(255,255,255,.02) inset}
@@ -22,29 +21,17 @@
     .muted{opacity:.85}
     a{color:#f0da80}
     footer{opacity:.6;font-size:.9rem;padding:24px 0}
-
-    /* ===== Topbar (fixed) ===== */
-    .site-topbar{
-      position:fixed; top:10px; left:0; right:0; z-index:50;
-      display:flex; align-items:center; gap:8px; padding:0 14px;
-    }
+    /* Top-right bar */
+    .site-topbar{position:fixed; top:10px; left:0; right:0; z-index:50; display:flex; align-items:center; gap:8px; padding:0 14px}
     .site-topbar .spacer{flex:1}
     .site-topbar .btn{padding:8px 12px}
-
-    /* 페이지 내용이 Topbar랑 겹치지 않게 */
-    body{padding-top:56px;}
-
-    /* ===== Lightbox ===== */
-    #lightbox{
-      display:none; position:fixed; inset:0; z-index:60;
-      background:rgba(0,0,0,.85); align-items:center; justify-content:center;
-    }
+    /* Lightbox */
+    #lightbox{display:none; position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.85); align-items:center; justify-content:center}
     #lightbox img{max-width:92vw;max-height:88vh;border-radius:16px}
   </style>
 </head>
 <body>
-
-  <!-- ===== Fixed Topbar: 커뮤니티 + 언어 ===== -->
+  <!-- site top bar -->
   <div class="site-topbar">
     <div class="spacer"></div>
     <a class="btn" href="https://x.com/Flexcoinmeme" target="_blank" rel="noopener">X</a>
@@ -60,7 +47,6 @@
     <h1>Flexcoin — $FLEX</h1>
     <img id="hero-img" alt="Hero" style="width:100%;border-radius:16px;display:block" />
 
-    <!-- ===== Tokenomics & Presale ===== -->
     <section class="panel">
       <h2 data-i18n="section_tokenomics">Tokenomics</h2>
       <div class="grid">
@@ -94,7 +80,6 @@
       </div>
     </section>
 
-    <!-- ===== Action Preview ===== -->
     <section class="panel">
       <h2>Action Preview</h2>
       <div class="gallery">
@@ -109,7 +94,6 @@
       </div>
     </section>
 
-    <!-- ===== NFT Preview + Mint ===== -->
     <section class="panel">
       <h2 data-i18n="nft.title">NFT Preview</h2>
       <div class="gallery">
@@ -126,7 +110,6 @@
       <p><button id="btn-mint" class="btn">Mint NFT</button></p>
     </section>
 
-    <!-- ===== Whitepaper ===== -->
     <section class="panel">
       <h2>Whitepaper</h2>
       <ul class="gallery" style="grid-template-columns:repeat(4,1fr)">
@@ -141,7 +124,7 @@
       </ul>
     </section>
 
-    <footer class="muted">Flexcoin V5.88 • Runtime JSON • Vite • GitHub Pages</footer>
+    <footer class="muted">Flexcoin V5.9 • Runtime JSON • Vite • GitHub Pages</footer>
   </div>
 
   <!-- Lightbox -->
@@ -159,14 +142,65 @@
     });
   </script>
 
-  <!-- 기존 메인 로직 (토크노믹스/주소/히어로 로더 등) -->
+  <!-- i18n loader (public/i18n/*.json) -->
+  <script>
+    async function setLang(lang){
+      try{
+        const dict = await (await fetch(`/i18n/${lang}.json`,{cache:"no-cache"})).json();
+        document.querySelectorAll("[data-i18n]").forEach(el=>{
+          const k = el.getAttribute("data-i18n");
+          if (k && dict[k]) el.textContent = dict[k];
+        });
+        localStorage.setItem("lang", lang);
+      }catch{}
+    }
+    const wanted = new URL(location.href).searchParams.get("lang") || localStorage.getItem("lang") || "en";
+    setLang(wanted);
+    addEventListener('DOMContentLoaded', ()=>{
+      document.querySelectorAll("[data-lang]").forEach(btn=>{
+        btn.addEventListener("click", ()=> setLang(btn.dataset.lang || "en"));
+      });
+    });
+  </script>
+
+  <!-- main.ts (Vite) -->
   <script type="module" src="/src/main.ts"></script>
 
-  <!-- Mint 버튼 연결 -->
-  <script type="module">
-    import { mintNft } from "/src/modules/mint.ts";
-    const btn = document.getElementById('btn-mint');
-    if (btn) btn.addEventListener('click', ()=> mintNft(1));
+  <!-- ethers via CDN (번들 불필요) -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <script>
+    const NFT_ABI = [
+      "function mint(uint256 qty) payable",
+      "function price() view returns (uint256)"
+    ];
+    async function readNftCfg(){
+      const r = await fetch("/config/nft.json",{cache:"no-cache"});
+      return r.json();
+    }
+    async function mintNft(qty=1){
+      const cfg = await readNftCfg();
+      if(!window.ethereum){ alert("Wallet not found"); return; }
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const [acc] = await provider.send("eth_requestAccounts",[]);
+      const net = await provider.getNetwork();
+      if (Number(net.chainId) !== Number(cfg.chainId)){
+        await window.ethereum.request({
+          method:"wallet_switchEthereumChain",
+          params:[{ chainId:"0x"+Number(cfg.chainId).toString(16) }]
+        });
+      }
+      const signer = provider.getSigner(acc);
+      const c = new ethers.Contract(cfg.contract, NFT_ABI, signer);
+      const unit = cfg.priceEth ? ethers.utils.parseEther(cfg.priceEth) : await c.price();
+      const want = Math.min(qty, cfg.maxPerTx || qty);
+      const tx = await c.mint(want, { value: unit.mul(want) });
+      await tx.wait();
+      alert("Mint success!");
+    }
+    document.addEventListener("DOMContentLoaded", ()=>{
+      const btn = document.getElementById("btn-mint");
+      if (btn) btn.addEventListener("click", ()=> mintNft(1));
+    });
   </script>
 </body>
 </html>
