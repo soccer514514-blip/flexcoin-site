@@ -1,14 +1,4 @@
 {
-  /* ==== 새 인덱스용(flat) ==== */
-  "lp": 54,
-  "presale": 20,
-  "team": 15,
-  "marketing": 10,
-  "burn": 1,
-  "softcap": "30 BNB",
-  "hardcap": "100 BNB",
-
-  /* ==== 레거시 호환용(기존 구조 유지) ==== */
   "tokenomics": { "lp": 54, "presale": 20, "team": 15, "marketing": 10, "burn": 1 },
   "presale": {
     "softcap_bnb": 30,
@@ -16,7 +6,7 @@
     "rate_flex_per_bnb": 2000000,
     "listing_rate_flex_per_bnb": 1600000,
     "start_kst": "2025-12-01T21:00:00+09:00",
-    "end_kst": "2026-01-01T21:00:00+09:00",
+    "end_kst":   "2026-01-01T21:00:00+09:00",
     "pinksale_url": ""
   },
   "ui": { "hide_team": false },
