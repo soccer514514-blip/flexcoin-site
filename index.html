@@ -62,15 +62,24 @@
 
     /* Galleries */
     .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    /* ✅ 핵심 수정: 이미지가 보이도록 aspect-ratio 사용 */
     .grid img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;
       border-radius:12px;border:1px solid var(--border);background:#0f0e0c}
-
     @media(max-width:900px){
       .tok-wrap{grid-template-columns:1fr}
       .grid{grid-template-columns:repeat(2,1fr)}
       .addr td{font-size:.85rem}
     }
+
+    /* === Lightbox (zoomable) === */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;
+      align-items:center;justify-content:center;z-index:50}
+    .lightbox.show{display:flex}
+    .lb-stage{position:relative;max-width:95vw;max-height:85vh;overflow:hidden;cursor:grab}
+    .lb-img{user-select:none;pointer-events:auto;transform-origin:center center;
+      will-change:transform;display:block;max-width:none}
+    .lb-toolbar{position:fixed;top:12px;right:12px;display:flex;gap:.4rem;z-index:60}
+    .lb-toolbar .btn{padding:.4rem .6rem;border-radius:.6rem}
+    .lb-hint{position:fixed;bottom:12px;left:12px;color:#ddd;font-size:.85rem;opacity:.8}
   </style>
 </head>
 <body>
@@ -150,20 +159,31 @@
     </section>
   </div>
 
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog">
+    <div class="lb-toolbar">
+      <button class="btn" id="lb-zoom-in">+</button>
+      <button class="btn" id="lb-zoom-out">−</button>
+      <button class="btn" id="lb-reset">100%</button>
+      <button class="btn" id="lb-close">Close</button>
+    </div>
+    <div class="lb-hint">Wheel/핀치로 확대, 드래그로 이동, ESC 닫기</div>
+    <div class="lb-stage" id="lb-stage">
+      <img id="lb-img" class="lb-img" alt="preview">
+    </div>
+  </div>
+
   <script>
     const $ = (q)=>document.querySelector(q);
     const fetchJSON = async (p)=> (await fetch(p,{cache:'no-cache'})).json();
 
     /* HERO Fallback */
-    (function(){
-      const img=$('#hero-img');
-      img.onerror=()=>{ img.onerror=null; img.src='/public/hero/1.jpg'; };
-    })();
+    (()=>{ const img=$('#hero-img'); img.onerror=()=>{ img.onerror=null; img.src='/public/hero/1.jpg'; }; })();
 
     /* Links + BscScan */
     async function initLinks(){
       const links=await fetchJSON('/public/config/links.json').catch(()=>({}));
-      const set=(id,url)=>{const b=$(id); if(url){b.href=url; b.disabled=false;} else {b.disabled=true;}};      
+      const set=(id,url)=>{const b=$(id); if(url){b.href=url; b.disabled=false;} else {b.disabled=true;}};
       set('#btn-x',links.x_url); set('#btn-tg',links.tg_url); set('#btn-pcs',links.pancakeswap_url);
 
       const addr=await fetchJSON('/public/config/addresses.json').catch(()=>({}));
@@ -204,16 +224,15 @@
       const fmt = (n)=> (Number.isFinite(n)&&n>0) ? n.toLocaleString() : '—';
       $('#rates').textContent=`Presale Rate: 1 BNB = ${fmt(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmt(list)} FLEX`;
 
-      // PinkSale 버튼 활성화
       const links = await fetchJSON('/public/config/links.json').catch(()=>({}));
       const psUrl = links.pinksale_url;
       const psBtn = $('#btn-pinksale');
       if(psUrl){ psBtn.textContent='Open Pinksale'; psBtn.disabled=false; psBtn.onclick=()=>window.open(psUrl,'_blank'); }
     }
 
-    /* Countdown — 24시간 표기(21:00:00) */
+    /* Countdown — 24h 표기(21:00:00) */
     async function initCountdown(){
-      let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00'; // 기본값
+      let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00';
       try{
         const p=await fetchJSON('/public/config/presale.json');
         if(p && (p.presale_start||p.start_kst)){
@@ -226,7 +245,6 @@
       const z=(n)=>String(n).padStart(2,'0');
       const fmt=(d)=>`${d.getFullYear()}. ${z(d.getMonth()+1)}. ${z(d.getDate())}. ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;
       range.textContent=`${fmt(s)} → ${fmt(e)}`;
-
       const tick=()=>{
         const now=new Date(); let t=s-now; if(t<0) t=e-now; if(t<=0){ count.textContent='—'; return; }
         const d=Math.floor(t/86400000); t%=86400000;
@@ -238,7 +256,7 @@
       tick(); setInterval(tick,1000);
     }
 
-    /* Galleries: 존재하는 파일만 노출 */
+    /* Galleries: 존재하는 파일만 노출 + 클릭시 라이트박스 */
     function tryImg(path){
       return new Promise(resolve=>{
         const i=new Image(); i.onload=()=>resolve(path); i.onerror=()=>resolve(null); i.src=path;
@@ -247,11 +265,16 @@
     async function loadGrid(prefix, targetId){
       const list = Array.from({length:8},(_,i)=>`${prefix}/${i+1}.jpg`);
       const ok = (await Promise.all(list.map(tryImg))).filter(Boolean);
-      $(targetId).innerHTML = ok.map(src=>`<img src="${src}" alt="">`).join('')
-        || '<div class="muted">Images coming soon.</div>';
+      const el = $(targetId);
+      el.innerHTML = ok.map(src=>`<img src="${src}" alt="">`).join('') || '<div class="muted">Images coming soon.</div>';
+      // Bind lightbox
+      el.querySelectorAll('img').forEach(img=>{
+        img.style.cursor='zoom-in';
+        img.addEventListener('click',()=>openLightbox(img.src));
+      });
     }
 
-    /* 간단 EN/KR 토글 (텍스트 키 기반) */
+    /* EN/KR 토글 */
     const i18n = { current:'en', dict:{} };
     async function loadI18n(lang){
       if(!i18n.dict[lang]){
@@ -262,7 +285,6 @@
         const k = el.getAttribute('data-i18n');
         if(d[k]) el.textContent = d[k];
       });
-      // 브랜드 문구는 고정
       $('#brand').textContent = '$FLEX is your life. Your life is FLEX.';
     }
     function bindLang(){
@@ -270,6 +292,54 @@
       const set=(lang)=>{ i18n.current=lang; en.classList.toggle('active',lang==='en'); ko.classList.toggle('active',lang==='ko'); loadI18n(lang); };
       en.onclick=()=>set('en'); ko.onclick=()=>set('ko'); set('en');
     }
+
+    /* === Lightbox logic (zoom/drag/pinch) === */
+    const lb = $('#lightbox'), lbImg = $('#lb-img'), lbStage = $('#lb-stage');
+    let scale = 1, minS = 1, maxS = 6, pos = {x:0,y:0}, dragging=false, start={x:0,y:0};
+    function apply(){ lbImg.style.transform = `translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
+    function openLightbox(src){ lbImg.src = src; scale = 1; pos = {x:0,y:0}; apply(); lb.classList.add('show'); }
+    function closeLightbox(){ lb.classList.remove('show'); }
+    function zoomBy(delta, cx=lbStage.clientWidth/2, cy=lbStage.clientHeight/2){
+      const prev = scale;
+      scale = Math.min(maxS, Math.max(minS, scale * (delta>0 ? 1.2 : 1/1.2)));
+      // 기준점 줌 보정
+      const rect = lbImg.getBoundingClientRect();
+      const ox = cx - rect.left, oy = cy - rect.top;
+      const k = scale/prev - 1;
+      pos.x -= ox * k; pos.y -= oy * k;
+      apply();
+    }
+    // controls
+    $('#lb-close').onclick = closeLightbox;
+    $('#lb-reset').onclick = ()=>{ scale=1; pos={x:0,y:0}; apply(); };
+    $('#lb-zoom-in').onclick = ()=>zoomBy(1);
+    $('#lb-zoom-out').onclick = ()=>zoomBy(-1);
+    // wheel zoom
+    lbStage.addEventListener('wheel', (e)=>{ e.preventDefault(); zoomBy(e.deltaY, e.clientX, e.clientY); }, {passive:false});
+    // drag
+    lbStage.addEventListener('mousedown', (e)=>{ dragging=true; lbStage.style.cursor='grabbing'; start={x:e.clientX-pos.x,y:e.clientY-pos.y}; });
+    window.addEventListener('mousemove', (e)=>{ if(!dragging) return; pos={x:e.clientX-start.x,y:e.clientY-start.y}; apply(); });
+    window.addEventListener('mouseup', ()=>{ dragging=false; lbStage.style.cursor='grab'; });
+    // close on bg click / ESC
+    lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLightbox(); });
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeLightbox(); });
+    // double click toggle
+    lbStage.addEventListener('dblclick', ()=>{ scale = (scale===1?2:1); pos={x:0,y:0}; apply(); });
+    // touch pinch
+    let lastDist=null;
+    lbStage.addEventListener('touchstart', (e)=>{ if(e.touches.length===1){ dragging=true; start={x:e.touches[0].clientX-pos.x,y:e.touches[0].clientY-pos.y}; } lastDist=null; }, {passive:false});
+    lbStage.addEventListener('touchmove', (e)=>{
+      if(e.touches.length===2){
+        e.preventDefault();
+        const dx=e.touches[0].clientX-e.touches[1].clientX, dy=e.touches[0].clientY-e.touches[1].clientY;
+        const dist=Math.hypot(dx,dy);
+        if(lastDist){ scale=Math.min(maxS,Math.max(minS, scale*(dist/lastDist))); apply(); }
+        lastDist=dist;
+      }else if(e.touches.length===1 && dragging){
+        pos={x:e.touches[0].clientX-start.x,y:e.touches[0].clientY-start.y}; apply();
+      }
+    }, {passive:false});
+    lbStage.addEventListener('touchend', ()=>{ dragging=false; lastDist=null; });
 
     (async()=>{
       bindLang();
