@@ -10,9 +10,13 @@
       --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a;
       --gold:#f4cc4f; --chip:#3a331c; --border:rgba(255,255,255,.08);
     }
+    /* ✅ 모바일 흔들림(가로 유격) 방지 */
     html,body{margin:0;background:var(--bg);color:var(--text);
-      font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial}
+      font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial;
+      overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none}
+    *{box-sizing:border-box}
     a{color:inherit}
+    body.noscroll{overflow:hidden} /* 라이트박스 열릴 때 스크롤 금지 */
 
     /* Top bar */
     .topbar{display:flex;align-items:center;gap:.5rem;padding:.8rem 1rem;
@@ -72,9 +76,9 @@
 
     /* === Lightbox (zoomable) === */
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;
-      align-items:center;justify-content:center;z-index:50}
+      align-items:center;justify-content:center;z-index:50;touch-action:none}
     .lightbox.show{display:flex}
-    .lb-stage{position:relative;max-width:95vw;max-height:85vh;overflow:hidden;cursor:grab}
+    .lb-stage{position:relative;max-width:95vw;max-height:85vh;overflow:hidden;cursor:grab;border-radius:12px}
     .lb-img{user-select:none;pointer-events:auto;transform-origin:center center;
       will-change:transform;display:block;max-width:none}
     .lb-toolbar{position:fixed;top:12px;right:12px;display:flex;gap:.4rem;z-index:60}
@@ -164,7 +168,8 @@
     <div class="lb-toolbar">
       <button class="btn" id="lb-zoom-in">+</button>
       <button class="btn" id="lb-zoom-out">−</button>
-      <button class="btn" id="lb-reset">100%</button>
+      <!-- ✅ 75% 표시 -->
+      <button class="btn" id="lb-reset">75%</button>
       <button class="btn" id="lb-close">Close</button>
     </div>
     <div class="lb-hint">Wheel/핀치로 확대, 드래그로 이동, ESC 닫기</div>
@@ -183,7 +188,7 @@
     /* Links + BscScan */
     async function initLinks(){
       const links=await fetchJSON('/public/config/links.json').catch(()=>({}));
-      const set=(id,url)=>{const b=$(id); if(url){b.href=url; b.disabled=false;} else {b.disabled=true;}};
+      const set=(id,url)=>{const b=$(id); if(url){b.href=url; b.disabled=false;} else {b.disabled=true;}};      
       set('#btn-x',links.x_url); set('#btn-tg',links.tg_url); set('#btn-pcs',links.pancakeswap_url);
 
       const addr=await fetchJSON('/public/config/addresses.json').catch(()=>({}));
@@ -224,13 +229,14 @@
       const fmt = (n)=> (Number.isFinite(n)&&n>0) ? n.toLocaleString() : '—';
       $('#rates').textContent=`Presale Rate: 1 BNB = ${fmt(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmt(list)} FLEX`;
 
+      // PinkSale 버튼
       const links = await fetchJSON('/public/config/links.json').catch(()=>({}));
       const psUrl = links.pinksale_url;
       const psBtn = $('#btn-pinksale');
       if(psUrl){ psBtn.textContent='Open Pinksale'; psBtn.disabled=false; psBtn.onclick=()=>window.open(psUrl,'_blank'); }
     }
 
-    /* Countdown — 24h 표기(21:00:00) */
+    /* Countdown — 24h (21:00:00) 표기 */
     async function initCountdown(){
       let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00';
       try{
@@ -267,7 +273,6 @@
       const ok = (await Promise.all(list.map(tryImg))).filter(Boolean);
       const el = $(targetId);
       el.innerHTML = ok.map(src=>`<img src="${src}" alt="">`).join('') || '<div class="muted">Images coming soon.</div>';
-      // Bind lightbox
       el.querySelectorAll('img').forEach(img=>{
         img.style.cursor='zoom-in';
         img.addEventListener('click',()=>openLightbox(img.src));
@@ -293,39 +298,37 @@
       en.onclick=()=>set('en'); ko.onclick=()=>set('ko'); set('en');
     }
 
-    /* === Lightbox logic (zoom/drag/pinch) === */
+    /* === Lightbox (zoom/drag/pinch) === */
     const lb = $('#lightbox'), lbImg = $('#lb-img'), lbStage = $('#lb-stage');
-    let scale = 1, minS = 1, maxS = 6, pos = {x:0,y:0}, dragging=false, start={x:0,y:0};
+    // ✅ 기본 배율 0.75, 최소 0.5
+    let scale = 0.75, minS = 0.5, maxS = 6, pos = {x:0,y:0}, dragging=false, start={x:0,y:0};
     function apply(){ lbImg.style.transform = `translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
-    function openLightbox(src){ lbImg.src = src; scale = 1; pos = {x:0,y:0}; apply(); lb.classList.add('show'); }
-    function closeLightbox(){ lb.classList.remove('show'); }
+    function openLightbox(src){
+      lbImg.src = src; scale = 0.75; pos = {x:0,y:0}; apply(); lb.classList.add('show');
+      document.body.classList.add('noscroll'); /* 라이트박스 시 배경 스크롤/흔들림 방지 */
+    }
+    function closeLightbox(){ lb.classList.remove('show'); document.body.classList.remove('noscroll'); }
     function zoomBy(delta, cx=lbStage.clientWidth/2, cy=lbStage.clientHeight/2){
       const prev = scale;
       scale = Math.min(maxS, Math.max(minS, scale * (delta>0 ? 1.2 : 1/1.2)));
-      // 기준점 줌 보정
       const rect = lbImg.getBoundingClientRect();
       const ox = cx - rect.left, oy = cy - rect.top;
       const k = scale/prev - 1;
       pos.x -= ox * k; pos.y -= oy * k;
       apply();
     }
-    // controls
     $('#lb-close').onclick = closeLightbox;
-    $('#lb-reset').onclick = ()=>{ scale=1; pos={x:0,y:0}; apply(); };
+    // ✅ 리셋도 0.75로
+    $('#lb-reset').onclick = ()=>{ scale=0.75; pos={x:0,y:0}; apply(); };
     $('#lb-zoom-in').onclick = ()=>zoomBy(1);
     $('#lb-zoom-out').onclick = ()=>zoomBy(-1);
-    // wheel zoom
     lbStage.addEventListener('wheel', (e)=>{ e.preventDefault(); zoomBy(e.deltaY, e.clientX, e.clientY); }, {passive:false});
-    // drag
     lbStage.addEventListener('mousedown', (e)=>{ dragging=true; lbStage.style.cursor='grabbing'; start={x:e.clientX-pos.x,y:e.clientY-pos.y}; });
     window.addEventListener('mousemove', (e)=>{ if(!dragging) return; pos={x:e.clientX-start.x,y:e.clientY-start.y}; apply(); });
     window.addEventListener('mouseup', ()=>{ dragging=false; lbStage.style.cursor='grab'; });
-    // close on bg click / ESC
     lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLightbox(); });
     window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeLightbox(); });
-    // double click toggle
-    lbStage.addEventListener('dblclick', ()=>{ scale = (scale===1?2:1); pos={x:0,y:0}; apply(); });
-    // touch pinch
+    lbStage.addEventListener('dblclick', ()=>{ scale = (scale===0.75?2:0.75); pos={x:0,y:0}; apply(); });
     let lastDist=null;
     lbStage.addEventListener('touchstart', (e)=>{ if(e.touches.length===1){ dragging=true; start={x:e.touches[0].clientX-pos.x,y:e.touches[0].clientY-pos.y}; } lastDist=null; }, {passive:false});
     lbStage.addEventListener('touchmove', (e)=>{
