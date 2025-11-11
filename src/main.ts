@@ -1,257 +1,162 @@
-// src/main.ts  — Flexcoin v5.9-ready (keeps v5.88 behavior, adds i18n + safer loaders)
-
-type AnyObj = Record<string, any>;
-
-const $ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) =>
-  root.querySelector<T>(sel)!;
-const $$ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) =>
-  Array.from(root.querySelectorAll<T>(sel));
-
-async function fetchJSON<T = AnyObj>(url: string): Promise<T | null> {
-  try {
-    const r = await fetch(url, { cache: "no-cache" });
-    if (!r.ok) return null;
-    return (await r.json()) as T;
-  } catch {
-    return null;
-  }
-}
-
-/* -----------------------------------------------------------------------------
-  1) Hero image loader (main.jpg → fallback 1.jpg) + (optional) rotator 1..8.jpg
------------------------------------------------------------------------------ */
-async function loadHero() {
-  const el = $("#hero-img") as HTMLImageElement | null;
-  if (!el) return;
-
-  const trySrc = (src: string) =>
-    new Promise<boolean>((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        el.src = src;
-        resolve(true);
-      };
-      img.onerror = () => resolve(false);
-      img.src = src;
-    });
-
-  // 1) main.jpg with cache-bust
-  const okMain = await trySrc(`/hero/main.jpg?ts=${Date.now()}`);
-  if (okMain) return;
-
-  // 2) fallback to /hero/1.jpg
-  const okFallback = await trySrc(`/hero/1.jpg?ts=${Date.now()}`);
-  if (!okFallback) return;
-
-  // (optional) light rotator among 1..8.jpg if they exist
-  let idx = 1;
-  setInterval(async () => {
-    idx = (idx % 8) + 1;
-    const next = `/hero/${idx}.jpg`;
-    // don't block if missing — just skip setting
-    const ok = await trySrc(`${next}?ts=${Date.now()}`);
-    if (!ok) idx = 1;
-  }, 8000);
-}
-
-/* -----------------------------------------------------------------------------
-  2) Runtime config → donut chart + text counters
-     Reads: /config/allocations.json, /config/presale.json, /config/addresses.json
------------------------------------------------------------------------------ */
-type Allocations = {
-  lp?: number; presale?: number; team?: number; marketing?: number; burn?: number;
-  presale_rate?: string | number;
-  listing_rate?: string | number;
-  softcap?: string | number;
-  hardcap?: string | number;
+// src/main.ts
+type AllocCfg = {
+  lp:number; presale:number; team:number; marketing:number; burn:number;
+  rates?:{ presale?:string; listing?:string }; softcap?:number; hardcap?:number;
+};
+type AddrCfg = {
+  chainId?: number;
+  token?: string; team?: string; marketing?: string; presale?: string; burn?: string; user?: string;
 };
 type PresaleCfg = {
-  presale_rate?: string | number;
-  listing_rate?: string | number;
-  softcap?: string | number;
-  hardcap?: string | number;
-  pinksale_url?: string;
-};
-type Addresses = {
-  token?: string; team?: string; marketing?: string; presale?: string; burn?: string; user?: string;
-  chainId?: number; chain?: string; explorer?: string;  // optional hints
+  pinksale_url?: string; pancakeswap_url?: string;
+  start?: string; end?: string;
+  rates?: { presale?:string; listing?:string };
+  softcap?: number; hardcap?: number;
 };
 
-function setText(selector: string, text: string) {
-  const el = document.querySelector<HTMLElement>(selector);
-  if (el) el.textContent = text;
+// ---------- helpers ----------
+const $ = <T extends HTMLElement>(sel:string)=>document.querySelector<T>(sel)!;
+
+async function json<T=any>(url:string, fallback:T):Promise<T>{
+  try{ return await (await fetch(url,{cache:"no-cache"})).json(); }
+  catch{ return fallback; }
+}
+function pct(n:number){ return `${(+n).toFixed(0)}%`; }
+function link(el:HTMLElement | null, href?:string){ if(!el) return; if(href){ (el as HTMLAnchorElement).href = href; el.removeAttribute("aria-disabled"); } else { el.setAttribute("aria-disabled","true"); } }
+
+// ---------- hero loader ----------
+function resolveHero(): string {
+  // prefer /hero/main.jpg -> fallback /hero/1.jpg
+  return "/hero/main.jpg";
 }
 
-function pct(n?: number) { return (typeof n === "number" ? n : 0).toFixed(0) + "%"; }
-
-function drawDonut(svgId: string, parts: Array<{ v: number; label: string }>) {
-  const svg = document.getElementById(svgId) as SVGSVGElement | null;
-  if (!svg) return;
-
-  const total = parts.reduce((s, p) => s + Math.max(0, p.v), 0) || 1;
-  const cx = 60, cy = 60, r = 50, t = 20; // radius/thickness
-  svg.innerHTML = ""; svg.setAttribute("viewBox", "0 0 120 120");
-
-  let a0 = -90; // start angle
-  parts.forEach((p) => {
-    const frac = Math.max(0, p.v) / total;
-    const a1 = a0 + 360 * frac;
-    const large = a1 - a0 > 180 ? 1 : 0;
-
-    const x0 = cx + r * Math.cos((Math.PI / 180) * a0);
-    const y0 = cy + r * Math.sin((Math.PI / 180) * a0);
-    const x1 = cx + r * Math.cos((Math.PI / 180) * a1);
-    const y1 = cy + r * Math.sin((Math.PI / 180) * a1);
-
-    // random-ish but stable hue by label
-    const hue = Math.abs(
-      p.label.split("").reduce((s, c) => s + c.charCodeAt(0), 0)
-    ) % 360;
-
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute(
-      "d",
-      `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1}`
-    );
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke", `hsl(${hue} 70% 55%)`);
-    path.setAttribute("stroke-width", String(t));
-    path.setAttribute("stroke-linecap", "butt");
-    svg.appendChild(path);
-
-    a0 = a1;
-  });
-
-  // inner hole
-  const hole = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-  hole.setAttribute("cx", String(cx));
-  hole.setAttribute("cy", String(cy));
-  hole.setAttribute("r", String(r - t));
-  hole.setAttribute("fill", "#13100b");
-  svg.appendChild(hole);
-}
-
-function applyTokenomics(a: Allocations) {
-  // Text counters
-  setText("[data-tok-lp]", pct(a.lp));
-  setText("[data-tok-presale]", pct(a.presale));
-  setText("[data-tok-team]", pct(a.team));
-  setText("[data-tok-mkt]", pct(a.marketing));
-  setText("[data-tok-burn]", pct(a.burn));
-
-  // Donut
-  drawDonut("donut", [
-    { v: a.lp ?? 0, label: "LP" },
-    { v: a.presale ?? 0, label: "Presale" },
-    { v: a.team ?? 0, label: "Team" },
-    { v: a.marketing ?? 0, label: "Marketing" },
-    { v: a.burn ?? 0, label: "Burn" },
-  ]);
-}
-
-function applyPresale(p: PresaleCfg | Allocations | null) {
-  if (!p) return;
-  if (p.presale_rate != null) setText("[data-presale-rate]", `Presale: 1 BNB = ${p.presale_rate} FLEX`);
-  if (p.listing_rate != null) setText("[data-listing-rate]", `Listing: 1 BNB = ${p.listing_rate} FLEX`);
-  if (p.softcap != null) setText("[data-softcap]", String(p.softcap));
-  if (p.hardcap != null) setText("[data-hardcap]", String(p.hardcap));
-
-  const btn = document.getElementById("btn-pinksale") as HTMLAnchorElement | null;
-  if (btn) {
-    const url = (p as PresaleCfg).pinksale_url;
-    if (url && /^https?:\/\//i.test(url)) {
-      btn.href = url;
-      btn.classList.remove("disabled");
-      btn.textContent = "Pinksale (Open)";
-      btn.target = "_blank";
-      btn.rel = "noopener";
-    } else {
-      btn.classList.add("disabled");
-      btn.removeAttribute("href");
-    }
-  }
-}
-
-function chainExplorerBase(addr: string, hint?: string) {
-  if (hint && /^https?:\/\//.test(hint)) return `${hint.replace(/\/+$/,"")}/address/${addr}`;
-  // default BSC mainnet
-  return `https://bscscan.com/address/${addr}`;
-}
-
-function applyAddresses(ad: Addresses | null) {
-  if (!ad) return;
-  const map: Array<[string, string | undefined]> = [
-    ["[data-addr-token]", ad.token],
-    ["[data-addr-team]", ad.team],
-    ["[data-addr-mkt]", ad.marketing],
-    ["[data-addr-presale]", ad.presale],
-    ["[data-addr-burn]", ad.burn],
-    ["[data-addr-user]", ad.user],
+// ---------- donut ----------
+function drawDonut(cfg:AllocCfg){
+  const total = cfg.lp+cfg.presale+cfg.team+cfg.marketing+cfg.burn || 100;
+  const parts = [
+    {k:"lp",        v:cfg.lp,        color:"#f7c843"},
+    {k:"presale",   v:cfg.presale,   color:"#ff8f3a"},
+    {k:"team",      v:cfg.team,      color:"#7ddc7a"},
+    {k:"marketing", v:cfg.marketing, color:"#67b7ff"},
+    {k:"burn",      v:cfg.burn,      color:"#ec6a6a"},
   ];
-  map.forEach(([sel, addr]) => {
-    const a = document.querySelector<HTMLAnchorElement>(sel);
-    if (!a) return;
-    if (addr) {
-      a.href = chainExplorerBase(addr, ad.explorer);
-      a.textContent = addr;
-      a.target = "_blank";
-      a.rel = "noopener";
-    } else {
-      a.removeAttribute("href");
-      a.textContent = "—";
-    }
+  const R=45, C=60, ST=16, Circ=2*Math.PI*R;
+  const svg = $("#donut") as unknown as SVGSVGElement;
+  svg.innerHTML = `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="#2a2418" stroke-width="${ST}"></circle>`;
+  let offset=0;
+  parts.forEach(p=>{
+    const frac = Math.max(0, p.v/total);
+    const len = frac * Circ;
+    const path = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    path.setAttribute("cx", String(C));
+    path.setAttribute("cy", String(C));
+    path.setAttribute("r", String(R));
+    path.setAttribute("fill","none");
+    path.setAttribute("stroke", p.color);
+    path.setAttribute("stroke-width", String(ST));
+    path.setAttribute("stroke-dasharray", `${len} ${Circ-len}`);
+    path.setAttribute("stroke-dashoffset", String(-offset));
+    path.setAttribute("transform", `rotate(-90 ${C} ${C})`);
+    svg.appendChild(path);
+    offset += len;
   });
+
+  // legend %
+  (document.querySelector('[data-tok-lp]') as HTMLElement).textContent = pct(cfg.lp);
+  (document.querySelector('[data-tok-presale]') as HTMLElement).textContent = pct(cfg.presale);
+  (document.querySelector('[data-tok-team]') as HTMLElement).textContent = pct(cfg.team);
+  (document.querySelector('[data-tok-mkt]') as HTMLElement).textContent = pct(cfg.marketing);
+  (document.querySelector('[data-tok-burn]') as HTMLElement).textContent = pct(cfg.burn);
 }
 
-/* -----------------------------------------------------------------------------
-  3) Very-light i18n (EN/KR) — works with /i18n/{lang}.json (from public/)
------------------------------------------------------------------------------ */
-async function setLang(lang: string) {
-  try {
-    const dict = await fetchJSON<Record<string, string>>(`/i18n/${lang}.json`);
-    if (!dict) return;
-    $$<HTMLElement>("[data-i18n]").forEach((el) => {
-      const key = el.getAttribute("data-i18n")!;
-      if (key in dict) el.textContent = dict[key];
-    });
-    localStorage.setItem("lang", lang);
-    const now = document.getElementById("lang-now");
-    if (now) now.textContent = lang.toUpperCase();
-  } catch {
-    /* no-op */
+// ---------- countdown ----------
+function startCountdown(startISO?:string, endISO?:string){
+  const el=$("#countdown");
+  const win=$("#presale-window");
+  if(!startISO || !endISO){ el.textContent="—"; win.textContent="—"; return; }
+
+  const start = new Date(startISO).getTime();
+  const end   = new Date(endISO).getTime();
+  win.textContent = new Date(startISO).toLocaleString() + " → " + new Date(endISO).toLocaleString();
+
+  function fmt(ms:number){
+    const s=Math.max(0,Math.floor(ms/1000));
+    const d=Math.floor(s/86400), h=Math.floor((s%86400)/3600), m=Math.floor((s%3600)/60), ss=s%60;
+    return `${d}d ${h}h ${m}m ${ss}s`;
   }
+
+  function tick(){
+    const now=Date.now();
+    if(now<start){ el.textContent="Starts in "+fmt(start-now); }
+    else if(now<=end){ el.textContent="Ends in "+fmt(end-now); }
+    else{ el.textContent="Finished"; clearInterval(tid); }
+  }
+  tick();
+  const tid=setInterval(tick,1000);
 }
-function bindLangSwitch() {
-  const wanted =
-    new URL(location.href).searchParams.get("lang") ||
-    localStorage.getItem("lang") ||
-    "en";
-  setLang(wanted);
-  $$<HTMLButtonElement>("[data-lang]").forEach((btn) => {
-    btn.addEventListener("click", () => setLang(btn.dataset.lang || "en"));
+
+// ---------- lightbox ----------
+function bindLightbox(selector:string){
+  const box=$("#lightbox"), img=box.querySelector("img")!;
+  document.querySelectorAll<HTMLImageElement>(selector).forEach(i=>{
+    i.addEventListener("click",()=>{ img.src=i.src; (box as HTMLElement).style.display="grid"; });
   });
+  box.addEventListener("click",()=> (box as HTMLElement).style.display="none");
 }
 
-/* -----------------------------------------------------------------------------
-  4) Boot
------------------------------------------------------------------------------ */
+// ---------- i18n ----------
+async function setLang(lang:string){
+  const dict = await json<Record<string,string>>(`/i18n/${lang}.json`, {});
+  document.querySelectorAll<HTMLElement>("[data-i18n]").forEach(el=>{
+    const k = el.getAttribute("data-i18n")!;
+    if(dict[k]) el.textContent = dict[k];
+  });
+  localStorage.setItem("lang", lang);
+  document.querySelectorAll<HTMLButtonElement>("#lang-pill [data-lang]").forEach(b=>b.classList.toggle("active",(b.dataset.lang||"en")===lang));
+}
+
+// ---------- boot ----------
 (async () => {
-  // Hero
-  loadHero();
+  // hero
+  const hero=$("#hero-img"); hero.src = resolveHero();
 
-  // Runtime JSON
-  const [alloc, presale, addrs] = await Promise.all([
-    fetchJSON<Allocations>("/config/allocations.json"),
-    fetchJSON<PresaleCfg>("/config/presale.json"),
-    fetchJSON<Addresses>("/config/addresses.json"),
-  ]);
+  // runtime config
+  const alloc = await json<AllocCfg>("/config/allocations.json", {lp:54,presale:20,team:15,marketing:10,burn:1});
+  const addr  = await json<AddrCfg>("/config/addresses.json",  {});
+  const ps    = await json<PresaleCfg>("/config/presale.json", {});
 
-  if (alloc) applyTokenomics(alloc);
-  applyPresale(presale ?? alloc ?? null);
-  applyAddresses(addrs);
+  drawDonut(alloc);
 
-  // i18n
-  bindLangSwitch();
+  // rates / caps
+  if(alloc.rates?.presale || ps.rates?.presale)  ($('[data-presale-rate]') as HTMLElement).textContent = alloc.rates?.presale || ps.rates?.presale || "";
+  if(alloc.rates?.listing || ps.rates?.listing)  ($('[data-listing-rate]') as HTMLElement).textContent = alloc.rates?.listing || ps.rates?.listing || "";
+  if(alloc.softcap || ps.softcap) (document.querySelector('[data-softcap]') as HTMLElement).textContent = String(alloc.softcap ?? ps.softcap ?? "—");
+  if(alloc.hardcap || ps.hardcap) (document.querySelector('[data-hardcap]') as HTMLElement).textContent = String(alloc.hardcap ?? ps.hardcap ?? "—");
 
-  // Community buttons are static; nothing required here.
+  // buttons / links
+  link($('#btn-swap'), ps.pancakeswap_url);
+  const pink = $('#btn-pinksale') as HTMLAnchorElement;
+  if (ps.pinksale_url && ps.pinksale_url.length>8) { pink.href = ps.pinksale_url; pink.textContent="Pinksale"; }
+  else { pink.textContent="Pinksale (coming soon)"; pink.removeAttribute('href'); pink.setAttribute('disabled',''); }
+
+  const base = (a?:string)=> a ? `https://bscscan.com/address/${a}` : '';
+  (document.querySelector('[data-addr-token]')   as HTMLAnchorElement).href = base(addr.token);
+  (document.querySelector('[data-addr-team]')    as HTMLAnchorElement).href = base(addr.team);
+  (document.querySelector('[data-addr-mkt]')     as HTMLAnchorElement).href = base(addr.marketing);
+  (document.querySelector('[data-addr-presale]') as HTMLAnchorElement).href = base(addr.presale);
+  (document.querySelector('[data-addr-burn]')    as HTMLAnchorElement).href = base(addr.burn);
+  (document.querySelector('[data-addr-user]')    as HTMLAnchorElement).href = base(addr.user);
+
+  // countdown
+  startCountdown(ps.start, ps.end);
+
+  // lightbox
+  bindLightbox("#action-gallery img, #nft-gallery img");
+
+  // i18n init/bind
+  const wanted = new URL(location.href).searchParams.get("lang") || localStorage.getItem("lang") || "en";
+  await setLang(wanted);
+  document.querySelectorAll<HTMLButtonElement>("#lang-pill [data-lang]").forEach(btn=>{
+    btn.addEventListener("click",()=> setLang(btn.dataset.lang || "en"));
+  });
 })();
