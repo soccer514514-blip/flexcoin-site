@@ -1,4 +1,5 @@
 {
-  "start_iso": "2025-12-01T12:00:00Z",
-  "end_iso":   "2026-01-01T12:00:00Z"
+  "timezone": "Asia/Seoul",
+  "presale_start": "2025-12-01T21:00:00",
+  "presale_end":   "2026-01-01T21:00:00"
 }
