@@ -6,10 +6,8 @@
   <title>$FLEX is your life — Flexcoin</title>
   <link rel="icon" href="/favicon.ico">
   <style>
-    :root{
-      --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a;
-      --gold:#f4cc4f; --chip:#3a331c; --border:rgba(255,255,255,.08);
-    }
+    :root{ --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a;
+      --gold:#f4cc4f; --chip:#3a331c; --border:rgba(255,255,255,.08); }
     html,body{margin:0;background:var(--bg);color:var(--text);
       font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial;
       overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none}
@@ -24,7 +22,7 @@
     .brand{font-weight:800;color:var(--gold);line-height:1.15}
     .spacer{flex:1}
     .btn{border:none;border-radius:.7rem;padding:.55rem .9rem;cursor:pointer;
-      text-decoration:none;background:var(--gold);color:#000;font-weight:800;display:inline-block}
+      background:var(--gold);color:#000;font-weight:800;display:inline-block}
     .btn[disabled]{opacity:.45;cursor:not-allowed}
     .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid var(--border)}
     .lang button{background:var(--chip);padding:.5rem .75rem;border:0;color:var(--text);cursor:pointer}
@@ -80,8 +78,7 @@
       align-items:center;justify-content:center;z-index:50;touch-action:none}
     .lightbox.show{display:flex}
     .lb-stage{position:relative;max-width:95vw;max-height:85vh;overflow:hidden;cursor:grab;border-radius:12px}
-    .lb-img{user-select:none;pointer-events:auto;transform-origin:center center;
-      will-change:transform;display:block;max-width:none}
+    .lb-img{user-select:none;pointer-events:auto;transform-origin:center center;display:block;max-width:none}
     .lb-toolbar{position:fixed;top:12px;right:12px;display:flex;gap:.4rem;z-index:60}
     .lb-toolbar .btn{padding:.4rem .6rem;border-radius:.6rem}
     .lb-hint{position:fixed;bottom:12px;left:12px;color:#ddd;font-size:.85rem;opacity:.8}
@@ -129,8 +126,7 @@
   <div class="wrap">
     <!-- HERO -->
     <section class="card hero">
-      <img id="hero-img" src="/hero/main.jpg" alt="Flexcoin hero"
-           onerror="this.onerror=null;this.src='/hero/1.jpg'">
+      <img id="hero-img" src="/hero/main.jpg" alt="Flexcoin hero" onerror="this.onerror=null;this.src='/hero/1.jpg'">
     </section>
 
     <!-- About -->
@@ -140,11 +136,7 @@
       <div class="about-grid">
         <div class="about-card">
           <h3 style="margin:0 0 8px 0">한국어</h3>
-          <p>
-            FlexCoin은 단순한 밈코인이 아닙니다. 한국에서 “Flex”는
-            <b>자신의 능력·소비력·자신감</b>을 당당하게 표현하는 문화입니다.
-            FlexCoin은 그 태도를 담은 <b>라이프스타일</b>입니다.
-          </p>
+          <p>FlexCoin은 단순한 밈코인이 아닙니다. 한국에서 “Flex”는 <b>자신의 능력·소비력·자신감</b>을 당당하게 표현하는 문화입니다. FlexCoin은 그 태도를 담은 <b>라이프스타일</b>입니다.</p>
           <blockquote class="about-quote">“Flex는 과시가 아니라, 당신의 삶을 증명하는 것이다.”</blockquote>
           <p>우리는 투명함을 선택했고, 그 투명함이 신뢰를 만든다고 믿습니다.</p>
           <ul class="about-bullets">
@@ -157,11 +149,7 @@
         </div>
         <div class="about-card">
           <h3 style="margin:0 0 8px 0">English</h3>
-          <p>
-            FlexCoin isn’t just a memecoin. In Korea, “Flex” means proudly expressing
-            your <b>capability, spending power, and confidence</b>. FlexCoin captures
-            that <b>lifestyle</b>.
-          </p>
+          <p>FlexCoin isn’t just a memecoin. In Korea, “Flex” means proudly expressing your <b>capability, spending power, and confidence</b>. FlexCoin captures that <b>lifestyle</b>.</p>
           <blockquote class="about-quote">“Flexing isn’t showing off — it’s owning your story.”</blockquote>
           <p>We choose transparency, because transparency creates trust.</p>
           <ul class="about-bullets">
@@ -268,31 +256,26 @@
   <script>
     const $ = (q)=>document.querySelector(q);
 
-    /* ---------- NEW: 폴백 헬퍼 ---------- */
+    /* --------- 공통 폴백 유틸 --------- */
     async function fetchFirst(paths){
-      for (const p of paths){
-        try{
-          const res = await fetch(p, {cache:'no-cache'});
-          if(res.ok) return res.json();
-        }catch(_){}
-      }
-      return {};
+      for(const p of paths){
+        try{ const r=await fetch(p,{cache:'no-cache'}); if(r.ok) return r.json(); }catch(_){}
+      } return {};
     }
     function firstExistingImage(paths){
       return new Promise(resolve=>{
-        let i=0;
-        const next=()=>{
-          if(i>=paths.length) return resolve(null);
-          const img=new Image();
-          img.onload = ()=>resolve(paths[i]);
-          img.onerror= ()=>{ i++; next(); };
-          img.src = paths[i];
-        };
+        let i=0; const next=()=>{ if(i>=paths.length) return resolve(null);
+          const img=new Image(); img.onload=()=>resolve(paths[i]); img.onerror=()=>{ i++; next(); }; img.src=paths[i]; };
         next();
       });
     }
+    async function firstExistingFile(paths){
+      for(const p of paths){
+        try{ const r=await fetch(p,{method:'HEAD',cache:'no-cache'}); if(r.ok) return p; }catch(_){}
+      } return null;
+    }
 
-    /* Links + BscScan (자동 폴백) */
+    /* --------- 링크/주소 --------- */
     async function initLinks(){
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
       const set=(id,url)=>{const b=$(id); if(!b) return; if(url){b.href=url; b.removeAttribute('disabled');} else {b.setAttribute('disabled','');}};
@@ -302,13 +285,19 @@
       const toScan=(a)=>a?`https://bscscan.com/address/${a}`:'#';
       const rows=[['Token',addr.token],['Team/Lock',addr.team_lock||addr.team],['Marketing',addr.marketing],
                   ['Presale',addr.presale],['Burn',addr.burn],['User',addr.user]];
-      $('#addr-table').innerHTML=rows.map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`).join('');
+      $('#addr-table').innerHTML = rows.map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`).join('');
     }
 
-    /* Tokenomics + Caps + Rates (자동 폴백) */
+    /* --------- 히어로 이미지 --------- */
+    async function initHero(){
+      const src = await firstExistingImage(['/public/hero/main.jpg','/hero/main.jpg','/public/hero/1.jpg','/hero/1.jpg']);
+      if(src){ const img=$('#hero-img'); img.src=src; }
+    }
+
+    /* --------- 토크노믹스 --------- */
     async function initTokenomics(){
       const j = await fetchFirst(['/public/config/allocations.json','/config/allocations.json']);
-      const t=j.tokenomics||{lp:54,presale:20,team:15,marketing:10,burn:1};
+      const t = j.tokenomics || {lp:54,presale:20,team:15,marketing:10,burn:1};
       const ctx=$('#donut').getContext('2d');
       const vals=[t.lp,t.presale,t.team,t.marketing,t.burn];
       const names=['LP','Presale','Team','Marketing','Burn'];
@@ -325,34 +314,27 @@
 
       $('#legend').innerHTML = names.map((n,i)=>`<li>• ${n} ${vals[i]}%</li>`).join(' · ');
 
-      const p = (j.presale||{});
-      const soft = p.softcap_bnb ?? '—';
-      const hard = p.hardcap_bnb ?? '—';
+      const p = j.presale || {};
+      const soft = p.softcap_bnb ?? j.softcap ?? '—';
+      const hard = p.hardcap_bnb ?? j.hardcap ?? '—';
       $('#caps').textContent=`Softcap: ${soft} BNB / Hardcap: ${hard} BNB`;
 
-      const pres = Number(p.rate_flex_per_bnb||0);
-      const list = Number(p.listing_rate_flex_per_bnb||0);
-      const fmt = (n)=> (Number.isFinite(n)&&n>0) ? n.toLocaleString() : '—';
+      const pres = Number(p.rate_flex_per_bnb ?? (j.rates?.presale||0));
+      const list = Number(p.listing_rate_flex_per_bnb ?? (j.rates?.listing||0));
+      const fmt=(n)=> (Number.isFinite(n)&&n>0)? n.toLocaleString():'—';
       $('#rates').textContent=`Presale Rate: 1 BNB = ${fmt(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmt(list)} FLEX`;
 
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
-      const psUrl = links.pinksale_url;
-      const psBtn = $('#btn-pinksale');
-      if(psUrl){ psBtn.textContent='Open Pinksale'; psBtn.removeAttribute('aria-disabled'); psBtn.href=psUrl; }
+      const btn = $('#btn-pinksale');
+      if(links.pinksale_url){ btn.textContent='Open Pinksale'; btn.href=links.pinksale_url; btn.removeAttribute('aria-disabled'); }
     }
 
-    /* Countdown (자동 폴백) */
+    /* --------- 카운트다운 --------- */
     async function initCountdown(){
       let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00';
-      try{
-        const p = await fetchFirst(['/public/config/presale.json','/config/presale.json']);
-        if(p && (p.presale_start||p.start)){
-          sISO=(p.presale_start||p.start)+(String(p.presale_start||p.start).includes('+')?'':'+09:00');
-        }
-        if(p && (p.presale_end||p.end)){
-          eISO=(p.presale_end||p.end)+(String(p.presale_end||p.end).includes('+')?'':'+09:00');
-        }
-      }catch(_){}
+      const p = await fetchFirst(['/public/config/presale.json','/config/presale.json']);
+      if(p.presale_start||p.start){ const x=(p.presale_start||p.start); sISO=x+(String(x).includes('+')?'':'+09:00'); }
+      if(p.presale_end||p.end){ const y=(p.presale_end||p.end); eISO=y+(String(y).includes('+')?'':'+09:00'); }
       const s=new Date(sISO), e=new Date(eISO);
       const range=$('#countdown-range'),count=$('#countdown');
       const z=(n)=>String(n).padStart(2,'0');
@@ -364,49 +346,36 @@
       tick(); setInterval(tick,1000);
     }
 
-    /* Galleries: 이미지 경로 자동 폴백 + 라이트박스 */
+    /* --------- 갤러리 + 라이트박스 --------- */
+    function tryImg(path){ return new Promise(res=>{ const i=new Image(); i.onload=()=>res(path); i.onerror=()=>res(null); i.src=path; }); }
     async function loadGrid(prefix, targetId){
-      const list = Array.from({length:8},(_,i)=>i+1);
-      const decided = await Promise.all(list.map(n=> firstExistingImage([
-        `/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`
-      ])));
-      const ok = decided.filter(Boolean);
-      const el = $(targetId);
-      el.innerHTML = ok.length
-        ? ok.map(src=>`<img src="${src}" alt="">`).join('')
-        : '<div class="muted">Images coming soon.</div>';
-      el.querySelectorAll('img').forEach(img=>{
-        img.style.cursor='zoom-in';
-        img.addEventListener('click',()=>openLightbox(img.src));
-      });
+      const list=Array.from({length:8},(_,i)=>i+1);
+      const decided=await Promise.all(list.map(n=> firstExistingImage([`/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`])));
+      const ok=decided.filter(Boolean);
+      const el=$(targetId);
+      el.innerHTML = ok.length ? ok.map(src=>`<img src="${src}" alt="">`).join('') : '<div class="muted">Images coming soon.</div>';
+      el.querySelectorAll('img').forEach(img=>{ img.style.cursor='zoom-in'; img.addEventListener('click',()=>openLightbox(img.src)); });
     }
 
-    /* Lightbox */
-    const lb = $('#lightbox'), lbImg = $('#lb-img'), lbStage = $('#lb-stage');
-    let scale = 0.75, minS = 0.5, maxS = 6, pos = {x:0,y:0}, dragging=false, startPos={x:0,y:0};
-    function apply(){ lbImg.style.transform=`translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
-    function openLightbox(src){ lbImg.src=src; scale=0.75; pos={x:0,y:0}; apply(); lb.classList.add('show'); document.body.classList.add('noscroll'); }
+    /* 라이트박스 */
+    const lb=$('#lightbox'), lbImg=$('#lb-img'), lbStage=$('#lb-stage');
+    let scale=0.75, minS=0.5, maxS=6, pos={x:0,y:0}, dragging=false, startPos={x:0,y:0};
+    function applyLB(){ lbImg.style.transform=`translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
+    function openLightbox(src){ lbImg.src=src; scale=0.75; pos={x:0,y:0}; applyLB(); lb.classList.add('show'); document.body.classList.add('noscroll'); }
     function closeLightbox(){ lb.classList.remove('show'); document.body.classList.remove('noscroll'); }
-    function zoomBy(delta,cx=lbStage.clientWidth/2,cy=lbStage.clientHeight/2){ const prev=scale; scale=Math.min(maxS,Math.max(minS,scale*(delta>0?1.2:1/1.2)));
-      const rect=lbImg.getBoundingClientRect(); const ox=cx-rect.left, oy=cy-rect.top; const k=scale/prev-1; pos.x-=ox*k; pos.y-=oy*k; apply(); }
-    $('#lb-close').onclick=closeLightbox; $('#lb-reset').onclick=()=>{scale=0.75;pos={x:0,y:0};apply();}; $('#lb-zoom-in').onclick=()=>zoomBy(1); $('#lb-zoom-out').onclick=()=>zoomBy(-1);
-    lbStage.addEventListener('wheel',(e)=>{ e.preventDefault(); zoomBy(e.deltaY,e.clientX,e.clientY); },{passive:false});
+    $('#lb-close').onclick=closeLightbox; $('#lb-reset').onclick=()=>{scale=0.75;pos={x:0,y:0};applyLB();};
+    $('#lb-zoom-in').onclick=()=>{ scale=Math.min(maxS,scale*1.2); applyLB(); };
+    $('#lb-zoom-out').onclick=()=>{ scale=Math.max(minS,scale/1.2); applyLB(); };
+    lbStage.addEventListener('wheel',(e)=>{ e.preventDefault(); const k=e.deltaY>0?1.2:1/1.2; scale=Math.min(maxS,Math.max(minS,scale*k)); applyLB(); },{passive:false});
     lbStage.addEventListener('mousedown',(e)=>{ dragging=true; lbStage.style.cursor='grabbing'; startPos={x:e.clientX-pos.x,y:e.clientY-pos.y}; });
-    window.addEventListener('mousemove',(e)=>{ if(!dragging) return; pos={x:e.clientX-startPos.x,y:e.clientY-startPos.y}; apply(); });
+    window.addEventListener('mousemove',(e)=>{ if(!dragging) return; pos={x:e.clientX-startPos.x,y:e.clientY-startPos.y}; applyLB(); });
     window.addEventListener('mouseup',()=>{ dragging=false; lbStage.style.cursor='grab'; });
     lb.addEventListener('click',(e)=>{ if(e.target===lb) closeLightbox(); });
-    window.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeLightbox(); });
-    let lastDist=null;
-    lbStage.addEventListener('touchstart',(e)=>{ if(e.touches.length===1){ dragging=true; startPos={x:e.touches[0].clientX-pos.x,y:e.touches[0].clientY-pos.y}; } lastDist=null; },{passive:false});
-    lbStage.addEventListener('touchmove',(e)=>{ if(e.touches.length===2){ e.preventDefault(); const dx=e.touches[0].clientX-e.touches[1].clientX, dy=e.touches[0].clientY-e.touches[1].clientY;
-        const dist=Math.hypot(dx,dy); if(lastDist){ scale=Math.min(maxS,Math.max(minS,scale*(dist/lastDist))); apply(); } lastDist=dist;
-      } else if(e.touches.length===1 && dragging){ pos={x:e.touches[0].clientX-startPos.x,y:e.touches[0].clientY-startPos.y}; apply(); } },{passive:false});
-    lbStage.addEventListener('touchend',()=>{ dragging=false; lastDist=null; });
 
-    /* i18n */
+    /* --------- i18n --------- */
     async function setLang(lang){
-      const dict = await fetchFirst([`/public/i18n/${lang}.json`, `/i18n/${lang}.json`]);
-      document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(k && dict[k]) el.textContent=dict[k]; });
+      const dict=await fetchFirst([`/public/i18n/${lang}.json`,`/i18n/${lang}.json`]);
+      document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(k&&dict[k]) el.textContent=dict[k]; });
       localStorage.setItem('lang',lang);
       document.querySelectorAll('#lang-pill [data-lang]').forEach(b=>b.classList.toggle('active', b.getAttribute('data-lang')===lang));
       $('#brand').textContent='$FLEX is your life. Your life is FLEX.';
@@ -414,81 +383,93 @@
     function bindLang(){
       const wanted=new URL(location.href).searchParams.get('lang')||localStorage.getItem('lang')||'en';
       setLang(wanted);
-      document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=>{ btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')); });
+      document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
     }
 
-    /* ===== NFT Mint (ethers) ===== */
-    const CHAINS = {
-      bscTestnet: { chainId: '0x61', name: 'BSC Testnet', rpc: 'https://data-seed-prebsc-1-s3.binance.org:8545' },
-      bscMainnet: { chainId: '0x38', name: 'BSC', rpc: 'https://bsc-dataseed.binance.org' }
-    };
-    // addresses.json 에 nft_mainnet / nft_testnet 있으면 자동 사용
-    let NFT_ADDR = { bscMainnet: '0xYourMainnetNFTAddress', bscTestnet: '0xYourTestnetNFTAddress' };
-    const ABI = ["function mint(uint256 quantity) payable","function price() view returns (uint256)"];
+    /* --------- 화이트페이퍼 경로 자동 설정 --------- */
+    async function initWhitepapers(){
+      const langs=[['en','English'],['ko','Korean'],['ja','Japanese'],['zh','Chinese'],['es','Spanish'],['de','German'],['pt','Portuguese'],['it','Italian']];
+      for(const [code] of langs){
+        const a=document.querySelector(`a[href$="/whitepaper/${code}.pdf"], a[href$="/public/whitepaper/${code}.pdf"]`);
+        if(!a) continue;
+        const good=await firstExistingFile([`/public/whitepaper/${code}.pdf`,`/whitepaper/${code}.pdf`]);
+        if(good){ a.setAttribute('href',good); a.setAttribute('download',''); a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
+      }
+    }
+
+    /* --------- NFT Mint (claim & mint 자동 시도) --------- */
+    const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'},
+                   bscMainnet:{chainId:'0x38',name:'BSC',rpc:'https://bsc-dataseed.binance.org'} };
+    const DEFAULT_PRICE_BNB = (window.NFT_PRICE_BNB || '0.0001');
+    const ABI_VARIANTS = [
+      ["function claim(address receiver, uint256 quantity) payable","function price() view returns (uint256)"],
+      ["function claim(uint256 quantity) payable","function price() view returns (uint256)"],
+      ["function mint(uint256 quantity) payable","function price() view returns (uint256)"]
+    ];
+    let NFT_ADDR={ bscMainnet:'0xYourMainnetNFTAddress', bscTestnet:'0xYourTestnetNFTAddress' };
 
     async function connect(chainKey){
       const { ethereum } = window;
       if(!ethereum) throw new Error('지갑이 없습니다. MetaMask를 설치하세요.');
-      const target = CHAINS[chainKey];
+      const target=CHAINS[chainKey];
       try{
-        await ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId: target.chainId }] });
+        await ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:target.chainId}]});
       }catch(e){
         if(e && e.code===4902){
-          await ethereum.request({ method:'wallet_addEthereumChain',
-            params:[{ chainId:target.chainId, chainName:target.name, rpcUrls:[target.rpc], nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18}}]});
+          await ethereum.request({method:'wallet_addEthereumChain',
+            params:[{chainId:target.chainId,chainName:target.name,rpcUrls:[target.rpc],nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18}}]});
         }else{ throw e; }
       }
-      const provider = new ethers.BrowserProvider(ethereum);
-      const signer = await provider.getSigner();
-      return signer;
+      const provider=new ethers.BrowserProvider(ethereum);
+      return await provider.getSigner();
     }
 
     async function setupMintUI(){
-      const addr = await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
-      if(addr.nft_mainnet) NFT_ADDR.bscMainnet = addr.nft_mainnet;
-      if(addr.nft_testnet) NFT_ADDR.bscTestnet = addr.nft_testnet;
+      const addr=await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
+      if(addr.nft_mainnet) NFT_ADDR.bscMainnet=addr.nft_mainnet;
+      if(addr.nft_testnet) NFT_ADDR.bscTestnet=addr.nft_testnet;
 
-      const sel=$('#net'), btnC=$('#connect'), btnM=$('#mint'), btnF=$('#mint-flex'), log=$('#mint-log');
-      const write=(s)=>log.textContent=s;
+      const sel=$('#net'), btnC=$('#connect'), btnLegacy=$('#mint'), btnFlex=$('#mint-flex'), log=$('#mint-log');
+      const write=(s)=>{ log.textContent=s; };
 
-      btnC.onclick = async ()=>{
+      btnC.onclick=async()=>{ try{ const s=await connect(sel.value); write('Connected: '+await s.getAddress()); }catch(e){ write('Connect error: '+(e.message||e)); } };
+
+      async function runMint(payFixed){
         try{
-          const signer = await connect(sel.value);
-          write('Connected: '+await signer.getAddress());
-        }catch(e){ write('Connect error: '+(e.message||e)); }
-      };
+          const chainKey=sel.value; const signer=await connect(chainKey); const to=await signer.getAddress();
+          const target=NFT_ADDR[chainKey]; if(!target || target.length<20) throw new Error('NFT 컨트랙트 주소가 설정되지 않았습니다.');
+          let last=null;
+          for(const abi of ABI_VARIANTS){
+            try{
+              const c=new ethers.Contract(target, abi, signer);
+              let value;
+              if(payFixed){ value=ethers.parseEther(DEFAULT_PRICE_BNB); }
+              else{ try{ value=await c.price(); }catch{ value=ethers.parseEther(DEFAULT_PRICE_BNB); } }
+              let tx;
+              if(c.claim){ // try claim(receiver,qty) then claim(qty)
+                try{ tx=await c.claim(to,1,{value}); }
+                catch{ tx=await c.claim(1,{value}); }
+              }else if(c.mint){ tx=await c.mint(1,{value}); }
+              else{ throw new Error('지원하지 않는 민팅 방식'); }
+              write('Minting... TX: '+tx.hash); await tx.wait(); write('Minted!'); return;
+            }catch(e){ last=e; }
+          }
+          throw last || new Error('민팅 실패');
+        }catch(e){ write('Mint error: '+((e&&e.message)||String(e))); }
+      }
 
-      btnM.onclick = async ()=>{
-        try{
-          const signer = await connect(sel.value);
-          const contract = new ethers.Contract(NFT_ADDR[sel.value], ABI, signer);
-          let value = ethers.parseEther('0.01');
-          try{ value = await contract.price(); }catch(_){}
-          const tx = await contract.mint(1, { value });
-          write('Minting... TX: '+tx.hash);
-          await tx.wait();
-          write('Minted!');
-        }catch(e){ write('Mint error: '+(e.message||e)); }
-      };
-
-      btnF.onclick = async ()=>{
-        try{
-          const signer = await connect(sel.value);
-          const contract = new ethers.Contract(NFT_ADDR[sel.value], ABI, signer);
-          const tx = await contract.mint(1, { value: ethers.parseEther('0.0001') });
-          write('Minting... TX: '+tx.hash);
-          await tx.wait();
-          write('Minted!');
-        }catch(e){ write('Mint error: '+(e.message||e)); }
-      };
+      btnLegacy.onclick = ()=>runMint(false);   // price() 우선
+      btnFlex.onclick   = ()=>runMint(true);    // 고정가
     }
 
-    /* ===== Boot ===== */
+    /* --------- Boot --------- */
     (async()=>{
       bindLang();
       await initLinks();
+      await initHero();
       await initTokenomics();
       await initCountdown();
+      await initWhitepapers();
       await loadGrid('/action', '#action-grid');
       await loadGrid('/nft-preview', '#nft-grid');
       await setupMintUI();
