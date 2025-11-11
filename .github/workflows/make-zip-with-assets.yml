@@ -1,0 +1,26 @@
+name: Make ZIP (with images)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  make-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare folders
+        run: |
+          mkdir -p public/hero public/action public/nft-preview public/whitepaper
+
+      - name: Create ZIP including all assets
+        run: |
+          zip -r Flexcoin_v5.9_AllInOne_WithAssets.zip . \
+            -x "*/node_modules/*" "*/dist/*"
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flexcoin_v5.9_AllInOne_WithAssets
+          path: Flexcoin_v5.9_AllInOne_WithAssets.zip
