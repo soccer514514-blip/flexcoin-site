@@ -10,7 +10,6 @@
       --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a;
       --gold:#f4cc4f; --chip:#3a331c; --border:rgba(255,255,255,.08);
     }
-    /* 모바일 가로 흔들림 방지 */
     html,body{margin:0;background:var(--bg);color:var(--text);
       font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial;
       overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none}
@@ -30,8 +29,6 @@
     .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid var(--border)}
     .lang button{background:var(--chip);padding:.5rem .75rem;border:0;color:var(--text);cursor:pointer}
     .lang button.active{background:var(--gold);color:#000;font-weight:800}
-
-    /* optional: mini nav */
     .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9}
     .nav a:hover{opacity:1}
 
@@ -52,9 +49,9 @@
     ul.legend{list-style:none;padding:0;margin:0}
     ul.legend li{margin:.2rem 0}
     #caps,#rates{margin-top:.35rem}
-    #btn-pinksale{margin-top:12px;display:inline-block} /* 버튼 겹침 해결 */
+    #btn-pinksale{margin-top:12px;display:inline-block}
 
-    /* Countdown box */
+    /* Countdown */
     .countbox{border:1px solid var(--border);border-radius:14px;padding:14px;
       background:linear-gradient(180deg,rgba(255,255,255,.02),transparent)}
     #countdown{font-weight:900;font-size:1.35rem}
@@ -78,7 +75,7 @@
       .addr td{font-size:.85rem}
     }
 
-    /* === Lightbox (zoomable) === */
+    /* Lightbox */
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;
       align-items:center;justify-content:center;z-index:50;touch-action:none}
     .lightbox.show{display:flex}
@@ -89,7 +86,7 @@
     .lb-toolbar .btn{padding:.4rem .6rem;border-radius:.6rem}
     .lb-hint{position:fixed;bottom:12px;left:12px;color:#ddd;font-size:.85rem;opacity:.8}
 
-    /* === About (인라인 스타일) === */
+    /* About */
     .about-section{background:linear-gradient(180deg,#0a0a0a 0%, #111 100%);border:1px solid rgba(212,175,55,.25);
       border-radius:24px;padding:28px;margin:24px 0;box-shadow:0 10px 30px rgba(0,0,0,.35);color:#f1f1f1}
     .about-title{font-size:28px;font-weight:800;margin-bottom:8px;color:#f6e8b1}
@@ -102,14 +99,14 @@
     blockquote.about-quote{margin:12px 0;border-left:4px solid rgba(212,175,55,.5);padding:8px 12px;color:#e9e1c8;font-style:italic}
     .small-muted{font-size:12px;color:#9a9a9a;margin-top:8px}
 
-    /* === NFT mint UI === */
+    /* NFT mint UI */
     .btn-row{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.6rem}
     .btn-gold{background:var(--gold);color:#000;border-radius:.7rem;padding:.55rem .9rem;font-weight:800;border:0;cursor:pointer}
     .select-net{margin:8px 0;padding:.45rem .6rem;border-radius:.6rem;border:1px solid var(--border);background:#0f0e0c;color:var(--text)}
     .mint-log{background:#0f0e0c;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;color:#ddd;font-size:.85rem;min-height:2.2em}
   </style>
 
-  <!-- ethers CDN (NFT 민팅용) -->
+  <!-- ethers CDN -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js"></script>
 </head>
 <body>
@@ -136,7 +133,7 @@
            onerror="this.onerror=null;this.src='/hero/1.jpg'">
     </section>
 
-    <!-- About (요청 스니펫) -->
+    <!-- About -->
     <section id="about-flexcoin" class="about-section">
       <div class="about-title">About FlexCoin</div>
       <div class="about-sub">감성 + 신뢰 결합 (Korean & English)</div>
@@ -213,7 +210,7 @@
       <div class="grid" id="nft-grid"></div>
     </section>
 
-    <!-- Whitepaper (풀네임 표기) -->
+    <!-- Whitepaper -->
     <section class="card">
       <div class="section-title">Whitepaper</div>
       <div class="wp-grid">
@@ -235,7 +232,7 @@
       <table id="addr-table"></table>
     </section>
 
-    <!-- NFT MINT (ethers 로직 포함) -->
+    <!-- NFT MINT -->
     <section id="nft" class="card">
       <div class="section-title">FLEX NFT MINT</div>
       <p class="muted" style="margin-top:-6px">Mint your official <b>FlexNFT</b> on BNB Smart Chain</p>
@@ -270,56 +267,91 @@
 
   <script>
     const $ = (q)=>document.querySelector(q);
-    const fetchJSON = async (p,fallback={})=>{ try{ return await (await fetch(p,{cache:'no-cache'})).json(); }catch{ return fallback; } };
 
-    /* Links + BscScan */
+    /* ---------- NEW: 폴백 헬퍼 ---------- */
+    async function fetchFirst(paths){
+      for (const p of paths){
+        try{
+          const res = await fetch(p, {cache:'no-cache'});
+          if(res.ok) return res.json();
+        }catch(_){}
+      }
+      return {};
+    }
+    function firstExistingImage(paths){
+      return new Promise(resolve=>{
+        let i=0;
+        const next=()=>{
+          if(i>=paths.length) return resolve(null);
+          const img=new Image();
+          img.onload = ()=>resolve(paths[i]);
+          img.onerror= ()=>{ i++; next(); };
+          img.src = paths[i];
+        };
+        next();
+      });
+    }
+
+    /* Links + BscScan (자동 폴백) */
     async function initLinks(){
-      const links=await fetchJSON('/config/links.json', {});
+      const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
       const set=(id,url)=>{const b=$(id); if(!b) return; if(url){b.href=url; b.removeAttribute('disabled');} else {b.setAttribute('disabled','');}};
       set('#btn-x',links.x_url); set('#btn-tg',links.tg_url); set('#btn-pcs',links.pancakeswap_url);
 
-      const addr=await fetchJSON('/config/addresses.json', {});
+      const addr = await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
       const toScan=(a)=>a?`https://bscscan.com/address/${a}`:'#';
-      const rows=[['Token',addr.token],['Team/Lock',addr.team],['Marketing',addr.marketing],
+      const rows=[['Token',addr.token],['Team/Lock',addr.team_lock||addr.team],['Marketing',addr.marketing],
                   ['Presale',addr.presale],['Burn',addr.burn],['User',addr.user]];
       $('#addr-table').innerHTML=rows.map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`).join('');
     }
 
-    /* Tokenomics + Caps + Rates (allocations.json or presale.json) */
+    /* Tokenomics + Caps + Rates (자동 폴백) */
     async function initTokenomics(){
-      const alloc=await fetchJSON('/config/allocations.json',{lp:54,presale:20,team:15,marketing:10,burn:1,presale:{rate_flex_per_bnb:1600000,listing_rate_flex_per_bnb:1600000}});
-      const t=alloc.tokenomics||alloc;
-      // donut
-      const ctx=$('#donut').getContext('2d'), vals=[t.lp,t.presale,t.team,t.marketing,t.burn];
+      const j = await fetchFirst(['/public/config/allocations.json','/config/allocations.json']);
+      const t=j.tokenomics||{lp:54,presale:20,team:15,marketing:10,burn:1};
+      const ctx=$('#donut').getContext('2d');
+      const vals=[t.lp,t.presale,t.team,t.marketing,t.burn];
       const names=['LP','Presale','Team','Marketing','Burn'];
       const cols=['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'];
+
       ctx.clearRect(0,0,300,300);
       let start=-Math.PI/2;
-      vals.forEach((v,i)=>{ const a=start+2*Math.PI*(v/100); ctx.beginPath();ctx.moveTo(150,150);ctx.arc(150,150,140,start,a);ctx.closePath();ctx.fillStyle=cols[i];ctx.fill();start=a; });
-      ctx.globalCompositeOperation='destination-out'; ctx.beginPath();ctx.arc(150,150,82,0,2*Math.PI);ctx.fill(); ctx.globalCompositeOperation='source-over';
+      vals.forEach((v,i)=>{ const a=start+2*Math.PI*(v/100);
+        ctx.beginPath();ctx.moveTo(150,150);ctx.arc(150,150,140,start,a);ctx.closePath();
+        ctx.fillStyle=cols[i];ctx.fill();start=a; });
+      ctx.globalCompositeOperation='destination-out';
+      ctx.beginPath();ctx.arc(150,150,82,0,2*Math.PI);ctx.fill();
+      ctx.globalCompositeOperation='source-over';
+
       $('#legend').innerHTML = names.map((n,i)=>`<li>• ${n} ${vals[i]}%</li>`).join(' · ');
 
-      const p=alloc.presale||{};
-      const soft=p.softcap_bnb ?? alloc.softcap ?? '—';
-      const hard=p.hardcap_bnb ?? alloc.hardcap ?? '—';
+      const p = (j.presale||{});
+      const soft = p.softcap_bnb ?? '—';
+      const hard = p.hardcap_bnb ?? '—';
       $('#caps').textContent=`Softcap: ${soft} BNB / Hardcap: ${hard} BNB`;
-      const pres=Number(p.rate_flex_per_bnb ?? (alloc.rates?.presale||0));
-      const list=Number(p.listing_rate_flex_per_bnb ?? (alloc.rates?.listing||0));
-      const fmt=(n)=> (Number.isFinite(n)&&n>0)? n.toLocaleString():'—';
+
+      const pres = Number(p.rate_flex_per_bnb||0);
+      const list = Number(p.listing_rate_flex_per_bnb||0);
+      const fmt = (n)=> (Number.isFinite(n)&&n>0) ? n.toLocaleString() : '—';
       $('#rates').textContent=`Presale Rate: 1 BNB = ${fmt(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmt(list)} FLEX`;
 
-      const links = await fetchJSON('/config/links.json', {});
+      const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
+      const psUrl = links.pinksale_url;
       const psBtn = $('#btn-pinksale');
-      if (links.pinksale_url){ psBtn.textContent='Open Pinksale'; psBtn.href=links.pinksale_url; psBtn.removeAttribute('aria-disabled'); }
+      if(psUrl){ psBtn.textContent='Open Pinksale'; psBtn.removeAttribute('aria-disabled'); psBtn.href=psUrl; }
     }
 
-    /* Countdown (presale.json 우선) */
+    /* Countdown (자동 폴백) */
     async function initCountdown(){
       let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00';
       try{
-        const p=await fetchJSON('/config/presale.json',{});
-        if(p && (p.presale_start||p.start)){ sISO=(p.presale_start||p.start)+(String(p.presale_start||p.start).includes('+')?'':'+09:00'); }
-        if(p && (p.presale_end||p.end)){ eISO=(p.presale_end||p.end)+(String(p.presale_end||p.end).includes('+')?'':'+09:00'); }
+        const p = await fetchFirst(['/public/config/presale.json','/config/presale.json']);
+        if(p && (p.presale_start||p.start)){
+          sISO=(p.presale_start||p.start)+(String(p.presale_start||p.start).includes('+')?'':'+09:00');
+        }
+        if(p && (p.presale_end||p.end)){
+          eISO=(p.presale_end||p.end)+(String(p.presale_end||p.end).includes('+')?'':'+09:00');
+        }
       }catch(_){}
       const s=new Date(sISO), e=new Date(eISO);
       const range=$('#countdown-range'),count=$('#countdown');
@@ -332,17 +364,24 @@
       tick(); setInterval(tick,1000);
     }
 
-    /* Galleries + Lightbox */
-    function tryImg(path){ return new Promise(res=>{ const i=new Image(); i.onload=()=>res(path); i.onerror=()=>res(null); i.src=path; }); }
+    /* Galleries: 이미지 경로 자동 폴백 + 라이트박스 */
     async function loadGrid(prefix, targetId){
-      const list=Array.from({length:8},(_,i)=>`${prefix}/${i+1}.jpg`);
-      const ok=(await Promise.all(list.map(tryImg))).filter(Boolean);
-      const el=$(targetId);
-      el.innerHTML = ok.map(src=>`<img src="${src}" alt="">`).join('') || '<div class="muted">Images coming soon.</div>';
-      el.querySelectorAll('img').forEach(img=>{ img.style.cursor='zoom-in'; img.addEventListener('click',()=>openLightbox(img.src)); });
+      const list = Array.from({length:8},(_,i)=>i+1);
+      const decided = await Promise.all(list.map(n=> firstExistingImage([
+        `/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`
+      ])));
+      const ok = decided.filter(Boolean);
+      const el = $(targetId);
+      el.innerHTML = ok.length
+        ? ok.map(src=>`<img src="${src}" alt="">`).join('')
+        : '<div class="muted">Images coming soon.</div>';
+      el.querySelectorAll('img').forEach(img=>{
+        img.style.cursor='zoom-in';
+        img.addEventListener('click',()=>openLightbox(img.src));
+      });
     }
 
-    // Lightbox 75%
+    /* Lightbox */
     const lb = $('#lightbox'), lbImg = $('#lb-img'), lbStage = $('#lb-stage');
     let scale = 0.75, minS = 0.5, maxS = 6, pos = {x:0,y:0}, dragging=false, startPos={x:0,y:0};
     function apply(){ lbImg.style.transform=`translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
@@ -366,7 +405,7 @@
 
     /* i18n */
     async function setLang(lang){
-      const dict=await fetchJSON(`/i18n/${lang}.json`,{});
+      const dict = await fetchFirst([`/public/i18n/${lang}.json`, `/i18n/${lang}.json`]);
       document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(k && dict[k]) el.textContent=dict[k]; });
       localStorage.setItem('lang',lang);
       document.querySelectorAll('#lang-pill [data-lang]').forEach(b=>b.classList.toggle('active', b.getAttribute('data-lang')===lang));
@@ -383,7 +422,7 @@
       bscTestnet: { chainId: '0x61', name: 'BSC Testnet', rpc: 'https://data-seed-prebsc-1-s3.binance.org:8545' },
       bscMainnet: { chainId: '0x38', name: 'BSC', rpc: 'https://bsc-dataseed.binance.org' }
     };
-    // addresses.json 에 nft_mainnet / nft_testnet 필드가 있으면 자동 사용, 없으면 수동 ADDR로
+    // addresses.json 에 nft_mainnet / nft_testnet 있으면 자동 사용
     let NFT_ADDR = { bscMainnet: '0xYourMainnetNFTAddress', bscTestnet: '0xYourTestnetNFTAddress' };
     const ABI = ["function mint(uint256 quantity) payable","function price() view returns (uint256)"];
 
@@ -405,8 +444,7 @@
     }
 
     async function setupMintUI(){
-      // addresses.json 에서 nft 주소 자동 로드
-      const addr = await fetchJSON('/config/addresses.json', {});
+      const addr = await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
       if(addr.nft_mainnet) NFT_ADDR.bscMainnet = addr.nft_mainnet;
       if(addr.nft_testnet) NFT_ADDR.bscTestnet = addr.nft_testnet;
 
@@ -420,7 +458,6 @@
         }catch(e){ write('Connect error: '+(e.message||e)); }
       };
 
-      // 기존 mint(가격 contract.price() 우선)
       btnM.onclick = async ()=>{
         try{
           const signer = await connect(sel.value);
@@ -434,7 +471,6 @@
         }catch(e){ write('Mint error: '+(e.message||e)); }
       };
 
-      // 고정가 0.0001 BNB 민팅 버튼
       btnF.onclick = async ()=>{
         try{
           const signer = await connect(sel.value);
