@@ -3,347 +3,155 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Flexcoin — $FLEX</title>
+  <title>$FLEX is your life — Flexcoin</title>
   <link rel="icon" href="./public/favicon.ico">
   <style>
     :root{
-      --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a; --accent:#8b7e45;
-      --gold:#d0b24a; --chip:#3a331c; --ok:#2ea043; --warn:#d29922; --err:#f85149;
+      --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a;
+      --accent:#8b7e45; --gold:#f4cc4f; --chip:#3a331c;
     }
-    html,body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";}
+    html,body{margin:0;background:var(--bg);color:var(--text);
+      font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial}
     a{color:inherit}
-
-    /* Top bar */
-    .topbar{
-      position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:.5rem;
-      padding:.75rem 1rem;background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,0));
-      backdrop-filter:saturate(1.2) blur(6px);
-    }
+    .topbar{display:flex;align-items:center;gap:.5rem;padding:.8rem 1rem;
+      background:linear-gradient(180deg,rgba(0,0,0,.45),transparent);
+      backdrop-filter:blur(6px);position:sticky;top:0;z-index:10;}
     .brand{font-weight:700;color:var(--gold);}
     .spacer{flex:1}
-    .btn{display:inline-flex;align-items:center;gap:.4rem;border:none;border-radius:.7rem;
-      background:var(--chip);color:var(--text);padding:.45rem .8rem;cursor:pointer;text-decoration:none}
-    .btn:disabled{opacity:.5;cursor:not-allowed}
-    .chip{border:1px solid rgba(255,255,255,.08)}
+    .btn{border:none;border-radius:.7rem;padding:.45rem .8rem;cursor:pointer;
+      text-decoration:none;background:var(--gold);color:#000;font-weight:700;}
+    .btn:disabled{opacity:.4;cursor:not-allowed}
     .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
     .lang button{background:var(--chip);padding:.45rem .7rem;border:0;color:var(--text);cursor:pointer}
-    .lang button.active{background:var(--accent);color:black;font-weight:700}
-
-    /* Layout */
+    .lang button.active{background:var(--gold);color:#000;font-weight:700}
     .wrap{max-width:1080px;margin:0 auto;padding:1rem}
-    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:14px}
-    .mt{margin-top:1.25rem}
-
-    /* Hero */
-    .hero{position:relative;border-radius:14px;overflow:hidden}
-    .hero img{width:100%;display:block}
-    .hero-rot{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.5rem}
-    .hero-rot img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;cursor:pointer;opacity:.85}
-    .hero-rot img:hover{opacity:1}
-
-    /* Gallery */
-    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem}
-    .grid4 img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;cursor:pointer}
-
-    /* Lightbox */
-    #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;place-items:center;z-index:60}
-    #lightbox img{max-width:92vw;max-height:88vh;border-radius:10px}
-
-    /* Tokenomics */
-    .row{display:grid;grid-template-columns:320px 1fr;gap:1rem}
-    @media (max-width:820px){ .row{grid-template-columns:1fr} .grid4{grid-template-columns:repeat(2,1fr)} .hero-rot{grid-template-columns:repeat(4,1fr)} }
-    canvas{background:#0f0e0c;border-radius:14px}
-    .legend li{list-style:none;margin:.25rem 0}
-    .dot{display:inline-block;width:.8rem;height:.8rem;border-radius:99px;margin-right:.4rem;vertical-align:middle}
-
-    /* Small text / titles */
-    .muted{color:var(--muted);font-size:.9rem}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);
+      border-radius:16px;padding:14px;margin-top:1rem}
     .section-title{font-size:1.4rem;font-weight:800;margin:.4rem 0 1rem;color:var(--gold)}
-    .downloads a{display:inline-block;margin:.25rem .4rem .25rem 0;padding:.45rem .65rem;background:var(--chip);border-radius:.6rem;border:1px solid rgba(255,255,255,.08);text-decoration:none}
-    .addr table{width:100%;border-collapse:collapse}
-    .addr td{padding:.35rem .5rem;border-bottom:1px dashed rgba(255,255,255,.06);font-family:ui-monospace,Consolas,monospace}
+    .muted{color:var(--muted);font-size:.9rem}
+    canvas{background:#0f0e0c;border-radius:14px}
+    .addr table{width:100%;border-collapse:collapse;font-size:.85rem}
+    .addr td{padding:.35rem .5rem;border-bottom:1px dashed rgba(255,255,255,.06);word-break:break-all}
     .addr a{color:var(--gold);text-decoration:none}
-    .count{font-weight:800;font-size:1.25rem}
-    .footer{margin:2rem 0;color:var(--muted);font-size:.85rem;text-align:center}
-
-    /* About */
-    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-    .about h3{margin:.2rem 0 .6rem;color:var(--gold)}
-    .about li{margin:.2rem 0}
-    @media (max-width:820px){ .about-grid{grid-template-columns:1fr} }
+    @media(max-width:820px){.addr td{font-size:.75rem}}
   </style>
 </head>
 <body>
   <div class="topbar">
-    <div class="brand">Flexcoin — $FLEX</div>
+    <div class="brand">$FLEX is your life. Your life is FLEX.</div>
     <div class="spacer"></div>
-
-    <a id="btn-x" class="btn chip" href="#" target="_blank" rel="noopener">X</a>
-    <a id="btn-tg" class="btn chip" href="#" target="_blank" rel="noopener">Telegram</a>
-    <a id="btn-pcs" class="btn" href="javascript:void(0)">Buy on PancakeSwap</a>
-
-    <div class="lang">
-      <button id="lang-en">EN</button>
-      <button id="lang-ko">KR</button>
-    </div>
+    <a id="btn-x" class="btn" href="#" target="_blank" rel="noopener">X</a>
+    <a id="btn-tg" class="btn" href="#" target="_blank" rel="noopener">Telegram</a>
+    <a id="btn-pcs" class="btn" href="#" target="_blank" rel="noopener">Buy on PancakeSwap</a>
+    <div class="lang"><button id="lang-en">EN</button><button id="lang-ko">KR</button></div>
   </div>
 
   <div class="wrap">
-    <!-- Hero -->
-    <section class="card hero">
-      <img id="hero-main" src="./public/hero/main.jpg" alt="hero">
-    </section>
-    <section class="hero-rot">
-      <img src="./public/hero/1.jpg" alt=""><img src="./public/hero/2.jpg" alt="">
-      <img src="./public/hero/3.jpg" alt=""><img src="./public/hero/4.jpg" alt="">
-      <img src="./public/hero/5.jpg" alt=""><img src="./public/hero/6.jpg" alt="">
-      <img src="./public/hero/7.jpg" alt=""><img src="./public/hero/8.jpg" alt="">
-    </section>
-
-    <!-- NFT Preview -->
-    <section class="card mt">
-      <div class="section-title" id="t-nft-title">NFT Preview</div>
-      <div class="grid4" id="nft-grid">
-        <img src="./public/nft-preview/1.jpg" alt=""><img src="./public/nft-preview/2.jpg" alt="">
-        <img src="./public/nft-preview/3.jpg" alt=""><img src="./public/nft-preview/4.jpg" alt="">
-        <img src="./public/nft-preview/5.jpg" alt=""><img src="./public/nft-preview/6.jpg" alt="">
-        <img src="./public/nft-preview/7.jpg" alt=""><img src="./public/nft-preview/8.jpg" alt="">
-      </div>
-      <div class="muted" id="nft-note">Upload 1..8.jpg (1600×900) to /public/nft-preview/</div>
-    </section>
-
     <!-- Tokenomics -->
-    <section class="card mt">
-      <div class="section-title" id="section_tokenomics">Tokenomics</div>
-      <div class="row">
-        <canvas id="donut" width="300" height="300"></canvas>
-        <div>
-          <ul class="legend" id="legend"></ul>
-          <div class="muted" id="caps"></div>
-          <button id="btn-pinksale" class="btn mt">Pinksale (coming soon)</button>
-        </div>
-      </div>
+    <section class="card">
+      <div class="section-title">Tokenomics</div>
+      <canvas id="donut" width="300" height="300"></canvas>
+      <ul id="legend"></ul>
+      <div id="caps" class="muted"></div>
+      <div id="rates" class="muted"></div>
+      <button id="btn-pinksale" class="btn" disabled>Pinksale (coming soon)</button>
     </section>
 
-    <!-- Presale countdown -->
-    <section class="card mt">
+    <!-- Countdown -->
+    <section class="card">
       <div class="section-title">Presale Countdown</div>
-      <div class="count" id="countdown">—</div>
-      <div class="muted" id="countdown-range">—</div>
+      <div id="countdown" style="font-weight:800;font-size:1.2rem">—</div>
+      <div id="countdown-range" class="muted">—</div>
     </section>
 
     <!-- Whitepaper -->
-    <section class="card mt">
+    <section class="card">
       <div class="section-title">Whitepaper</div>
-      <div class="downloads">
-        <!-- 모두 상대 경로(루트/whitepaper/*.pdf). CSP가 다운로드 차단시 새 탭이 열리고 저장 안내 -->
-        <a class="link" href="./whitepaper/whitepaper-en.pdf" target="_blank" rel="noopener">EN</a>
-        <a class="link" href="./whitepaper/whitepaper-ko.pdf" target="_blank" rel="noopener">KO</a>
-        <a class="link" href="./whitepaper/whitepaper-ja.pdf" target="_blank" rel="noopener">JA</a>
-        <a class="link" href="./whitepaper/whitepaper-zh.pdf" target="_blank" rel="noopener">ZH</a>
-        <a class="link" href="./whitepaper/whitepaper-es.pdf" target="_blank" rel="noopener">ES</a>
-        <a class="link" href="./whitepaper/whitepaper-de.pdf" target="_blank" rel="noopener">DE</a>
-        <a class="link" href="./whitepaper/whitepaper-pt.pdf" target="_blank" rel="noopener">PT</a>
-        <a class="link" href="./whitepaper/whitepaper-it.pdf" target="_blank" rel="noopener">IT</a>
+      <div>
+        <a class="btn" href="./whitepaper/whitepaper-en.pdf" download>EN</a>
+        <a class="btn" href="./whitepaper/whitepaper-ko.pdf" download>KO</a>
+        <a class="btn" href="./whitepaper/whitepaper-ja.pdf" download>JA</a>
+        <a class="btn" href="./whitepaper/whitepaper-zh.pdf" download>ZH</a>
       </div>
-      <div class="muted">※ 다운로드가 막히면 새 탭 → 브라우저 메뉴 “다른 이름으로 저장”.</div>
+      <div class="muted">※ 다운로드가 막히면 새 탭에서 열림 → “다른 이름으로 저장”.</div>
     </section>
 
-    <!-- Addresses (+ BscScan 링크) -->
-    <section class="card mt addr">
+    <!-- Addresses -->
+    <section class="card addr">
       <div class="section-title">Addresses</div>
       <table id="addr-table"></table>
     </section>
-
-    <!-- About -->
-    <section class="card mt about">
-      <div class="section-title">About FlexCoin</div>
-      <div class="about-grid">
-        <div>
-          <h3>한국어</h3>
-          <p>FlexCoin은 단순한 밈코인이 아닙니다. FlexCoin은 라이프스타일이자 태도이며, “투명성은 곧 신뢰이고, 신뢰는 곧 가치”라는 철학에서 시작되었습니다.</p>
-          <p><b>“Flex는 과시가 아니라, 당신의 삶을 스스로 증명하는 것이다.”</b><br/>우리는 숨기지 않습니다. 우리는 속이지 않습니다. 우리는 모든 것을 공개합니다.</p>
-          <ul>
-            <li>팀 신원 KYC 인증</li>
-            <li>스마트 컨트랙트 감사(Audit)</li>
-            <li>유동성 LP Lock + 소유권 포기(Ownership Renounce)</li>
-            <li>Tokenomics 및 지갑 배분 100% 공개</li>
-            <li>모든 항목은 온체인으로 검증 가능</li>
-          </ul>
-        </div>
-        <div>
-          <h3>English</h3>
-          <p>FlexCoin isn’t just a memecoin. It’s a mindset and a lifestyle built on one belief: transparency breeds trust, and trust creates value.</p>
-          <p><b>“Flexing isn’t showing off — it’s owning your story.”</b><br/>We don’t hide. We don’t mislead. We build with transparency.</p>
-          <ul>
-            <li>Team KYC Verified</li>
-            <li>Smart Contract Audit Completed</li>
-            <li>LP Locked + Ownership Renounced</li>
-            <li>100% Transparent Tokenomics & Wallet Allocation</li>
-            <li>All items are verifiable on-chain</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <div class="footer">Flexcoin V5.9 • runtime JSON • static GitHub Pages</div>
   </div>
 
-  <!-- Lightbox -->
-  <div id="lightbox"><img alt=""></div>
-
   <script>
-    /* ===== Helpers ===== */
-    const $ = (q, r=document)=>r.querySelector(q);
-    const $$ = (q, r=document)=>[...r.querySelectorAll(q)];
-    const fetchJSON = async (p) => (await fetch(p,{cache:'no-cache'})).json();
+    const $ = (q)=>document.querySelector(q);
+    const fetchJSON = async (p)=> (await fetch(p,{cache:'no-cache'})).json();
 
-    /* ===== Lang ===== */
-    const i18nEls = {
-      nftTitle: $('#t-nft-title'),
-      nftNote:  $('#nft-note'),
-      tokenomicsTitle: $('#section_tokenomics'),
-    };
-    async function applyLang(lang){
-      try{
-        const m = await fetchJSON(`./public/i18n/${lang}.json`);
-        i18nEls.nftTitle.textContent = m["t-nft-title"] ?? "NFT Preview";
-        i18nEls.nftNote.textContent  = m["nft.note"] ?? i18nEls.nftNote.textContent;
-        $('#section_tokenomics').textContent = m["section_tokenomics"] ?? "Tokenomics";
-      }catch(e){ console.warn('i18n load fail', e) }
-      localStorage.setItem('lang', lang);
-      $('#lang-en').classList.toggle('active', lang==='en');
-      $('#lang-ko').classList.toggle('active', lang==='ko');
+    /* Links + BscScan */
+    async function initLinks(){
+      const links=await fetchJSON('./public/config/links.json');
+      const set=(sel,url)=>{const b=$(sel); if(url){b.href=url;b.disabled=false}else{b.disabled=true}};
+      set('#btn-x',links.x_url);
+      set('#btn-tg',links.tg_url);
+      set('#btn-pcs',links.pancakeswap_url);
+      const psBtn=$('#btn-pinksale');
+      if(links.pinksale_url){ psBtn.disabled=false; psBtn.onclick=()=>window.open(links.pinksale_url,'_blank','noopener'); }
+
+      const addr=await fetchJSON('./public/config/addresses.json');
+      const toScan=(a)=>a?`https://bscscan.com/address/${a}`:'';
+      const rows=[['Token',addr.token],['Team/Lock',addr.team_lock],['Marketing',addr.marketing],
+                  ['Presale',addr.presale],['Burn',addr.burn],['User',addr.user]];
+      $('#addr-table').innerHTML = rows
+        .map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||'—'}</a></td></tr>`).join('');
     }
-    $('#lang-en').onclick = ()=>applyLang('en');
-    $('#lang-ko').onclick = ()=>applyLang('ko');
-    applyLang(localStorage.getItem('lang')||'en');
 
-    /* ===== Hero rotator ===== */
-    $$('.hero-rot img').forEach(img=>{
-      img.addEventListener('click', ()=> $('#hero-main').src = img.src);
-    });
-
-    /* ===== Lightbox ===== */
-    const lb = $('#lightbox'); const lbImg = $('#lightbox img');
-    function bindLightbox(containerSel){
-      $$(containerSel+' img').forEach(el=>{
-        el.addEventListener('click', ()=>{ lbImg.src = el.src; lb.style.display='grid'; })
-      });
-    }
-    bindLightbox('.grid4'); bindLightbox('.hero-rot');
-    lb.addEventListener('click', ()=>{ lb.style.display='none'; lbImg.src=''; });
-
-    /* ===== Links & Addresses ===== */
-    async function wireRuntime(){
-      try{
-        const links = await fetchJSON('./public/config/links.json');
-        const pcs = $('#btn-pcs'), tg = $('#btn-tg'), x = $('#btn-x'), ps = $('#btn-pinksale');
-
-        const setBtn = (btn, url, soonLabel)=>{
-          if(url && /^https?:\/\//.test(url)){ btn.href=url; btn.target='_blank'; btn.rel='noopener'; btn.disabled=false; }
-          else { btn.removeAttribute('href'); btn.disabled=true; if(soonLabel) btn.textContent=soonLabel; }
-        };
-        setBtn(x,  links.x_url);
-        setBtn(tg, links.tg_url);
-        setBtn(pcs, links.pancakeswap_url, 'Buy on PancakeSwap (soon)');
-        setBtn(ps, links.pinksale_url, 'Pinksale (coming soon)');
-
-        const addr = await fetchJSON('./public/config/addresses.json');
-        const toScan = (a)=> a ? `https://bscscan.com/address/${a}` : '';
-        const rows = [
-          ['Token', addr.token],
-          ['Team/Lock', addr.team_lock],
-          ['Marketing', addr.marketing],
-          ['Presale', addr.presale],
-          ['Burn', addr.burn],
-          ['User', addr.user]
-        ];
-        const tbl = $('#addr-table');
-        tbl.innerHTML = rows.map(([k,v])=>{
-          const link = v ? `<a href="${toScan(v)}" target="_blank" rel="noopener">${v}</a>` : '—';
-          return `<tr><td>${k}</td><td>${link}</td></tr>`;
-        }).join('');
-      }catch(e){ console.warn('links/addresses load fail', e) }
-    }
-    wireRuntime();
-
-    /* ===== Tokenomics donut ===== */
-    function drawDonut(ctx, parts, colors){
-      const sum = parts.reduce((a,b)=>a+b,0) || 1;
-      let a0 = -Math.PI/2;
-      parts.forEach((v,i)=>{
-        const a1 = a0 + 2*Math.PI*(v/sum);
-        ctx.beginPath(); ctx.moveTo(150,150);
-        ctx.arc(150,150,140,a0,a1); ctx.closePath();
-        ctx.fillStyle = colors[i]; ctx.fill();
-        a0 = a1;
-      });
-      ctx.globalCompositeOperation='destination-out';
-      ctx.beginPath(); ctx.arc(150,150,80,0,2*Math.PI); ctx.fill();
-      ctx.globalCompositeOperation='source-over';
-    }
-    async function renderTokenomics(){
-      // 당신 레포의 allocations.json 형식(중첩)과 평평한 형식 둘 다 지원
-      let lp=54,presale=20,team=15,marketing=10,burn=1,softcap='—',hardcap='—';
-      try{
-        const j = await fetchJSON('./public/config/allocations.json');
-        if (j.tokenomics){ // 중첩형 (현재 레포)
-          const t=j.tokenomics||{};
-          lp=t.lp??lp; presale=t.presale??presale; team=t.team??team; marketing=t.marketing??marketing; burn=t.burn??burn;
-          const p=j.presale||{};
-          softcap = (p.softcap_bnb!=null)? `${p.softcap_bnb} BNB` : softcap;
-          hardcap = (p.hardcap_bnb!=null)? `${p.hardcap_bnb} BNB` : hardcap;
-        }else{ // 평평한 형식(대체)
-          lp=j.lp??lp; presale=j.presale??presale; team=j.team??team; marketing=j.marketing??marketing; burn=j.burn??burn;
-          softcap=j.softcap??softcap; hardcap=j.hardcap??hardcap;
-        }
-      }catch(_){}
-      const nums=[lp,presale,team,marketing,burn].map(n=>Number(n)||0);
+    /* Donut + Caps + Rate (allocations.json: tokenomics + presale) */
+    async function initTokenomics(){
+      const j=await fetchJSON('./public/config/allocations.json');
+      const t=j.tokenomics||j;
+      const p=j.presale||{};
+      const vals=[t.lp,t.presale,t.team,t.marketing,t.burn].map(Number);
       const ctx=$('#donut').getContext('2d');
-      drawDonut(ctx, nums, ['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b']);
-      const labels=['LP','Presale','Team','Marketing','Burn'];
-      $('#legend').innerHTML = labels.map((n,i)=>`
-        <li><span class="dot" style="background:${['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'][i]}"></span>
-          ${n}: <b>${nums[i]}%</b></li>`).join('');
-      $('#caps').innerHTML = `Softcap: <b>${softcap}</b> / Hardcap: <b>${hardcap}</b>`;
-    }
-    renderTokenomics();
+      const cols=['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'];
+      let start=-Math.PI/2;
+      vals.forEach((v,i)=>{
+        const end=start+2*Math.PI*(v/100);
+        ctx.beginPath();ctx.moveTo(150,150);ctx.arc(150,150,140,start,end);ctx.closePath();
+        ctx.fillStyle=cols[i];ctx.fill();start=end;
+      });
+      ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(150,150,80,0,2*Math.PI);ctx.fill();
+      ctx.globalCompositeOperation='source-over';
 
-    /* ===== Presale countdown ===== */
-    function fmt(n){ return String(n).padStart(2,'0'); }
-    let timer;
-    async function startCountdown(){
-      try{
-        const p = await fetchJSON('./public/config/presale.json');
-        // 두 형식 지원: {start_iso/end_iso} 또는 {timezone,presale_start,presale_end(KST)}
-        let start,end;
-        if (p.start_iso && p.end_iso){
-          start = new Date(p.start_iso); end = new Date(p.end_iso);
-        }else{
-          // presale_start "2025-12-01T21:00:00" (KST) -> UTC 변환
-          const toUtc = (kst)=> new Date(kst.replace(' ','T')+':00').getTime() - (9*3600000);
-          start = new Date(toUtc(p.presale_start));
-          end   = new Date(toUtc(p.presale_end));
-        }
-        $('#countdown-range').textContent = `${start.toLocaleString()} → ${end.toLocaleString()}`;
-
-        clearInterval(timer);
-        timer = setInterval(()=>{
-          const now = new Date();
-          let t = (now < start) ? (start-now) : (end-now);
-          if(t <= 0){ $('#countdown').textContent = '—'; clearInterval(timer); return; }
-          const d = Math.floor(t/86400000); t%=86400000;
-          const h = Math.floor(t/3600000);  t%=3600000;
-          const m = Math.floor(t/60000);    t%=60000;
-          const s = Math.floor(t/1000);
-          $('#countdown').textContent = `${d}d ${fmt(h)}:${fmt(m)}:${fmt(s)}`;
-        }, 1000);
-      }catch(e){
-        console.warn('countdown fail', e); $('#countdown').textContent='—';
-      }
+      $('#legend').innerHTML=`<li>LP ${t.lp}% • Presale ${t.presale}% • Team ${t.team}% • Marketing ${t.marketing}% • Burn ${t.burn}%</li>`;
+      $('#caps').textContent=`Softcap: ${p.softcap_bnb??'—'} BNB / Hardcap: ${p.hardcap_bnb??'—'} BNB`;
+      const rate=(n)=> (Number(n)||0).toLocaleString();
+      $('#rates').textContent=`Presale Rate: 1 BNB = ${rate(p.rate_flex_per_bnb)} FLEX • Listing Rate: 1 BNB = ${rate(p.listing_rate_flex_per_bnb)} FLEX`;
     }
-    startCountdown();
+
+    /* Countdown (presale.json: timezone + presale_start/end) */
+    async function initCountdown(){
+      const p=await fetchJSON('./public/config/presale.json');
+      const tz = p.timezone || 'Asia/Seoul';
+      // 문자열 그대로 Date로 만들기 + 타임존 보정(간단히 +09:00 기본)
+      const z = (tz.includes('Seoul')||tz.includes('Tokyo'))?'+09:00':'';
+      const s=new Date((p.presale_start||p.start_iso)+z);
+      const e=new Date((p.presale_end||p.end_iso)+z);
+      const range=$('#countdown-range'),count=$('#countdown');
+      range.textContent=`${s.toLocaleString()} → ${e.toLocaleString()}`;
+      const pad=(n)=>String(n).padStart(2,'0');
+      setInterval(()=>{
+        const now=new Date();
+        let t = (now < s) ? (s-now) : (e-now);
+        if(t<=0){ count.textContent='—'; return; }
+        const d=Math.floor(t/86400000); t%=86400000;
+        const h=Math.floor(t/3600000);  t%=3600000;
+        const m=Math.floor(t/60000);    t%=60000;
+        const s2=Math.floor(t/1000);
+        count.textContent = `${d}d ${pad(h)}:${pad(m)}:${pad(s2)}`;
+      },1000);
+    }
+
+    (async()=>{ await initLinks(); await initTokenomics(); await initCountdown(); })();
   </script>
 </body>
 </html>
