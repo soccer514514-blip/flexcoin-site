@@ -1,0 +1,31 @@
+name: Make ZIP (no images)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  make-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare folders
+        run: |
+          mkdir -p public/hero public/action public/nft-preview public/whitepaper
+          touch public/hero/.keep public/action/.keep public/nft-preview/.keep public/whitepaper/.keep
+
+      - name: Create ZIP excluding images & heavy assets
+        run: |
+          zip -r Flexcoin_v5.9_AllInOne_NoAssets.zip . \
+            -x "*/node_modules/*" "*/dist/*" \
+            "public/hero/*.jpg" "public/hero/*.png" \
+            "public/action/*.jpg" "public/action/*.png" \
+            "public/nft-preview/*.jpg" "public/nft-preview/*.png" \
+            "public/whitepaper/*.pdf"
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flexcoin_v5.9_AllInOne_NoAssets
+          path: Flexcoin_v5.9_AllInOne_NoAssets.zip
