@@ -138,7 +138,6 @@
     <section class="card mt">
       <div class="section-title">Whitepaper</div>
       <div class="downloads">
-        <!-- 상대경로: 이 index.html과 같은 폴더의 /whitepaper/ 를 참조 -->
         <a class="link" href="./whitepaper/whitepaper-en.pdf" download>EN</a>
         <a class="link" href="./whitepaper/whitepaper-ko.pdf" download>KO</a>
         <a class="link" href="./whitepaper/whitepaper-ja.pdf" download>JA</a>
@@ -169,7 +168,7 @@
     const $$ = (q, r=document)=>[...r.querySelectorAll(q)];
     const fetchJSON = async (p) => (await fetch(p,{cache:'no-cache'})).json();
 
-    /* ===== Lang (runtime i18n from /public/i18n/*.json) ===== */
+    /* ===== Lang (runtime i18n) ===== */
     const i18nEls = {
       nftTitle: $('#t-nft-title'),
       nftNote:  $('#nft-note'),
@@ -190,12 +189,12 @@
     $('#lang-ko').onclick = ()=>applyLang('ko');
     applyLang(localStorage.getItem('lang')||'en');
 
-    /* ===== Hero rotator (click thumbnail => main) ===== */
+    /* ===== Hero rotator ===== */
     $$('.hero-rot img').forEach(img=>{
       img.addEventListener('click', ()=> $('#hero-main').src = img.src);
     });
 
-    /* ===== Lightbox (action + nft) ===== */
+    /* ===== Lightbox ===== */
     const lb = $('#lightbox'); const lbImg = $('#lightbox img');
     function bindLightbox(containerSel){
       $$(containerSel+' img').forEach(el=>{
@@ -206,14 +205,14 @@
     bindLightbox('.hero-rot');         // Hero thumbs
     lb.addEventListener('click', ()=>{ lb.style.display='none'; lbImg.src=''; });
 
-    /* ===== Links & Addresses from runtime JSON ===== */
+    /* ===== Links & Addresses (runtime JSON) ===== */
     async function wireRuntime(){
       try{
         const links = await fetchJSON('./public/config/links.json');
         const pcs = $('#btn-pcs'), tg = $('#btn-tg'), x = $('#btn-x'), ps = $('#btn-pinksale');
 
         const setBtn = (btn, url, labelWhenMissing)=>{
-          if(url && /^https?:\/\//.test(url)){ btn.href=url; btn.target='_blank'; btn.rel='noopener'; btn.disabled=false; btn.textContent = btn.textContent; }
+          if(url && /^https?:\/\//.test(url)){ btn.href=url; btn.target='_blank'; btn.rel='noopener'; btn.disabled=false; }
           else { btn.removeAttribute('href'); btn.disabled=true; if(labelWhenMissing) btn.textContent=labelWhenMissing; }
         };
         setBtn(x,  links.x_url);
@@ -235,7 +234,7 @@
     }
     wireRuntime();
 
-    /* ===== Tokenomics donut from runtime JSON ===== */
+    /* ===== Tokenomics donut ===== */
     function drawDonut(ctx, parts, colors){
       const sum = parts.reduce((a,b)=>a+b,0) || 1;
       let a0 = -Math.PI/2;
@@ -246,7 +245,6 @@
         ctx.fillStyle = colors[i]; ctx.fill();
         a0 = a1;
       });
-      // hole
       ctx.globalCompositeOperation='destination-out';
       ctx.beginPath(); ctx.arc(150,150,80,0,2*Math.PI); ctx.fill();
       ctx.globalCompositeOperation='source-over';
@@ -261,26 +259,23 @@
       const nums = [conf.lp, conf.presale, conf.team, conf.marketing, conf.burn].map(x=>Number(x)||0);
       const ctx = $('#donut').getContext('2d');
       drawDonut(ctx, nums, ['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b']);
-
       const labels = ['LP','Presale','Team','Marketing','Burn'];
       $('#legend').innerHTML = labels.map((n,i)=>`
         <li><span class="dot" style="background:${['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'][i]}"></span>
           ${n}: <b>${nums[i]}%</b></li>`).join('');
-
       $('#caps').innerHTML = `Softcap: <b>${conf.softcap}</b> / Hardcap: <b>${conf.hardcap}</b>`;
     }
     renderTokenomics();
 
-    /* ===== Presale countdown from runtime JSON ===== */
+    /* ===== Presale countdown ===== */
     function fmt(n){ return String(n).padStart(2,'0'); }
     let timer;
     async function startCountdown(){
       try{
         const p = await fetchJSON('./public/config/presale.json');
-        const start = new Date(p.start_iso);   // ISO(UTC/Z) 권장
+        const start = new Date(p.start_iso);
         const end   = new Date(p.end_iso);
         $('#countdown-range').textContent = `${start.toLocaleString()} → ${end.toLocaleString()}`;
-
         clearInterval(timer);
         timer = setInterval(()=>{
           const now = new Date();
@@ -292,9 +287,7 @@
           const s = Math.floor(t/1000);
           $('#countdown').textContent = `${d}d ${fmt(h)}:${fmt(m)}:${fmt(s)}`;
         }, 1000);
-      }catch(e){
-        $('#countdown').textContent='—';
-      }
+      }catch(e){ $('#countdown').textContent='—'; }
     }
     startCountdown();
   </script>
