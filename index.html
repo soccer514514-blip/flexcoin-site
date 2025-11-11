@@ -13,7 +13,8 @@
     html,body{margin:0;background:var(--bg);color:var(--text);
       font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial}
     a{color:inherit}
-    /* Top */
+
+    /* Top bar */
     .topbar{display:flex;align-items:center;gap:.5rem;padding:.8rem 1rem;
       background:linear-gradient(180deg,rgba(0,0,0,.45),transparent);
       backdrop-filter:blur(6px);position:sticky;top:0;z-index:10}
@@ -25,36 +26,46 @@
     .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid var(--border)}
     .lang button{background:var(--chip);padding:.5rem .75rem;border:0;color:var(--text);cursor:pointer}
     .lang button.active{background:var(--gold);color:#000;font-weight:800}
+
     /* Layout */
     .wrap{max-width:1100px;margin:0 auto;padding:1rem}
     .card{background:var(--card);border:1px solid var(--border);
       border-radius:18px;padding:16px;margin-top:1rem}
     .section-title{font-size:1.4rem;font-weight:900;margin:.4rem 0 1rem;color:var(--gold)}
     .muted{color:var(--muted);font-size:.95rem}
+
     /* Hero */
     .hero{background:#0f0e0c;border-radius:18px;overflow:hidden;border:1px solid var(--border)}
     .hero img{display:block;width:100%;height:auto}
+
     /* Tokenomics */
     .tok-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px}
     canvas{background:#0f0e0c;border-radius:14px}
     ul.legend{list-style:none;padding:0;margin:0}
     ul.legend li{margin:.2rem 0}
     #caps,#rates{margin-top:.35rem}
-    #btn-pinksale{margin-top:12px;display:inline-block} /* 겹침 해결 */
+    #btn-pinksale{margin-top:12px;display:inline-block} /* 버튼 겹침 해결 */
+
     /* Countdown box */
     .countbox{border:1px solid var(--border);border-radius:14px;padding:14px;
       background:linear-gradient(180deg,rgba(255,255,255,.02),transparent)}
     #countdown{font-weight:900;font-size:1.35rem}
+
     /* Whitepaper */
     .wp-grid{display:flex;flex-wrap:wrap;gap:.5rem}
     .wp-note{margin-top:.5rem}
-    /* Tables */
+
+    /* Addresses */
     .addr table{width:100%;border-collapse:collapse;font-size:.92rem}
     .addr td{padding:.45rem .55rem;border-bottom:1px dashed var(--border);word-break:break-all}
     .addr a{color:var(--gold);text-decoration:none}
+
     /* Galleries */
     .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .grid img{width:100%;height:0;padding-bottom:56.25%;object-fit:cover;border-radius:12px;border:1px solid var(--border);background:#0f0e0c}
+    /* ✅ 핵심 수정: 이미지가 보이도록 aspect-ratio 사용 */
+    .grid img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;
+      border-radius:12px;border:1px solid var(--border);background:#0f0e0c}
+
     @media(max-width:900px){
       .tok-wrap{grid-template-columns:1fr}
       .grid{grid-template-columns:repeat(2,1fr)}
@@ -76,7 +87,7 @@
   </div>
 
   <div class="wrap">
-    <!-- HERO (kept) -->
+    <!-- HERO -->
     <section class="card hero">
       <img id="hero-img" src="/public/hero/main.jpg" alt="Flexcoin hero">
     </section>
@@ -132,7 +143,7 @@
       <div class="muted wp-note">※ 다운로드가 막히면 새 탭에서 열림 → “다른 이름으로 저장”.</div>
     </section>
 
-    <!-- Addresses (BscScan linked) -->
+    <!-- Addresses -->
     <section class="card addr">
       <div class="section-title">Addresses</div>
       <table id="addr-table"></table>
@@ -143,7 +154,7 @@
     const $ = (q)=>document.querySelector(q);
     const fetchJSON = async (p)=> (await fetch(p,{cache:'no-cache'})).json();
 
-    /* Hero with fallback */
+    /* HERO Fallback */
     (function(){
       const img=$('#hero-img');
       img.onerror=()=>{ img.onerror=null; img.src='/public/hero/1.jpg'; };
@@ -151,11 +162,11 @@
 
     /* Links + BscScan */
     async function initLinks(){
-      const links=await fetchJSON('/public/config/links.json');
-      const set=(id,url)=>{const b=$(id); if(url){b.href=url; b.disabled=false;} else {b.disabled=true;}};
+      const links=await fetchJSON('/public/config/links.json').catch(()=>({}));
+      const set=(id,url)=>{const b=$(id); if(url){b.href=url; b.disabled=false;} else {b.disabled=true;}};      
       set('#btn-x',links.x_url); set('#btn-tg',links.tg_url); set('#btn-pcs',links.pancakeswap_url);
 
-      const addr=await fetchJSON('/public/config/addresses.json');
+      const addr=await fetchJSON('/public/config/addresses.json').catch(()=>({}));
       const toScan=(a)=>a?`https://bscscan.com/address/${a}`:'';
       const rows=[['Token',addr.token],['Team/Lock',addr.team_lock],['Marketing',addr.marketing],
                   ['Presale',addr.presale],['Burn',addr.burn],['User',addr.user]];
@@ -163,109 +174,101 @@
         `<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`).join('');
     }
 
-    /* Donut + Caps + Rates */
+    /* Tokenomics + Caps + Rates */
     async function initTokenomics(){
-      const j=await fetchJSON('/public/config/allocations.json');
-      const t=j.tokenomics||j;
+      const j=await fetchJSON('/public/config/allocations.json').catch(()=>({}));
+      const t=j.tokenomics||{lp:54,presale:20,team:15,marketing:10,burn:1};
       const ctx=$('#donut').getContext('2d');
       const vals=[t.lp,t.presale,t.team,t.marketing,t.burn];
       const names=['LP','Presale','Team','Marketing','Burn'];
       const cols=['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'];
-      let start=-Math.PI/2;
+
       ctx.clearRect(0,0,300,300);
-      vals.forEach((v,i)=>{
-        const a=start+2*Math.PI*(v/100);
+      let start=-Math.PI/2;
+      vals.forEach((v,i)=>{ const a=start+2*Math.PI*(v/100);
         ctx.beginPath();ctx.moveTo(150,150);ctx.arc(150,150,140,start,a);ctx.closePath();
-        ctx.fillStyle=cols[i];ctx.fill();start=a;
-      });
+        ctx.fillStyle=cols[i];ctx.fill();start=a; });
       ctx.globalCompositeOperation='destination-out';
       ctx.beginPath();ctx.arc(150,150,82,0,2*Math.PI);ctx.fill();
       ctx.globalCompositeOperation='source-over';
 
-      $('#legend').innerHTML =
-        names.map((n,i)=>`<li>• ${n} ${vals[i]}%</li>`).join(' · ');
+      $('#legend').innerHTML = names.map((n,i)=>`<li>• ${n} ${vals[i]}%</li>`).join(' · ');
 
       const p=j.presale||{};
-      const soft= p.softcap_bnb ?? '—', hard= p.hardcap_bnb ?? '—';
+      const soft = p.softcap_bnb ?? '—';
+      const hard = p.hardcap_bnb ?? '—';
       $('#caps').textContent=`Softcap: ${soft} BNB / Hardcap: ${hard} BNB`;
 
-      // 숫자 안전 처리 (문자면 숫자처럼 보이게)
       const pres = Number(p.rate_flex_per_bnb||0);
       const list = Number(p.listing_rate_flex_per_bnb||0);
-      const fmt = (n)=> (Number.isFinite(n) && n>0) ? n.toLocaleString() : '—';
+      const fmt = (n)=> (Number.isFinite(n)&&n>0) ? n.toLocaleString() : '—';
       $('#rates').textContent=`Presale Rate: 1 BNB = ${fmt(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmt(list)} FLEX`;
 
-      // PinkSale URL 있으면 활성화
+      // PinkSale 버튼 활성화
       const links = await fetchJSON('/public/config/links.json').catch(()=>({}));
+      const psUrl = links.pinksale_url;
       const psBtn = $('#btn-pinksale');
-      const psUrl = (links && links.pinksale_url)||'';
-      if(psUrl){ psBtn.textContent = 'Open Pinksale'; psBtn.disabled = false; psBtn.onclick=()=>window.open(psUrl,'_blank'); }
+      if(psUrl){ psBtn.textContent='Open Pinksale'; psBtn.disabled=false; psBtn.onclick=()=>window.open(psUrl,'_blank'); }
     }
 
-    /* Countdown — presale.json 우선, 없거나 비정상이면 기본값(요청값) 사용 */
+    /* Countdown — 24시간 표기(21:00:00) */
     async function initCountdown(){
-      let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00'; // 요청값
+      let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00'; // 기본값
       try{
         const p=await fetchJSON('/public/config/presale.json');
         if(p && (p.presale_start||p.start_kst)){
-          // 양식 호환: presale_start(현행) 또는 start_kst(이전)
-          sISO = (p.presale_start||p.start_kst)+ (p.presale_start?.includes('+')?'':'+09:00');
-          eISO = (p.presale_end||p.end_kst)+ (p.presale_end?.includes('+')?'':'+09:00');
+          sISO=(p.presale_start||p.start_kst)+(String(p.presale_start).includes('+')?'':'+09:00');
+          eISO=(p.presale_end||p.end_kst)+(String(p.presale_end).includes('+')?'':'+09:00');
         }
-      }catch(e){}
+      }catch(_){}
       const s=new Date(sISO), e=new Date(eISO);
       const range=$('#countdown-range'),count=$('#countdown');
-      range.textContent=`${s.toLocaleString()} → ${e.toLocaleString()}`;
+      const z=(n)=>String(n).padStart(2,'0');
+      const fmt=(d)=>`${d.getFullYear()}. ${z(d.getMonth()+1)}. ${z(d.getDate())}. ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;
+      range.textContent=`${fmt(s)} → ${fmt(e)}`;
+
       const tick=()=>{
         const now=new Date(); let t=s-now; if(t<0) t=e-now; if(t<=0){ count.textContent='—'; return; }
         const d=Math.floor(t/86400000); t%=86400000;
         const h=Math.floor(t/3600000); t%=3600000;
         const m=Math.floor(t/60000); t%=60000;
         const s2=Math.floor(t/1000);
-        const pad=(x)=>String(x).padStart(2,'0');
-        count.textContent=`${d}d ${pad(h)}:${pad(m)}:${pad(s2)}`;
+        count.textContent=`${d}d ${z(h)}:${z(m)}:${z(s2)}`;
       };
       tick(); setInterval(tick,1000);
     }
 
-    /* Galleries: action & nft (존재하는 파일만 노출) */
+    /* Galleries: 존재하는 파일만 노출 */
     function tryImg(path){
       return new Promise(resolve=>{
         const i=new Image(); i.onload=()=>resolve(path); i.onerror=()=>resolve(null); i.src=path;
       });
     }
     async function loadGrid(prefix, targetId){
-      const candidates = Array.from({length:8},(_,i)=>`${prefix}/${i+1}.jpg`);
-      const results = await Promise.all(candidates.map(tryImg));
-      const ok = results.filter(Boolean);
-      $(targetId).innerHTML = ok.map(src=>`<img src="${src}" alt="">`).join('') || '<div class="muted">Images coming soon.</div>';
+      const list = Array.from({length:8},(_,i)=>`${prefix}/${i+1}.jpg`);
+      const ok = (await Promise.all(list.map(tryImg))).filter(Boolean);
+      $(targetId).innerHTML = ok.map(src=>`<img src="${src}" alt="">`).join('')
+        || '<div class="muted">Images coming soon.</div>';
     }
 
-    /* i18n EN/KR 토글 (간단 치환) */
+    /* 간단 EN/KR 토글 (텍스트 키 기반) */
     const i18n = { current:'en', dict:{} };
     async function loadI18n(lang){
       if(!i18n.dict[lang]){
-        try{ i18n.dict[lang] = await fetchJSON(`/public/i18n/${lang}.json`); }
-        catch{ i18n.dict[lang] = {}; }
+        i18n.dict[lang] = await fetchJSON(`/public/i18n/${lang}.json`).catch(()=>({}));
       }
       const d = i18n.dict[lang] || {};
       document.querySelectorAll('[data-i18n]').forEach(el=>{
         const k = el.getAttribute('data-i18n');
         if(d[k]) el.textContent = d[k];
       });
-      // 브랜드 문구는 고정(요청문구 유지)
+      // 브랜드 문구는 고정
       $('#brand').textContent = '$FLEX is your life. Your life is FLEX.';
     }
     function bindLang(){
       const en=$('#lang-en'), ko=$('#lang-ko');
-      const set=(lang)=>{
-        i18n.current=lang;
-        en.classList.toggle('active', lang==='en');
-        ko.classList.toggle('active', lang==='ko');
-        loadI18n(lang);
-      };
-      en.onclick=()=>set('en'); ko.onclick=()=>set('ko');
-      set('en');
+      const set=(lang)=>{ i18n.current=lang; en.classList.toggle('active',lang==='en'); ko.classList.toggle('active',lang==='ko'); loadI18n(lang); };
+      en.onclick=()=>set('en'); ko.onclick=()=>set('ko'); set('en');
     }
 
     (async()=>{
