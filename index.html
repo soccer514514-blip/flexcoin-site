@@ -29,6 +29,7 @@
     #lightbox{display:none; position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.85); align-items:center; justify-content:center}
     #lightbox img{max-width:92vw;max-height:88vh;border-radius:16px}
   </style>
+  <link rel="stylesheet" href="/styles/trust.css">
 </head>
 <body>
   <!-- site top bar -->
@@ -44,6 +45,7 @@
   </div>
 
   <div class="wrap">
+    <div id="trust-transparency"></div>
     <h1>Flexcoin — $FLEX</h1>
     <img id="hero-img" alt="Hero" style="width:100%;border-radius:16px;display:block" />
 
@@ -202,5 +204,6 @@
       if (btn) btn.addEventListener("click", ()=> mintNft(1));
     });
   </script>
+  <script type="module" src="/src/trust.ts"></script>
 </body>
 </html>
