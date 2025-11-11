@@ -201,16 +201,16 @@
         el.addEventListener('click', ()=>{ lbImg.src = el.src; lb.style.display='grid'; })
       });
     }
-    bindLightbox('.grid4');            // NFT
-    bindLightbox('.hero-rot');         // Hero thumbs
+    bindLightbox('.grid4');      // NFT
+    bindLightbox('.hero-rot');   // Hero thumbs
     lb.addEventListener('click', ()=>{ lb.style.display='none'; lbImg.src=''; });
 
     /* ===== Links & Addresses (runtime JSON) ===== */
     async function wireRuntime(){
       try{
+        // links.json (네가 준 값으로 활성화/비활성 처리)
         const links = await fetchJSON('./public/config/links.json');
         const pcs = $('#btn-pcs'), tg = $('#btn-tg'), x = $('#btn-x'), ps = $('#btn-pinksale');
-
         const setBtn = (btn, url, labelWhenMissing)=>{
           if(url && /^https?:\/\//.test(url)){ btn.href=url; btn.target='_blank'; btn.rel='noopener'; btn.disabled=false; }
           else { btn.removeAttribute('href'); btn.disabled=true; if(labelWhenMissing) btn.textContent=labelWhenMissing; }
@@ -220,7 +220,8 @@
         setBtn(pcs, links.pancakeswap_url, 'Buy on PancakeSwap (soon)');
         setBtn(ps, links.pinksale_url, 'Pinksale (coming soon)');
 
-        const addr = await fetchJSON('./public/config/addresses.json');
+        // addresses.json
+        const addr = await fetchJSON('./public/config/addresses.json').catch(()=>({}));
         const rows = [
           ['Token', addr.token],
           ['Team/Lock', addr.team_lock],
@@ -234,7 +235,11 @@
     }
     wireRuntime();
 
-    /* ===== Tokenomics donut ===== */
+    /* ===== Tokenomics donut =====
+       - allocations.json이 두 가지 형태 모두 지원:
+         A) { "lp": 54, "presale": 20, ... }
+         B) { "tokenomics": { "lp": 54, "presale": 20, ... }, "presale": { ... } }
+    */
     function drawDonut(ctx, parts, colors){
       const sum = parts.reduce((a,b)=>a+b,0) || 1;
       let a0 = -Math.PI/2;
@@ -250,44 +255,68 @@
       ctx.globalCompositeOperation='source-over';
     }
     async function renderTokenomics(){
-      const def = { lp:54, presale:20, team:15, marketing:10, burn:1, softcap:'—', hardcap:'—' };
-      let conf = def;
+      const def = { lp:54, presale:20, team:15, marketing:10, burn:1 };
+      let tok = def, softcap='—', hardcap='—';
       try{
         const j = await fetchJSON('./public/config/allocations.json');
-        conf = { ...def, ...j };
+        if (j.tokenomics) tok = { ...def, ...j.tokenomics };
+        else tok = { ...def, ...j };
+        if (j.presale){
+          if (typeof j.presale.softcap_bnb !== 'undefined') softcap = `${j.presale.softcap_bnb} BNB`;
+          if (typeof j.presale.hardcap_bnb !== 'undefined') hardcap = `${j.presale.hardcap_bnb} BNB`;
+        } else {
+          softcap = j.softcap || softcap;
+          hardcap = j.hardcap || hardcap;
+        }
       }catch(_){}
-      const nums = [conf.lp, conf.presale, conf.team, conf.marketing, conf.burn].map(x=>Number(x)||0);
+      const nums = [tok.lp, tok.presale, tok.team, tok.marketing, tok.burn].map(x=>Number(x)||0);
       const ctx = $('#donut').getContext('2d');
       drawDonut(ctx, nums, ['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b']);
       const labels = ['LP','Presale','Team','Marketing','Burn'];
       $('#legend').innerHTML = labels.map((n,i)=>`
         <li><span class="dot" style="background:${['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'][i]}"></span>
           ${n}: <b>${nums[i]}%</b></li>`).join('');
-      $('#caps').innerHTML = `Softcap: <b>${conf.softcap}</b> / Hardcap: <b>${conf.hardcap}</b>`;
+      $('#caps').innerHTML = `Softcap: <b>${softcap}</b> / Hardcap: <b>${hardcap}</b>`;
     }
     renderTokenomics();
 
-    /* ===== Presale countdown ===== */
+    /* ===== Presale countdown =====
+       - 우선순위:
+         1) allocations.json.presale.start_kst/end_kst (KST ISO 또는 "YYYY-MM-DDTHH:mm:ss+09:00")
+         2) presale.json { start_iso, end_iso }
+    */
     function fmt(n){ return String(n).padStart(2,'0'); }
     let timer;
     async function startCountdown(){
+      let start=null, end=null;
       try{
-        const p = await fetchJSON('./public/config/presale.json');
-        const start = new Date(p.start_iso);
-        const end   = new Date(p.end_iso);
-        $('#countdown-range').textContent = `${start.toLocaleString()} → ${end.toLocaleString()}`;
-        clearInterval(timer);
-        timer = setInterval(()=>{
-          const now = new Date();
-          let t = (now < start) ? (start-now) : (end-now);
-          if(t <= 0){ $('#countdown').textContent = '—'; clearInterval(timer); return; }
-          const d = Math.floor(t/86400000); t%=86400000;
-          const h = Math.floor(t/3600000);  t%=3600000;
-          const m = Math.floor(t/60000);    t%=60000;
-          const s = Math.floor(t/1000);
-          $('#countdown').textContent = `${d}d ${fmt(h)}:${fmt(m)}:${fmt(s)}`;
-        }, 1000);
-      }catch(e){ $('#countdown').textContent='—'; }
+        const a = await fetchJSON('./public/config/allocations.json');
+        if (a.presale && a.presale.start_kst && a.presale.end_kst){
+          start = new Date(a.presale.start_kst); // 예: "2025-12-01T21:00:00+09:00"
+          end   = new Date(a.presale.end_kst);
+        }
+      }catch(_){}
+      if(!start || !end){
+        try{
+          const p = await fetchJSON('./public/config/presale.json');
+          start = new Date(p.start_iso); end = new Date(p.end_iso);
+        }catch(_){}
+      }
+      if(!start || !end){
+        $('#countdown').textContent='—'; $('#countdown-range').textContent='—'; return;
+      }
+      $('#countdown-range').textContent = `${start.toLocaleString()} → ${end.toLocaleString()}`;
+      clearInterval(timer);
+      timer = setInterval(()=>{
+        const now = new Date();
+        let t = (now < start) ? (start-now) : (end-now);
+        if(t <= 0){ $('#countdown').textContent = '—'; clearInterval(timer); return; }
+        const d = Math.floor(t/86400000); t%=86400000;
+        const h = Math.floor(t/3600000);  t%=3600000;
+        const m = Math.floor(t/60000);    t%=60000;
+        const s = Math.floor(t/1000);
+        $('#countdown').textContent = `${d}d ${fmt(h)}:${fmt(m)}:${fmt(s)}`;
+      }, 1000);
     }
     startCountdown();
   </script>
