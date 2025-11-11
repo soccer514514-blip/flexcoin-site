@@ -15,25 +15,39 @@
     a{color:inherit}
     .topbar{display:flex;align-items:center;gap:.5rem;padding:.8rem 1rem;
       background:linear-gradient(180deg,rgba(0,0,0,.45),transparent);
-      backdrop-filter:blur(6px);position:sticky;top:0;z-index:10;}
-    .brand{font-weight:700;color:var(--gold);}
+      backdrop-filter:blur(6px);position:sticky;top:0;z-index:20}
+    .brand{font-weight:800;color:var(--gold);line-height:1.2}
     .spacer{flex:1}
-    .btn{border:none;border-radius:.7rem;padding:.45rem .8rem;cursor:pointer;
-      text-decoration:none;background:var(--gold);color:#000;font-weight:700;}
+    .btn{border:none;border-radius:.7rem;padding:.55rem .9rem;cursor:pointer;
+      text-decoration:none;background:var(--gold);color:#000;font-weight:800;}
     .btn:disabled{opacity:.4;cursor:not-allowed}
     .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
-    .lang button{background:var(--chip);padding:.45rem .7rem;border:0;color:var(--text);cursor:pointer}
-    .lang button.active{background:var(--gold);color:#000;font-weight:700}
+    .lang button{background:var(--chip);padding:.5rem .7rem;border:0;color:var(--text);cursor:pointer}
+    .lang button.active{background:var(--gold);color:#000;font-weight:800}
     .wrap{max-width:1080px;margin:0 auto;padding:1rem}
     .card{background:var(--card);border:1px solid rgba(255,255,255,.06);
       border-radius:16px;padding:14px;margin-top:1rem}
-    .section-title{font-size:1.4rem;font-weight:800;margin:.4rem 0 1rem;color:var(--gold)}
+    .section-title{font-size:1.4rem;font-weight:900;margin:.4rem 0 1rem;color:var(--gold)}
     .muted{color:var(--muted);font-size:.9rem}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem}
+    .grid4 img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;cursor:pointer}
+    .hero{position:relative;border-radius:14px;overflow:hidden}
+    .hero img{width:100%;display:block}
+    .hero-rot{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.5rem}
+    .hero-rot img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;cursor:pointer;opacity:.9}
+    .hero-rot img:hover{opacity:1}
     canvas{background:#0f0e0c;border-radius:14px}
     .addr table{width:100%;border-collapse:collapse;font-size:.85rem}
-    .addr td{padding:.35rem .5rem;border-bottom:1px dashed rgba(255,255,255,.06);word-break:break-all}
+    .addr td{padding:.4rem .5rem;border-bottom:1px dashed rgba(255,255,255,.06);word-break:break-all}
     .addr a{color:var(--gold);text-decoration:none}
-    @media(max-width:820px){.addr td{font-size:.75rem}}
+    #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;place-items:center;z-index:30}
+    #lightbox img{max-width:92vw;max-height:88vh;border-radius:12px}
+    @media(max-width:820px){
+      .grid4{grid-template-columns:repeat(2,1fr)}
+      .hero-rot{grid-template-columns:repeat(4,1fr)}
+      .addr td{font-size:.78rem}
+      .brand{font-size:1rem}
+    }
   </style>
 </head>
 <body>
@@ -47,6 +61,41 @@
   </div>
 
   <div class="wrap">
+
+    <!-- Hero (유지) -->
+    <section class="card hero">
+      <img id="hero-main" src="./public/hero/main.jpg" alt="hero">
+    </section>
+    <section class="hero-rot">
+      <img src="./public/hero/1.jpg" alt=""><img src="./public/hero/2.jpg" alt="">
+      <img src="./public/hero/3.jpg" alt=""><img src="./public/hero/4.jpg" alt="">
+      <img src="./public/hero/5.jpg" alt=""><img src="./public/hero/6.jpg" alt="">
+      <img src="./public/hero/7.jpg" alt=""><img src="./public/hero/8.jpg" alt="">
+    </section>
+
+    <!-- Action Gallery (유지) -->
+    <section class="card">
+      <div class="section-title">Action Preview</div>
+      <div class="grid4">
+        <img src="./public/action/1.jpg" alt=""><img src="./public/action/2.jpg" alt="">
+        <img src="./public/action/3.jpg" alt=""><img src="./public/action/4.jpg" alt="">
+        <img src="./public/action/5.jpg" alt=""><img src="./public/action/6.jpg" alt="">
+        <img src="./public/action/7.jpg" alt=""><img src="./public/action/8.jpg" alt="">
+      </div>
+    </section>
+
+    <!-- NFT Preview (유지) -->
+    <section class="card">
+      <div class="section-title">NFT Preview</div>
+      <div class="grid4">
+        <img src="./public/nft-preview/1.jpg" alt=""><img src="./public/nft-preview/2.jpg" alt="">
+        <img src="./public/nft-preview/3.jpg" alt=""><img src="./public/nft-preview/4.jpg" alt="">
+        <img src="./public/nft-preview/5.jpg" alt=""><img src="./public/nft-preview/6.jpg" alt="">
+        <img src="./public/nft-preview/7.jpg" alt=""><img src="./public/nft-preview/8.jpg" alt="">
+      </div>
+      <div class="muted">/public/nft-preview/ 에 1..8.jpg(1600×900) 업로드</div>
+    </section>
+
     <!-- Tokenomics -->
     <section class="card">
       <div class="section-title">Tokenomics</div>
@@ -54,7 +103,7 @@
       <ul id="legend"></ul>
       <div id="caps" class="muted"></div>
       <div id="rates" class="muted"></div>
-      <button id="btn-pinksale" class="btn" disabled>Pinksale (coming soon)</button>
+      <a id="btn-pinksale" class="btn" href="javascript:void(0)" rel="noopener">Pinksale (coming soon)</a>
     </section>
 
     <!-- Countdown -->
@@ -68,12 +117,17 @@
     <section class="card">
       <div class="section-title">Whitepaper</div>
       <div>
-        <a class="btn" href="./whitepaper/whitepaper-en.pdf" download>EN</a>
-        <a class="btn" href="./whitepaper/whitepaper-ko.pdf" download>KO</a>
-        <a class="btn" href="./whitepaper/whitepaper-ja.pdf" download>JA</a>
-        <a class="btn" href="./whitepaper/whitepaper-zh.pdf" download>ZH</a>
+        <!-- 다운로드 속성 제거: 모바일 크롬의 .htm 문제 회피 → 새 탭 열기 후 저장 -->
+        <a class="btn" href="./whitepaper/whitepaper-en.pdf" target="_blank" rel="noopener">EN</a>
+        <a class="btn" href="./whitepaper/whitepaper-ko.pdf" target="_blank" rel="noopener">KO</a>
+        <a class="btn" href="./whitepaper/whitepaper-ja.pdf" target="_blank" rel="noopener">JA</a>
+        <a class="btn" href="./whitepaper/whitepaper-zh.pdf" target="_blank" rel="noopener">ZH</a>
+        <a class="btn" href="./whitepaper/whitepaper-es.pdf" target="_blank" rel="noopener">ES</a>
+        <a class="btn" href="./whitepaper/whitepaper-de.pdf" target="_blank" rel="noopener">DE</a>
+        <a class="btn" href="./whitepaper/whitepaper-pt.pdf" target="_blank" rel="noopener">PT</a>
+        <a class="btn" href="./whitepaper/whitepaper-it.pdf" target="_blank" rel="noopener">IT</a>
       </div>
-      <div class="muted">※ 다운로드가 막히면 새 탭에서 열림 → “다른 이름으로 저장”.</div>
+      <div class="muted">※ 새 탭에서 열림 → 브라우저 메뉴 “다른 이름으로 저장”.</div>
     </section>
 
     <!-- Addresses -->
@@ -81,77 +135,112 @@
       <div class="section-title">Addresses</div>
       <table id="addr-table"></table>
     </section>
+
+    <!-- About -->
+    <section class="card">
+      <div class="section-title">About FlexCoin</div>
+      <div id="about-ko" style="margin-bottom:.5rem">
+        <p><b>FlexCoin은 단순한 밈코인이 아닙니다.</b> FlexCoin은 라이프스타일이자 태도이며,
+        “투명성은 곧 신뢰이고, 신뢰는 곧 가치”라는 철학에서 시작되었습니다.</p>
+        <p><i>“Flex는 과시가 아니라, 당신의 삶을 스스로 증명하는 것이다.”</i><br/>
+        우리는 숨기지 않습니다. 우리는 속이지 않습니다. 우리는 모든 것을 공개합니다.</p>
+        <ul>
+          <li>팀 신원 KYC 인증</li>
+          <li>스마트 컨트랙트 감사(Audit)</li>
+          <li>유동성 LP Lock + 소유권 포기(Ownership Renounce)</li>
+          <li>Tokenomics 및 지갑 배분 100% 공개</li>
+          <li>모든 항목은 온체인으로 검증 가능합니다.</li>
+        </ul>
+      </div>
+      <div id="about-en">
+        <p><b>FlexCoin isn’t just a memecoin.</b> It’s a mindset and a lifestyle built on one belief:
+        transparency breeds trust, and trust creates value.</p>
+        <p><i>“Flexing isn’t showing off — it’s owning your story.”</i><br/>
+        We don’t hide. We don’t mislead. We build with transparency.</p>
+        <ul>
+          <li>Team KYC Verified</li>
+          <li>Smart Contract Audit Completed</li>
+          <li>LP Locked + Ownership Renounced</li>
+          <li>100% Transparent Tokenomics & Wallet Allocation</li>
+          <li>All items are verifiable on-chain.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="muted" style="text-align:center;margin:2rem 0">Flexcoin V5.9 • runtime JSON • static GitHub Pages</div>
   </div>
 
-  <script>
-    const $ = (q)=>document.querySelector(q);
-    const fetchJSON = async (p)=> (await fetch(p,{cache:'no-cache'})).json();
+  <!-- Lightbox -->
+  <div id="lightbox"><img alt=""></div>
 
-    /* Links + BscScan */
+  <script>
+    const $ = (q, r=document)=>r.querySelector(q);
+    const $$ = (q, r=document)=>[...r.querySelectorAll(q)];
+    const fetchJSON = async (p)=> (await fetch(p,{cache:'no-cache'})).json();
+    const fmt = (n)=>String(n).padStart(2,'0');
+
+    /* Hero rotator + Lightbox (유지) */
+    $$('.hero-rot img').forEach(img=>img.addEventListener('click',()=>$('#hero-main').src=img.src));
+    const lb=$('#lightbox'), lbImg=$('#lightbox img');
+    function bindLightbox(sel){ $$(sel+' img').forEach(el=>el.addEventListener('click',()=>{lbImg.src=el.src;lb.style.display='grid'})); }
+    bindLightbox('.grid4'); bindLightbox('.hero-rot'); lb.addEventListener('click',()=>{lb.style.display='none';lbImg.src='';});
+
+    /* Links & Buttons */
     async function initLinks(){
       const links=await fetchJSON('./public/config/links.json');
-      const set=(sel,url)=>{const b=$(sel); if(url){b.href=url;b.disabled=false}else{b.disabled=true}};
-      set('#btn-x',links.x_url);
-      set('#btn-tg',links.tg_url);
-      set('#btn-pcs',links.pancakeswap_url);
-      const psBtn=$('#btn-pinksale');
-      if(links.pinksale_url){ psBtn.disabled=false; psBtn.onclick=()=>window.open(links.pinksale_url,'_blank','noopener'); }
+      const set=(id,url)=>{const b=$(id); if(url && /^https?:\/\//.test(url)){ b.href=url; b.disabled=false; } else { b.removeAttribute('href'); b.disabled=true; } };
+      set('#btn-x',links.x_url); set('#btn-tg',links.tg_url); set('#btn-pcs',links.pancakeswap_url);
+      const ps=$('#btn-pinksale'); if(links.pinksale_url){ ps.href=links.pinksale_url; ps.textContent='Pinksale'; } else { ps.removeAttribute('href'); ps.textContent='Pinksale (coming soon)'; }
 
       const addr=await fetchJSON('./public/config/addresses.json');
       const toScan=(a)=>a?`https://bscscan.com/address/${a}`:'';
-      const rows=[['Token',addr.token],['Team/Lock',addr.team_lock],['Marketing',addr.marketing],
-                  ['Presale',addr.presale],['Burn',addr.burn],['User',addr.user]];
-      $('#addr-table').innerHTML = rows
-        .map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||'—'}</a></td></tr>`).join('');
+      const rows=[['Token',addr.token],['Team/Lock',addr.team_lock],['Marketing',addr.marketing],['Presale',addr.presale],['Burn',addr.burn],['User',addr.user]];
+      $('#addr-table').innerHTML = rows.map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||'—'}</a></td></tr>`).join('');
     }
 
-    /* Donut + Caps + Rate (allocations.json: tokenomics + presale) */
+    /* Tokenomics */
+    function drawDonut(ctx, parts, colors){
+      const sum = parts.reduce((a,b)=>a+b,0)||1; let a0=-Math.PI/2;
+      parts.forEach((v,i)=>{ const a1=a0+2*Math.PI*(v/sum); ctx.beginPath(); ctx.moveTo(150,150); ctx.arc(150,150,140,a0,a1); ctx.closePath(); ctx.fillStyle=colors[i]; ctx.fill(); a0=a1; });
+      ctx.globalCompositeOperation='destination-out'; ctx.beginPath(); ctx.arc(150,150,80,0,2*Math.PI); ctx.fill(); ctx.globalCompositeOperation='source-over';
+    }
     async function initTokenomics(){
-      const j=await fetchJSON('./public/config/allocations.json');
-      const t=j.tokenomics||j;
+      const j = await fetchJSON('./public/config/allocations.json');
+      const t = j.tokenomics || j;  // 둘 다 지원
+      const parts=[t.lp,t.presale,t.team,t.marketing,t.burn].map(n=>Number(n)||0);
+      drawDonut($('#donut').getContext('2d'), parts, ['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b']);
+      $('#legend').innerHTML = `<li>• LP ${parts[0]}%  • Presale ${parts[1]}%  • Team ${parts[2]}%  • Marketing ${parts[3]}%  • Burn ${parts[4]}%</li>`;
       const p=j.presale||{};
-      const vals=[t.lp,t.presale,t.team,t.marketing,t.burn].map(Number);
-      const ctx=$('#donut').getContext('2d');
-      const cols=['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'];
-      let start=-Math.PI/2;
-      vals.forEach((v,i)=>{
-        const end=start+2*Math.PI*(v/100);
-        ctx.beginPath();ctx.moveTo(150,150);ctx.arc(150,150,140,start,end);ctx.closePath();
-        ctx.fillStyle=cols[i];ctx.fill();start=end;
-      });
-      ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(150,150,80,0,2*Math.PI);ctx.fill();
-      ctx.globalCompositeOperation='source-over';
-
-      $('#legend').innerHTML=`<li>LP ${t.lp}% • Presale ${t.presale}% • Team ${t.team}% • Marketing ${t.marketing}% • Burn ${t.burn}%</li>`;
-      $('#caps').textContent=`Softcap: ${p.softcap_bnb??'—'} BNB / Hardcap: ${p.hardcap_bnb??'—'} BNB`;
-      const rate=(n)=> (Number(n)||0).toLocaleString();
-      $('#rates').textContent=`Presale Rate: 1 BNB = ${rate(p.rate_flex_per_bnb)} FLEX • Listing Rate: 1 BNB = ${rate(p.listing_rate_flex_per_bnb)} FLEX`;
+      $('#caps').textContent = `Softcap: ${p.softcap_bnb??'—'} BNB / Hardcap: ${p.hardcap_bnb??'—'} BNB`;
+      const r1 = p.rate_flex_per_bnb!=null ? p.rate_flex_per_bnb.toLocaleString() : '—';
+      const r2 = p.listing_rate_flex_per_bnb!=null ? p.listing_rate_flex_per_bnb.toLocaleString() : '—';
+      $('#rates').textContent = `Presale Rate: 1 BNB = ${r1} FLEX • Listing Rate: 1 BNB = ${r2} FLEX`;
     }
 
-    /* Countdown (presale.json: timezone + presale_start/end) */
+    /* Countdown (KST 텍스트를 UTC로 변환 없이 직접 파싱) */
     async function initCountdown(){
-      const p=await fetchJSON('./public/config/presale.json');
-      const tz = p.timezone || 'Asia/Seoul';
-      // 문자열 그대로 Date로 만들기 + 타임존 보정(간단히 +09:00 기본)
-      const z = (tz.includes('Seoul')||tz.includes('Tokyo'))?'+09:00':'';
-      const s=new Date((p.presale_start||p.start_iso)+z);
-      const e=new Date((p.presale_end||p.end_iso)+z);
-      const range=$('#countdown-range'),count=$('#countdown');
-      range.textContent=`${s.toLocaleString()} → ${e.toLocaleString()}`;
-      const pad=(n)=>String(n).padStart(2,'0');
-      setInterval(()=>{
-        const now=new Date();
-        let t = (now < s) ? (s-now) : (e-now);
-        if(t<=0){ count.textContent='—'; return; }
-        const d=Math.floor(t/86400000); t%=86400000;
-        const h=Math.floor(t/3600000);  t%=3600000;
-        const m=Math.floor(t/60000);    t%=60000;
-        const s2=Math.floor(t/1000);
-        count.textContent = `${d}d ${pad(h)}:${pad(m)}:${pad(s2)}`;
-      },1000);
+      const p=await fetchJSON('./public/config/presale.json'); // { timezone:"Asia/Seoul", presale_start:"YYYY-MM-DDTHH:mm:00", presale_end:"..." }
+      const s=new Date(p.presale_start); const e=new Date(p.presale_end);
+      const range=$('#countdown-range'), count=$('#countdown');
+      range.textContent = `${s.toLocaleString()} → ${e.toLocaleString()}`;
+      const tick=()=>{ const now=new Date(); let t=(now<s)?(s-now):(e-now); if(t<=0){ count.textContent='—'; return; }
+        const d=Math.floor(t/86400000); t%=86400000; const h=Math.floor(t/3600000); t%=3600000; const m=Math.floor(t/60000); t%=60000; const s2=Math.floor(t/1000);
+        count.textContent = `${d}d ${fmt(h)}:${fmt(m)}:${fmt(s2)}`; };
+      tick(); setInterval(tick,1000);
     }
 
-    (async()=>{ await initLinks(); await initTokenomics(); await initCountdown(); })();
+    /* Lang (선택 저장만, 텍스트는 유지) */
+    function initLang(){ const l=localStorage.getItem('lang')||'en'; $('#lang-en').classList.toggle('active',l==='en'); $('#lang-ko').classList.toggle('active',l==='ko');
+      $('#lang-en').onclick=()=>{localStorage.setItem('lang','en'); $('#lang-en').classList.add('active'); $('#lang-ko').classList.remove('active');};
+      $('#lang-ko').onclick=()=>{localStorage.setItem('lang','ko'); $('#lang-ko').classList.add('active'); $('#lang-en').classList.remove('active');};
+    }
+
+    (async()=>{
+      initLang();
+      await initLinks();
+      await initTokenomics();
+      await initCountdown();
+    })();
   </script>
 </body>
 </html>
