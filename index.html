@@ -6,71 +6,101 @@
   <title>Flexcoin — $FLEX</title>
   <meta name="theme-color" content="#14110b"/>
   <style>
-    body{background:#0e0b07;color:#f6e9c0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Noto Sans',sans-serif;margin:0; padding-top:56px}
-    .wrap{max-width:1100px;margin:0 auto;padding:24px}
-    h1,h2,h3{color:#f4d03f;margin:12px 0}
-    .panel{background:#13100b;border:1px solid #312b1f;border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 0 0 1px rgba(255,255,255,.02) inset}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-    .btn{display:inline-block;border-radius:12px;padding:10px 14px;background:#6b5b2b;color:#fff;text-decoration:none;font-weight:700}
-    .btn[disabled]{opacity:.5;pointer-events:none}
-    ul{list-style:none;padding:0;margin:8px 0}
-    li{margin:6px 0}
-    .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-    .tile{border-radius:16px;overflow:hidden;background:#1b160e}
-    .tile img{display:block;width:100%;height:160px;object-fit:cover;cursor:zoom-in}
+    :root{
+      --bg:#0e0b07; --panel:#13100b; --gold:#f4d03f; --line:#312b1f; --text:#f6e9c0;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Noto Sans',sans-serif}
+    img{max-width:100%;display:block}
+    a{color:#f0da80;text-decoration:none}
+    .wrap{max-width:1100px;margin:0 auto;padding:20px}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 0 0 1px rgba(255,255,255,.03) inset}
+    h1,h2,h3{color:var(--gold);margin:10px 0}
     .muted{opacity:.85}
-    a{color:#f0da80}
-    footer{opacity:.6;font-size:.9rem;padding:24px 0}
-    /* Top-right bar */
-    .site-topbar{position:fixed; top:10px; left:0; right:0; z-index:50; display:flex; align-items:center; gap:8px; padding:0 14px}
-    .site-topbar .spacer{flex:1}
-    .site-topbar .btn{padding:8px 12px}
+
+    /* Topbar */
+    .topbar{position:sticky;top:0;z-index:50;background:rgba(14,11,7,.85);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+    .tb-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+    .grow{flex:1}
+    .btn{display:inline-flex;align-items:center;gap:8px;border-radius:10px;padding:8px 12px;background:#6b5b2b;color:#fff;font-weight:700}
+    .btn[disabled]{opacity:.55;pointer-events:none}
+    .pill{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+    .pill button{background:transparent;color:var(--text);padding:8px 12px;border:0;cursor:pointer}
+    .pill button.active{background:#2a2418}
+
+    /* Grid & gallery */
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .tile{border-radius:14px;overflow:hidden;background:#1b160e}
+    .tile img{width:100%;height:160px;object-fit:cover;cursor:zoom-in}
+
+    /* Donut */
+    .donut{width:220px;height:220px}
+    .legend li{display:flex;align-items:center;gap:8px}
+    .dot{width:10px;height:10px;border-radius:50%}
+
     /* Lightbox */
-    #lightbox{display:none; position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.85); align-items:center; justify-content:center}
-    #lightbox img{max-width:92vw;max-height:88vh;border-radius:16px}
+    #lightbox{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.85);z-index:100}
+    #lightbox img{max-width:92vw;max-height:90vh;border-radius:12px}
+
+    footer{opacity:.6;font-size:.9rem;padding:24px 0}
+
+    /* Mobile fixes */
+    @media (max-width:960px){
+      .grid{grid-template-columns:1fr}
+      .gallery{grid-template-columns:repeat(2,1fr)}
+      .tile img{height:140px}
+      .tb-in{gap:8px}
+      .btn{padding:8px 10px}
+    }
   </style>
-  <link rel="stylesheet" href="/styles/trust.css">
 </head>
 <body>
-  <!-- site top bar -->
-  <div class="site-topbar">
-    <div class="spacer"></div>
-    <a class="btn" href="https://x.com/Flexcoinmeme" target="_blank" rel="noopener">X</a>
-    <a class="btn" href="https://t.me/+p1BMrdypmDFmNTA1" target="_blank" rel="noopener">TG</a>
-    <a class="btn" href="https://pancakeswap.finance/swap?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f&chainId=56" target="_blank" rel="noopener">Buy $FLEX</a>
-    <div class="lang-switch">
-      <button class="btn" data-lang="en">EN</button>
-      <button class="btn" data-lang="ko">KR</button>
+  <!-- sticky topbar -->
+  <header class="topbar">
+    <div class="tb-in">
+      <strong style="color:var(--gold)">Flexcoin — $FLEX</strong>
+      <div class="grow"></div>
+      <a class="btn" href="https://x.com/Flexcoinmeme" target="_blank" rel="noopener">X</a>
+      <a class="btn" href="https://t.me/+p1BMrdypmDFmNTA1" target="_blank" rel="noopener">Telegram</a>
+      <a id="btn-swap" class="btn" target="_blank" rel="noopener">Buy on PancakeSwap</a>
+      <div class="pill" id="lang-pill">
+        <button data-lang="en">EN</button>
+        <button data-lang="ko">KR</button>
+      </div>
     </div>
-  </div>
+  </header>
 
   <div class="wrap">
-    <div id="trust-transparency"></div>
-    <h1>Flexcoin — $FLEX</h1>
-    <img id="hero-img" alt="Hero" style="width:100%;border-radius:16px;display:block" />
+    <!-- Hero -->
+    <img id="hero-img" alt="Hero" class="panel" />
 
+    <!-- Presale / Tokenomics -->
     <section class="panel">
       <h2 data-i18n="section_tokenomics">Tokenomics</h2>
       <div class="grid">
         <div>
-          <svg id="donut" viewBox="0 0 120 120" width="180" height="180"></svg>
-          <ul class="muted">
-            <li>LP: <b data-tok-lp>—</b></li>
-            <li>Presale: <b data-tok-presale>—</b></li>
-            <li>Team: <b data-tok-team>—</b></li>
-            <li>Marketing: <b data-tok-mkt>—</b></li>
-            <li>Burn: <b data-tok-burn>—</b></li>
+          <svg id="donut" class="donut" viewBox="0 0 120 120"></svg>
+          <ul class="legend muted" style="list-style:none;padding:0;margin:10px 0 0">
+            <li><span class="dot" style="background:#f7c843"></span> LP: <b data-tok-lp>—</b></li>
+            <li><span class="dot" style="background:#ff8f3a"></span> Presale: <b data-tok-presale>—</b></li>
+            <li><span class="dot" style="background:#7ddc7a"></span> Team: <b data-tok-team>—</b></li>
+            <li><span class="dot" style="background:#67b7ff"></span> Marketing: <b data-tok-mkt>—</b></li>
+            <li><span class="dot" style="background:#ec6a6a"></span> Burn: <b data-tok-burn>—</b></li>
           </ul>
-          <div class="rates muted">
+          <div class="rates muted" style="margin-top:10px">
             <div data-presale-rate>—</div>
             <div data-listing-rate>—</div>
             <div>Softcap: <b data-softcap>—</b> / Hardcap: <b data-hardcap>—</b></div>
           </div>
-          <p><a id="btn-pinksale" class="btn disabled">Pinksale (coming soon)</a></p>
+          <p style="margin-top:10px"><a id="btn-pinksale" class="btn" target="_blank" rel="noopener">Pinksale</a></p>
         </div>
         <div>
-          <h3>Addresses</h3>
-          <ul>
+          <h3>Presale Countdown</h3>
+          <div id="countdown" style="font-size:1.6rem;font-weight:800">—</div>
+          <p class="muted" id="presale-window">—</p>
+          <h3 style="margin-top:12px">Addresses</h3>
+          <ul style="list-style:none;padding:0;margin:8px 0">
             <li><a data-addr-token target="_blank" rel="noopener">Token</a></li>
             <li><a data-addr-team target="_blank" rel="noopener">Team/Lock</a></li>
             <li><a data-addr-mkt target="_blank" rel="noopener">Marketing</a></li>
@@ -82,9 +112,10 @@
       </div>
     </section>
 
+    <!-- Action Preview -->
     <section class="panel">
       <h2>Action Preview</h2>
-      <div class="gallery">
+      <div class="gallery" id="action-gallery">
         <div class="tile"><img src="/action/1.jpg" alt=""></div>
         <div class="tile"><img src="/action/2.jpg" alt=""></div>
         <div class="tile"><img src="/action/3.jpg" alt=""></div>
@@ -96,9 +127,10 @@
       </div>
     </section>
 
+    <!-- NFT Preview -->
     <section class="panel">
       <h2 data-i18n="nft.title">NFT Preview</h2>
-      <div class="gallery">
+      <div class="gallery" id="nft-gallery">
         <div class="tile"><img src="/nft-preview/1.jpg" alt=""></div>
         <div class="tile"><img src="/nft-preview/2.jpg" alt=""></div>
         <div class="tile"><img src="/nft-preview/3.jpg" alt=""></div>
@@ -109,101 +141,29 @@
         <div class="tile"><img src="/nft-preview/8.jpg" alt=""></div>
       </div>
       <p class="muted" data-i18n="nft.note">Upload 1..8.jpg (1600×900) to /public/nft-preview/</p>
-      <p><button id="btn-mint" class="btn">Mint NFT</button></p>
     </section>
 
+    <!-- Whitepaper -->
     <section class="panel">
       <h2>Whitepaper</h2>
-      <ul class="gallery" style="grid-template-columns:repeat(4,1fr)">
-        <li class="tile"><a href="/whitepaper/en.pdf" class="btn" download>English</a></li>
-        <li class="tile"><a href="/whitepaper/ko.pdf" class="btn" download>Korean</a></li>
-        <li class="tile"><a href="/whitepaper/ja.pdf" class="btn" download>Japanese</a></li>
-        <li class="tile"><a href="/whitepaper/zh.pdf" class="btn" download>Chinese</a></li>
-        <li class="tile"><a href="/whitepaper/es.pdf" class="btn" download>Spanish</a></li>
-        <li class="tile"><a href="/whitepaper/de.pdf" class="btn" download>German</a></li>
-        <li class="tile"><a href="/whitepaper/pt.pdf" class="btn" download>Portuguese</a></li>
-        <li class="tile"><a href="/whitepaper/it.pdf" class="btn" download>Italian</a></li>
-      </ul>
+      <div class="gallery" style="grid-template-columns:repeat(4,1fr)">
+        <a class="btn tile" href="/whitepaper/whitepaper-en.pdf" download>English</a>
+        <a class="btn tile" href="/whitepaper/whitepaper-ko.pdf" download>Korean</a>
+        <a class="btn tile" href="/whitepaper/whitepaper-ja.pdf" download>Japanese</a>
+        <a class="btn tile" href="/whitepaper/whitepaper-zh.pdf" download>Chinese</a>
+        <a class="btn tile" href="/whitepaper/whitepaper-es.pdf" download>Spanish</a>
+        <a class="btn tile" href="/whitepaper/whitepaper-de.pdf" download>German</a>
+        <a class="btn tile" href="/whitepaper/whitepaper-pt.pdf" download>Portuguese</a>
+        <a class="btn tile" href="/whitepaper/whitepaper-it.pdf" download>Italian</a>
+      </div>
     </section>
 
     <footer class="muted">Flexcoin V5.9 • Runtime JSON • Vite • GitHub Pages</footer>
   </div>
 
-  <!-- Lightbox -->
-  <div id="lightbox"><img id="lightbox-img" alt="preview"></div>
-  <script>
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightbox-img');
-    function openLB(src){ lbImg.src = src; lb.style.display='flex'; }
-    function closeLB(){ lb.style.display='none'; lbImg.src=''; }
-    lb.addEventListener('click', closeLB);
-    addEventListener('DOMContentLoaded',()=>{
-      document.querySelectorAll('.gallery img').forEach(img=>{
-        img.addEventListener('click', ()=> openLB(img.src));
-      });
-    });
-  </script>
+  <!-- lightbox -->
+  <div id="lightbox"><img alt=""></div>
 
-  <!-- i18n loader (public/i18n/*.json) -->
-  <script>
-    async function setLang(lang){
-      try{
-        const dict = await (await fetch(`/i18n/${lang}.json`,{cache:"no-cache"})).json();
-        document.querySelectorAll("[data-i18n]").forEach(el=>{
-          const k = el.getAttribute("data-i18n");
-          if (k && dict[k]) el.textContent = dict[k];
-        });
-        localStorage.setItem("lang", lang);
-      }catch{}
-    }
-    const wanted = new URL(location.href).searchParams.get("lang") || localStorage.getItem("lang") || "en";
-    setLang(wanted);
-    addEventListener('DOMContentLoaded', ()=>{
-      document.querySelectorAll("[data-lang]").forEach(btn=>{
-        btn.addEventListener("click", ()=> setLang(btn.dataset.lang || "en"));
-      });
-    });
-  </script>
-
-  <!-- main.ts (Vite) -->
   <script type="module" src="/src/main.ts"></script>
-
-  <!-- ethers via CDN (번들 불필요) -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
-  <script>
-    const NFT_ABI = [
-      "function mint(uint256 qty) payable",
-      "function price() view returns (uint256)"
-    ];
-    async function readNftCfg(){
-      const r = await fetch("/config/nft.json",{cache:"no-cache"});
-      return r.json();
-    }
-    async function mintNft(qty=1){
-      const cfg = await readNftCfg();
-      if(!window.ethereum){ alert("Wallet not found"); return; }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const [acc] = await provider.send("eth_requestAccounts",[]);
-      const net = await provider.getNetwork();
-      if (Number(net.chainId) !== Number(cfg.chainId)){
-        await window.ethereum.request({
-          method:"wallet_switchEthereumChain",
-          params:[{ chainId:"0x"+Number(cfg.chainId).toString(16) }]
-        });
-      }
-      const signer = provider.getSigner(acc);
-      const c = new ethers.Contract(cfg.contract, NFT_ABI, signer);
-      const unit = cfg.priceEth ? ethers.utils.parseEther(cfg.priceEth) : await c.price();
-      const want = Math.min(qty, cfg.maxPerTx || qty);
-      const tx = await c.mint(want, { value: unit.mul(want) });
-      await tx.wait();
-      alert("Mint success!");
-    }
-    document.addEventListener("DOMContentLoaded", ()=>{
-      const btn = document.getElementById("btn-mint");
-      if (btn) btn.addEventListener("click", ()=> mintNft(1));
-    });
-  </script>
-  <script type="module" src="/src/trust.ts"></script>
 </body>
 </html>
