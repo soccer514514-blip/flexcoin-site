@@ -4,7 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>$FLEX is your life — Flexcoin</title>
-  <link rel="icon" href="/favicon.ico">
+
+  <!-- ✅ Favicons / preload (404 제거 & 중복 정리) -->
+  <link rel="preload" href="/public/hero/main.jpg" as="image" imagesrcset="/public/hero/main.jpg 1x, /hero/main.jpg 1x">
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="alternate icon" href="/public/favicon.ico">
+  <link rel="apple-touch-icon" href="/public/og.png" sizes="512x512">
+
   <style>
     :root{ --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a;
       --gold:#f4cc4f; --chip:#3a331c; --border:rgba(255,255,255,.08); }
@@ -34,7 +40,7 @@
     @media(max-width:600px){
       .topbar{flex-wrap:wrap;gap:.4rem}
       .brand{flex:1 1 100%; font-size:1rem}
-      .nav{order:3; width:100%; display:flex; gap:.6rem; margin-top:.2rem}
+      .nav{order:3; width:100%; display:flex; gap:.6rem; margin-top:.2rem; flex-wrap:wrap}
       .btn{padding:.5rem .7rem}
       .lang{order:4}
     }
@@ -128,8 +134,9 @@
     <div class="spacer"></div>
     <div class="nav">
       <a href="#about-flexcoin">About</a>
-      <a href="#nft">NFT</a>
+      <a href="#whitepaper">Whitepaper</a>
       <a href="#roadmap">Roadmap</a>
+      <a href="#nft">NFT</a>
     </div>
     <a id="btn-x" class="btn" href="#" target="_blank" rel="noopener">X</a>
     <a id="btn-tg" class="btn" href="#" target="_blank" rel="noopener">Telegram</a>
@@ -142,7 +149,7 @@
   <div class="wrap">
     <!-- HERO -->
     <section class="card hero">
-      <img id="hero-img" src="/hero/main.jpg" alt="Flexcoin hero" onerror="this.onerror=null;this.src='/hero/1.jpg'">
+      <img id="hero-img" src="/public/hero/main.jpg" alt="Flexcoin hero" onerror="this.onerror=null;this.src='/hero/1.jpg'">
     </section>
 
     <!-- About -->
@@ -215,7 +222,7 @@
     </section>
 
     <!-- Whitepaper -->
-    <section class="card">
+    <section id="whitepaper" class="card">
       <div class="section-title">Whitepaper</div>
       <div class="wp-grid">
         <a class="btn" href="/whitepaper/en.pdf" download target="_blank" rel="noopener">English</a>
@@ -394,7 +401,6 @@
     }
 
     /* --------- 갤러리 + 라이트박스 --------- */
-    function tryImg(path){ return new Promise(res=>{ const i=new Image(); i.onload=()=>res(path); i.onerror=()=>res(null); i.src=path; }); }
     async function loadGrid(prefix, targetId){
       const list=Array.from({length:8},(_,i)=>i+1);
       const decided=await Promise.all(list.map(n=> firstExistingImage([`/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`])));
@@ -493,7 +499,7 @@
               if(payFixed){ value=ethers.parseEther(DEFAULT_PRICE_BNB); }
               else{ try{ value=await c.price(); }catch{ value=ethers.parseEther(DEFAULT_PRICE_BNB); } }
               let tx;
-              if(c.claim){ // try claim(receiver,qty) then claim(qty)
+              if(c.claim){
                 try{ tx=await c.claim(to,1,{value}); }
                 catch{ tx=await c.claim(1,{value}); }
               }else if(c.mint){ tx=await c.mint(1,{value}); }
