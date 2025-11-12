@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>$FLEX is your life — Flexcoin</title>
 
-  <!-- ✅ Favicons / preload (404 제거 & 중복 정리) -->
-  <link rel="preload" href="/public/hero/main.jpg" as="image" imagesrcset="/public/hero/main.jpg 1x, /hero/main.jpg 1x">
+  <!-- ✅ 최소 교체: 파비콘 정리 + 히어로 프리로드 (중복/404 제거) -->
+  <link rel="preload" href="/public/hero/main.jpg" as="image">
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
   <link rel="alternate icon" href="/public/favicon.ico">
   <link rel="apple-touch-icon" href="/public/og.png" sizes="512x512">
@@ -21,7 +21,7 @@
     a{color:inherit; text-decoration:none}
     body.noscroll{overflow:hidden}
 
-    /* Top bar */
+    /* Top bar (모바일 겹침만 개선) */
     .topbar{display:flex;align-items:center;gap:.5rem;padding:.8rem 1rem;
       background:linear-gradient(180deg,rgba(0,0,0,.45),transparent);
       backdrop-filter:blur(6px);position:sticky;top:0;z-index:10}
@@ -35,8 +35,6 @@
     .lang button.active{background:var(--gold);color:#000;font-weight:800}
     .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9; white-space:nowrap}
     .nav a:hover{opacity:1}
-
-    /* Mobile topbar fix (겹침/잘림 방지) */
     @media(max-width:600px){
       .topbar{flex-wrap:wrap;gap:.4rem}
       .brand{flex:1 1 100%; font-size:1rem}
@@ -45,7 +43,7 @@
       .lang{order:4}
     }
 
-    /* Layout */
+    /* Layout & 공통 스타일 — 기존 유지 */
     .wrap{max-width:1100px;margin:0 auto;padding:1rem}
     .card{background:var(--card);border:1px solid var(--border);
       border-radius:18px;padding:16px;margin-top:1rem}
@@ -117,14 +115,14 @@
     .select-net{margin:8px 0;padding:.45rem .6rem;border-radius:.6rem;border:1px solid var(--border);background:#0f0e0c;color:var(--text)}
     .mint-log{background:#0f0e0c;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;color:#ddd;font-size:.85rem;min-height:2.2em}
 
-    /* === Roadmap (inline 기본 스타일) === */
+    /* === Roadmap (i18n 연결) — 필요한 부분만 추가 스타일 */
     #roadmap .grid{grid-template-columns:repeat(4,1fr)}
     #roadmap .roadmap-card{transition:transform .25s ease, box-shadow .25s ease}
     #roadmap .roadmap-card:hover{transform:translateY(-4px); box-shadow:0 4px 15px rgba(212,175,55,.15)}
     @media(max-width:900px){ #roadmap .grid{grid-template-columns:repeat(2,1fr)} }
   </style>
 
-  <!-- ethers CDN -->
+  <!-- ethers CDN (기존 유지) -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js"></script>
 </head>
 <body>
@@ -134,7 +132,7 @@
     <div class="spacer"></div>
     <div class="nav">
       <a href="#about-flexcoin">About</a>
-      <a href="#whitepaper">Whitepaper</a>
+      <a href="#whitepaper">Whitepaper</a><!-- ✅ 바로가기 추가 -->
       <a href="#roadmap">Roadmap</a>
       <a href="#nft">NFT</a>
     </div>
@@ -147,12 +145,13 @@
   </div>
 
   <div class="wrap">
-    <!-- HERO -->
+    <!-- HERO (프리로드된 경로 우선 사용) -->
     <section class="card hero">
-      <img id="hero-img" src="/public/hero/main.jpg" alt="Flexcoin hero" onerror="this.onerror=null;this.src='/hero/1.jpg'">
+      <img id="hero-img" src="/public/hero/main.jpg" alt="Flexcoin hero"
+           onerror="this.onerror=null;this.src='/hero/1.jpg'">
     </section>
 
-    <!-- About -->
+    <!-- About (기존 유지) -->
     <section id="about-flexcoin" class="about-section">
       <div class="about-title">About FlexCoin</div>
       <div class="about-sub">감성 + 신뢰 결합 (Korean & English)</div>
@@ -186,7 +185,7 @@
       </div>
     </section>
 
-    <!-- Tokenomics -->
+    <!-- Tokenomics (기존 유지) -->
     <section class="card">
       <div class="section-title" data-i18n="section_tokenomics">Tokenomics</div>
       <div class="tok-wrap">
@@ -200,7 +199,7 @@
       </div>
     </section>
 
-    <!-- Countdown -->
+    <!-- Countdown (기존 유지) -->
     <section class="card">
       <div class="section-title">Presale Countdown</div>
       <div class="countbox">
@@ -209,19 +208,18 @@
       </div>
     </section>
 
-    <!-- Action Preview -->
+    <!-- Action Preview / NFT Preview (기존 유지) -->
     <section class="card">
       <div class="section-title">Action Preview</div>
       <div class="grid" id="action-grid"></div>
     </section>
 
-    <!-- NFT Preview -->
     <section class="card">
       <div class="section-title" data-i18n="nft.title">NFT Preview</div>
       <div class="grid" id="nft-grid"></div>
     </section>
 
-    <!-- Whitepaper -->
+    <!-- ✅ Whitepaper: 앵커 + 다운로드 경로 자동 보정 -->
     <section id="whitepaper" class="card">
       <div class="section-title">Whitepaper</div>
       <div class="wp-grid">
@@ -237,13 +235,13 @@
       <div class="muted wp-note">※ 다운로드가 막히면 새 탭에서 열림 → “다른 이름으로 저장”.</div>
     </section>
 
-    <!-- Addresses -->
+    <!-- Addresses (기존 유지) -->
     <section class="card addr">
       <div class="section-title">Addresses</div>
       <table id="addr-table"></table>
     </section>
 
-    <!-- Roadmap (다국어 i18n 연결) -->
+    <!-- ✅ Roadmap: i18n 키 연결 (ko/en.json에 roadmap.* 추가되어 있어야 함) -->
     <section id="roadmap" class="card">
       <div class="section-title" data-i18n="roadmap.title">Roadmap</div>
       <div class="grid">
@@ -274,7 +272,7 @@
       </div>
     </section>
 
-    <!-- NFT MINT -->
+    <!-- NFT MINT (기존 로직 유지, 주소/ABI 자동탐색만) -->
     <section id="nft" class="card">
       <div class="section-title" data-i18n="section_nft">FLEX NFT MINT</div>
       <p class="muted" style="margin-top:-6px">Mint your official <b>FlexNFT</b> on BNB Smart Chain</p>
@@ -293,7 +291,7 @@
     </section>
   </div>
 
-  <!-- Lightbox -->
+  <!-- Lightbox (기존 유지) -->
   <div class="lightbox" id="lightbox" aria-modal="true" role="dialog">
     <div class="lb-toolbar">
       <button class="btn" id="lb-zoom-in">+</button>
@@ -302,9 +300,7 @@
       <button class="btn" id="lb-close">Close</button>
     </div>
     <div class="lb-hint">Wheel/핀치로 확대, 드래그로 이동, ESC 닫기</div>
-    <div class="lb-stage" id="lb-stage">
-      <img id="lb-img" class="lb-img" alt="preview">
-    </div>
+    <div class="lb-stage" id="lb-stage"><img id="lb-img" class="lb-img" alt="preview"></div>
   </div>
 
   <script>
@@ -410,7 +406,7 @@
       el.querySelectorAll('img').forEach(img=>{ img.style.cursor='zoom-in'; img.addEventListener('click',()=>openLightbox(img.src)); });
     }
 
-    /* 라이트박스 */
+    /* Lightbox 동작 (기존 유지) */
     const lb=$('#lightbox'), lbImg=$('#lb-img'), lbStage=$('#lb-stage');
     let scale=0.75, minS=0.5, maxS=6, pos={x:0,y:0}, dragging=false, startPos={x:0,y:0};
     function applyLB(){ lbImg.style.transform=`translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
@@ -439,7 +435,7 @@
       document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
     }
 
-    /* --------- 화이트페이퍼 경로 자동 설정 --------- */
+    /* --------- Whitepaper 경로 자동 보정 --------- */
     async function initWhitepapers(){
       const langs=[['en','English'],['ko','Korean'],['ja','Japanese'],['zh','Chinese'],['es','Spanish'],['de','German'],['pt','Portuguese'],['it','Italian']];
       for(const [code] of langs){
@@ -450,7 +446,7 @@
       }
     }
 
-    /* --------- NFT Mint (claim & mint 자동 시도) --------- */
+    /* --------- NFT Mint (기존 로직 유지) --------- */
     const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'},
                    bscMainnet:{chainId:'0x38',name:'BSC',rpc:'https://bsc-dataseed.binance.org'} };
     const DEFAULT_PRICE_BNB = (window.NFT_PRICE_BNB || '0.0001');
@@ -499,10 +495,8 @@
               if(payFixed){ value=ethers.parseEther(DEFAULT_PRICE_BNB); }
               else{ try{ value=await c.price(); }catch{ value=ethers.parseEther(DEFAULT_PRICE_BNB); } }
               let tx;
-              if(c.claim){
-                try{ tx=await c.claim(to,1,{value}); }
-                catch{ tx=await c.claim(1,{value}); }
-              }else if(c.mint){ tx=await c.mint(1,{value}); }
+              if(c.claim){ try{ tx=await c.claim(to,1,{value}); } catch{ tx=await c.claim(1,{value}); } }
+              else if(c.mint){ tx=await c.mint(1,{value}); }
               else{ throw new Error('지원하지 않는 민팅 방식'); }
               write('Minting... TX: '+tx.hash); await tx.wait(); write('Minted!'); return;
             }catch(e){ last=e; }
@@ -522,7 +516,7 @@
       await initHero();
       await initTokenomics();
       await initCountdown();
-      await initWhitepapers();
+      await initWhitepapers();   // ✅ 화이트페이퍼 경로 자동 보정
       await loadGrid('/action', '#action-grid');
       await loadGrid('/nft-preview', '#nft-grid');
       await setupMintUI();
