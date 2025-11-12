@@ -101,6 +101,14 @@
     .btn-gold{background:var(--gold);color:#000;border-radius:.7rem;padding:.55rem .9rem;font-weight:800;border:0;cursor:pointer}
     .select-net{margin:8px 0;padding:.45rem .6rem;border-radius:.6rem;border:1px solid var(--border);background:#0f0e0c;color:var(--text)}
     .mint-log{background:#0f0e0c;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;color:#ddd;font-size:.85rem;min-height:2.2em}
+
+    /* === Roadmap (NEW) === */
+    .roadmap-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+    .roadmap-card{background:#0e0e0e;border:1px solid rgba(212,175,55,.25);border-radius:16px;padding:16px}
+    .roadmap-card h3{color:#f4cc4f;margin:0 0 8px 0;font-size:18px}
+    .roadmap-card p{color:#e8e8e8;font-size:14px;margin:0}
+    #roadmap .roadmap-card{transition:transform .25s ease, box-shadow .25s ease}
+    #roadmap .roadmap-card:hover{transform:translateY(-4px);box-shadow:0 4px 15px rgba(212,175,55,.15)}
   </style>
 
   <!-- ethers CDN -->
@@ -183,6 +191,29 @@
       <div class="countbox">
         <div id="countdown">—</div>
         <div id="countdown-range" class="muted">—</div>
+      </div>
+    </section>
+
+    <!-- ===== Roadmap (i18n 연결) ===== -->
+    <section class="card" id="roadmap">
+      <div class="section-title" data-i18n="roadmap.title">Roadmap</div>
+      <div class="roadmap-grid">
+        <div class="roadmap-card">
+          <h3 data-i18n="roadmap.phase1.title">Phase 1</h3>
+          <p data-i18n="roadmap.phase1.desc">성공적 런칭 &amp; memecoin 섹터에서 살아남기</p>
+        </div>
+        <div class="roadmap-card">
+          <h3 data-i18n="roadmap.phase2.title">Phase 2</h3>
+          <p data-i18n="roadmap.phase2.desc">커뮤니티 활성화 및 보유자 1000명 확보</p>
+        </div>
+        <div class="roadmap-card">
+          <h3 data-i18n="roadmap.phase3.title">Phase 3</h3>
+          <p data-i18n="roadmap.phase3.desc">DEX &amp; CEX 거래소 상장</p>
+        </div>
+        <div class="roadmap-card">
+          <h3 data-i18n="roadmap.phase4.title">Phase 4</h3>
+          <p data-i18n="roadmap.phase4.desc">생태계 확장 (AI &amp; NFT)</p>
+        </div>
       </div>
     </section>
 
