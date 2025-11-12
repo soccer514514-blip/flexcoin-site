@@ -5,12 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>$FLEX is your life — Flexcoin</title>
 
-  <!-- Favicon (404 방지: /public 경로 우선, 둘 다 시도) -->
-  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
-  <link rel="alternate icon" href="/public/favicon.ico">
-  <link rel="alternate icon" href="/favicon.ico">
+  <!-- Favicon (루트/퍼블릭 모두 대응 + 캐시 버스팅) -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
+  <link rel="mask-icon" href="/favicon.svg?v=4" color="#f4cc4f">
+  <link rel="icon" type="image/x-icon" sizes="any" href="/favicon.ico?v=4">
+  <link rel="shortcut icon" href="/favicon.ico?v=4">
+  <link rel="alternate icon" href="/public/favicon.ico?v=4">
 
-  <!-- Whitepaper discoverability (선택): 검색·공유용 힌트 -->
+  <!-- Hero 프리로드(있으면 빠르게) -->
+  <link rel="preload" as="image" href="/public/hero/main.jpg" imagesizes="(max-width:1100px) 100vw, 1100px">
+
+  <!-- Whitepaper discoverability -->
   <link rel="alternate" hreflang="en" href="/public/whitepaper/en.pdf">
   <link rel="alternate" hreflang="ko" href="/public/whitepaper/ko.pdf">
   <link rel="alternate" hreflang="ja" href="/public/whitepaper/ja.pdf">
@@ -30,13 +35,11 @@
       font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial;
       overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none
     }
-    /* 상단바 고정 → 본문 패딩 */
     body{ padding-top:64px; }
     *{box-sizing:border-box}
     a{color:inherit; text-decoration:none}
     body.noscroll{overflow:hidden}
 
-    /* Top bar (fixed) */
     .topbar{
       position:fixed; inset:0 auto auto 0; right:0; top:0;
       display:flex; align-items:center; gap:.5rem; padding:.8rem 1rem;
@@ -92,6 +95,7 @@
     .addr a{color:var(--gold);text-decoration:none}
 
     .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .grid picture{display:block}
     .grid img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;
       border-radius:12px;border:1px solid var(--border);background:#0f0e0c}
     @media(max-width:900px){
@@ -124,7 +128,7 @@
     .btn-row{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.6rem}
     .btn-gold{background:var(--gold);color:#000;border-radius:.7rem;padding:.55rem .9rem;font-weight:800;border:0;cursor:pointer}
     .select-net{margin:8px 0;padding:.45rem .6rem;border-radius:.6rem;border:1px solid var(--border);background:#0f0e0c;color:var(--text)}
-    .mint-log{background:#0f0e0c;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;color:#ddd;font-size:.85rem;min-height:2.2em}
+    .mint-log{background:#0f0e0c;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;color:#ddd;font-size:.85rem;min-height:2.2em;white-space:pre-wrap}
 
     #roadmap .grid{grid-template-columns:repeat(4,1fr)}
     #roadmap .roadmap-card{transition:transform .25s ease, box-shadow .25s ease}
@@ -133,7 +137,7 @@
   </style>
 
   <!-- ethers CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js" defer></script>
 </head>
 <body>
   <!-- Top bar -->
@@ -155,9 +159,12 @@
   </div>
 
   <div class="wrap">
-    <!-- HERO -->
+    <!-- HERO (이미지 최적화: WebP/AVIF 탐지 + fallback) -->
     <section class="card hero">
-      <img id="hero-img" src="/public/hero/main.jpg" alt="Flexcoin hero" onerror="this.onerror=null;this.src='/public/hero/1.jpg'">
+      <img id="hero-img" src="/public/hero/main.jpg" alt="Flexcoin hero"
+           loading="eager" decoding="async"
+           sizes="(max-width:1100px) 100vw, 1100px"
+           onerror="this.onerror=null;this.src='/public/hero/1.jpg'">
     </section>
 
     <!-- About -->
@@ -318,14 +325,7 @@
   <script>
     const $ = (q)=>document.querySelector(q);
 
-    /* ---------------- Whitepaper Direct Router ----------------
-       주소창에 다음 형태를 넣으면 즉시 PDF로 리다이렉트/다운로드:
-       - /whitepaper               → ko.pdf (기본)
-       - /whitepaper/en            → en.pdf
-       - /whitepaper/ko.pdf        → ko.pdf
-       - /wp/en , /pdf/en          → en.pdf
-       - #whitepaper-en , #pdf-en  → en.pdf (해시)
-    ----------------------------------------------------------- */
+    /* -------------- Whitepaper Direct Router -------------- */
     (function directWhitepaperRouter(){
       const langCodes = ['en','ko','ja','zh','es','de','pt','it'];
       const lower = (s)=> (s||'').toLowerCase();
@@ -346,11 +346,9 @@
         const code = (m[2] && langCodes.includes(m[2])) ? m[2] : 'ko';
         const url = await findBestPdf(code);
         if(url){
-          // 자동 다운로드 유도
           const a = document.createElement('a');
           a.href = url; a.download = `flexcoin_whitepaper_${code}.pdf`;
           document.body.appendChild(a); a.click(); a.remove();
-          // 동시에 새 탭 열기(브라우저에 따라)
           window.open(url,'_blank','noopener');
           return true;
         }
@@ -359,8 +357,6 @@
 
       async function handleHash(){
         const h = lower(location.hash);
-        // #whitepaper, #pdf → 기본 ko
-        // #whitepaper-en / #pdf-en → 언어 지정
         let code = null;
         const mh = h.match(/^#(?:whitepaper|pdf)(?:[-_]?([a-z]{2}))?$/);
         if(mh){ code = mh[1] || 'ko'; }
@@ -375,16 +371,11 @@
         }
         return false;
       }
-
-      // 즉시 처리
-      handlePath().then(hit=>{
-        if(!hit) handleHash();
-      });
-      // 해시 변경에도 반응
+      handlePath().then(hit=>{ if(!hit) handleHash(); });
       window.addEventListener('hashchange', handleHash);
     })();
 
-    /* --------- 유틸 --------- */
+    /* -------------------- 유틸 -------------------- */
     const deep = (obj, path) => path.split('.').reduce((o,k)=> (o && k in o) ? o[k] : undefined, obj);
 
     async function fetchFirst(paths){
@@ -405,7 +396,7 @@
       } return null;
     }
 
-    /* --------- 링크/주소 --------- */
+    /* -------------- 링크/주소 -------------- */
     async function initLinks(){
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
       const set=(id,url)=>{const b=$(id); if(!b) return; if(url){b.href=url; b.removeAttribute('disabled');} else {b.setAttribute('disabled','');}};
@@ -418,13 +409,20 @@
       $('#addr-table').innerHTML = rows.map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`).join('');
     }
 
-    /* --------- 히어로 이미지 --------- */
+    /* -------------- 히어로 이미지 최적화 -------------- */
     async function initHero(){
-      const src = await firstExistingImage(['/public/hero/main.jpg','/hero/main.jpg','/public/hero/1.jpg','/hero/1.jpg']);
-      if(src){ const img=$('#hero-img'); img.src=src; }
+      // avif > webp > jpg 순으로 탐색
+      const src = await firstExistingImage([
+        '/public/hero/main.avif','/hero/main.avif',
+        '/public/hero/main.webp','/hero/main.webp',
+        '/public/hero/main.jpg','/hero/main.jpg',
+        '/public/hero/1.webp','/hero/1.webp',
+        '/public/hero/1.jpg','/hero/1.jpg'
+      ]);
+      if(src){ const img=$('#hero-img'); img.src=src; img.loading='eager'; img.decoding='async'; img.sizes='(max-width:1100px) 100vw, 1100px'; }
     }
 
-    /* --------- 토크노믹스 --------- */
+    /* -------------- 토크노믹스 -------------- */
     async function initTokenomics(){
       const j = await fetchFirst(['/public/config/allocations.json','/config/allocations.json']);
       const t = j.tokenomics || {lp:54,presale:20,team:15,marketing:10,burn:1};
@@ -459,7 +457,7 @@
       if(links.pinksale_url){ btn.textContent='Open Pinksale'; btn.href=links.pinksale_url; btn.removeAttribute('aria-disabled'); }
     }
 
-    /* --------- 카운트다운 --------- */
+    /* -------------- 카운트다운 -------------- */
     async function initCountdown(){
       let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00';
       const p = await fetchFirst(['/public/config/presale.json','/config/presale.json']);
@@ -476,17 +474,31 @@
       tick(); setInterval(tick,1000);
     }
 
-    /* --------- 갤러리 + 라이트박스 --------- */
+    /* -------------- 그리드 이미지 최적화 -------------- */
+    function pictureHTML(srcBase){
+      // srcBase: '/public/action/1' 등. avif > webp > jpg
+      const avif = `${srcBase}.avif`, webp = `${srcBase}.webp`, jpg = `${srcBase}.jpg`;
+      return `
+        <picture>
+          <source type="image/avif" srcset="${avif}">
+          <source type="image/webp" srcset="${webp}">
+          <img src="${jpg}" alt="" loading="lazy" decoding="async"
+               sizes="(max-width:900px) 50vw, 25vw">
+        </picture>`;
+    }
     async function loadGrid(prefix, targetId){
       const list=Array.from({length:8},(_,i)=>i+1);
-      const decided=await Promise.all(list.map(n=> firstExistingImage([`/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`])));
-      const ok=decided.filter(Boolean);
       const el=$(targetId);
-      el.innerHTML = ok.length ? ok.map(src=>`<img src="${src}" alt="">`).join('') : '<div class="muted">Images coming soon.</div>';
-      el.querySelectorAll('img').forEach(img=>{ img.style.cursor='zoom-in'; img.addEventListener('click',()=>openLightbox(img.src)); });
+      // jpg가 최소 보장. avif/webp는 브라우저가 자동 선택.
+      el.innerHTML = list.map(n=> pictureHTML(`/public${prefix}/${n}`)).join('');
+      // 라이트박스 연결
+      el.querySelectorAll('img').forEach(img=>{
+        img.style.cursor='zoom-in';
+        img.addEventListener('click',()=>openLightbox(img.currentSrc || img.src),{passive:true});
+      });
     }
 
-    /* 라이트박스 */
+    /* -------------- 라이트박스 -------------- */
     const lb=$('#lightbox'), lbImg=$('#lb-img'), lbStage=$('#lb-stage');
     let scale=0.75, minS=0.5, maxS=6, pos={x:0,y:0}, dragging=false, startPos={x:0,y:0};
     function applyLB(){ lbImg.style.transform=`translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
@@ -501,7 +513,7 @@
     window.addEventListener('mouseup',()=>{ dragging=false; lbStage.style.cursor='grab'; });
     lb.addEventListener('click',(e)=>{ if(e.target===lb) closeLightbox(); });
 
-    /* --------- i18n --------- */
+    /* -------------- i18n -------------- */
     async function setLang(lang){
       const dict=await fetchFirst([`/public/i18n/${lang}.json`,`/i18n/${lang}.json`]);
       document.querySelectorAll('[data-i18n]').forEach(el=>{
@@ -519,7 +531,7 @@
       document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
     }
 
-    /* --------- 화이트페이퍼 링크 보정 (#whitepaper/#pdf) --------- */
+    /* -------------- 화이트페이퍼 링크 보정 -------------- */
     async function initWhitepapers(){
       const langs=[['en','English'],['ko','Korean'],['ja','Japanese'],['zh','Chinese'],['es','Spanish'],['de','German'],['pt','Portuguese'],['it','Italian']];
       for(const [code] of langs){
@@ -530,16 +542,20 @@
       }
     }
 
-    /* --------- NFT Mint --------- */
+    /* -------------- NFT Mint (오류내성 강화판) -------------- */
     const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'},
                    bscMainnet:{chainId:'0x38',name:'BSC',rpc:'https://bsc-dataseed.binance.org'} };
     const DEFAULT_PRICE_BNB = (window.NFT_PRICE_BNB || '0.0001');
+
+    // ABI 후보 (claim(receiver,qty), claim(qty), mint(qty)) + price()
     const ABI_VARIANTS = [
       ["function claim(address receiver, uint256 quantity) payable","function price() view returns (uint256)"],
       ["function claim(uint256 quantity) payable","function price() view returns (uint256)"],
-      ["function mint(uint256 quantity) payable","function price() view returns (uint256)"]
+      ["function mint(uint256 quantity) payable","function price() view returns (uint256)"],
     ];
     let NFT_ADDR={ bscMainnet:'0xYourMainnetNFTAddress', bscTestnet:'0xYourTestnetNFTAddress' };
+
+    function logMint(msg){ const el=$('#mint-log'); el.textContent += (el.textContent.trim()? "\n" :"") + msg; }
 
     async function connect(chainKey){
       const { ethereum } = window;
@@ -554,7 +570,52 @@
         }else{ throw e; }
       }
       const provider=new ethers.BrowserProvider(ethereum);
+      const net = await provider.getNetwork();
+      if(net.chainId !== BigInt(target.chainId)) {
+        // 일부 지갑에서 즉시 반영 안됐을 때 재확인
+        await new Promise(r=>setTimeout(r,350));
+      }
       return await provider.getSigner();
+    }
+
+    async function safePrice(contract){
+      try{ const v=await contract.price(); return v; }catch(_){
+        // price() 없으면 고정가 사용
+        return ethers.parseEther(DEFAULT_PRICE_BNB);
+      }
+    }
+
+    async function runMintInternal(signer, contract, to){
+      // 지갑 잔고 검사(부족 시 명확히 표시)
+      const bal = await signer.provider.getBalance(await signer.getAddress());
+      const ask = await safePrice(contract);
+      if(bal < ask){ throw new Error(`Insufficient BNB. Need ${ethers.formatEther(ask)} BNB.`); }
+
+      // 가스 추정 + 여유치 20%, 레거시 트랜잭션(type:0) 우선 시도
+      let tx;
+      try{
+        const est = await contract.claim ? contract.estimateGas.claim(to,1,{ value: ask }).catch(()=>contract.estimateGas.claim(1,{ value: ask }))
+                  : contract.estimateGas.mint(1,{ value: ask });
+        const gasLimit = est ? (est * 12n / 10n) : undefined;
+
+        if(contract.claim){
+          try{ tx=await contract.claim(to,1,{ value: ask, gasLimit, type:0 }); }
+          catch{ tx=await contract.claim(1,{ value: ask, gasLimit, type:0 }); }
+        }else{
+          tx=await contract.mint(1,{ value: ask, gasLimit, type:0 });
+        }
+      }catch(e){
+        // 레거시 타입 실패 시 EIP-1559 재시도
+        if(contract.claim){
+          try{ tx=await contract.claim(to,1,{ value: await safePrice(contract) }); }
+          catch{ tx=await contract.claim(1,{ value: await safePrice(contract) }); }
+        }else{
+          tx=await contract.mint(1,{ value: await safePrice(contract) });
+        }
+      }
+      logMint('Minting... TX: '+tx.hash);
+      await tx.wait();
+      logMint('✅ Minted!');
     }
 
     async function setupMintUI(){
@@ -562,40 +623,49 @@
       if(addr.nft_mainnet) NFT_ADDR.bscMainnet=addr.nft_mainnet;
       if(addr.nft_testnet) NFT_ADDR.bscTestnet=addr.nft_testnet;
 
-      const sel=$('#net'), btnC=$('#connect'), btnLegacy=$('#mint'), btnFlex=$('#mint-flex'), log=$('#mint-log');
-      const write=(s)=>{ log.textContent=s; };
+      const sel=$('#net'), btnC=$('#connect'), btnLegacy=$('#mint'), btnFlex=$('#mint-flex'), logEl=$('#mint-log');
+      const setLog=(s)=>{ logEl.textContent=s; };
 
-      btnC.onclick=async()=>{ try{ const s=await connect(sel.value); write('Connected: '+await s.getAddress()); }catch(e){ write('Connect error: '+(e.message||e)); } };
+      btnC.onclick=async()=>{ try{ const s=await connect(sel.value); setLog('Connected: '+await s.getAddress()); }catch(e){ setLog('Connect error: '+(e.message||e)); } };
 
       async function runMint(payFixed){
         try{
           const chainKey=sel.value; const signer=await connect(chainKey); const to=await signer.getAddress();
           const target=NFT_ADDR[chainKey]; if(!target || target.length<20) throw new Error('NFT 컨트랙트 주소가 설정되지 않았습니다.');
+          setLog('Preparing mint...');
           let last=null;
+
           for(const abi of ABI_VARIANTS){
             try{
               const c=new ethers.Contract(target, abi, signer);
-              let value;
-              if(payFixed){ value=ethers.parseEther(DEFAULT_PRICE_BNB); }
-              else{ try{ value=await c.price(); }catch{ value=ethers.parseEther(DEFAULT_PRICE_BNB); } }
-              let tx;
-              if(c.claim){
-                try{ tx=await c.claim(to,1,{value}); }
-                catch{ tx=await c.claim(1,{value}); }
-              }else if(c.mint){ tx=await c.mint(1,{value}); }
-              else{ throw new Error('지원하지 않는 민팅 방식'); }
-              write('Minting... TX: '+tx.hash); await tx.wait(); write('Minted!'); return;
+              // payFixed면 price() 무시하고 고정가
+              if(payFixed){
+                const value = ethers.parseEther(DEFAULT_PRICE_BNB);
+                // 추정 및 전송
+                const est = (c.claim ? (await (async()=>{ try{return await c.estimateGas.claim(to,1,{value});}catch{return await c.estimateGas.claim(1,{value});}})())
+                                      : await c.estimateGas.mint(1,{value})).catch?.(()=>null);
+                const gasLimit = est ? (est * 12n / 10n) : undefined;
+                let tx;
+                try{ tx = c.claim ? await c.claim(to,1,{value,gasLimit,type:0}) : await c.mint(1,{value,gasLimit,type:0}); }
+                catch{ tx = c.claim ? await c.claim(1,{value}) : await c.mint(1,{value}); }
+                logMint('Minting... TX: '+tx.hash); await tx.wait(); setLog('✅ Minted!'); return;
+              }else{
+                await runMintInternal(signer, c, to); setLog('✅ Minted!'); return;
+              }
             }catch(e){ last=e; }
           }
           throw last || new Error('민팅 실패');
-        }catch(e){ write('Mint error: '+((e&&e.message)||String(e))); }
+        }catch(e){
+          const code = (e && (e.code||e.error?.code)) ?? '';
+          setLog(`Mint error: ${code} ${e.message||e}`);
+        }
       }
 
       btnLegacy.onclick = ()=>runMint(false);
       btnFlex.onclick   = ()=>runMint(true);
     }
 
-    /* --------- Boot --------- */
+    /* -------------- Boot -------------- */
     (async()=>{
       bindLang();
       await initLinks();
