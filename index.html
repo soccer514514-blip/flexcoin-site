@@ -5,59 +5,58 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>$FLEX is your life — Flexcoin</title>
 
-  <!-- Favicon (404 완화: ico + svg 동시 선언) -->
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="apple-touch-icon" href="/favicon.png">
+  <!-- Favicon (404 방지: /public 경로 우선, 둘 다 시도) -->
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="alternate icon" href="/public/favicon.ico">
+  <link rel="alternate icon" href="/favicon.ico">
 
   <style>
     :root{
       --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a;
       --gold:#f4cc4f; --chip:#3a331c; --border:rgba(255,255,255,.08);
-      --topbar-h:56px;  /* ⬅︎ 고정 상단바 높이(모바일에서도 여유) */
     }
-    html,body{margin:0;background:var(--bg);color:var(--text);
+    html,body{
+      margin:0; background:var(--bg); color:var(--text);
       font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial;
-      overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none}
+      overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none
+    }
+    /* 상단바를 fixed로 고정하므로, 본문이 가려지지 않게 패딩 부여 */
+    body{ padding-top:64px; }
     *{box-sizing:border-box}
     a{color:inherit; text-decoration:none}
     body.noscroll{overflow:hidden}
 
-    /* ========== TOP BAR (고정) ========== */
+    /* Top bar (고정 + z-index ↑) */
     .topbar{
-      position:fixed; inset:0 0 auto 0; height:var(--topbar-h);
-      display:flex; align-items:center; gap:.5rem; padding:.6rem 1rem;
-      background:linear-gradient(180deg,rgba(0,0,0,.75),rgba(0,0,0,.35) 60%, transparent);
-      backdrop-filter:blur(6px); z-index:1000;
+      position:fixed; inset:0 auto auto 0; right:0; top:0;
+      display:flex; align-items:center; gap:.5rem; padding:.8rem 1rem;
+      background:linear-gradient(180deg,rgba(0,0,0,.75),rgba(0,0,0,.35));
+      backdrop-filter:blur(6px); z-index:9999; border-bottom:1px solid var(--border);
     }
     .brand{font-weight:800;color:var(--gold);line-height:1.15;white-space:nowrap}
     .spacer{flex:1}
-    .btn{border:none;border-radius:.7rem;padding:.55rem .9rem;cursor:pointer;
-      background:var(--gold);color:#000;font-weight:800;display:inline-block;white-space:nowrap}
+    .btn{
+      border:none;border-radius:.7rem;padding:.55rem .9rem;cursor:pointer;
+      background:var(--gold);color:#000;font-weight:800;display:inline-block;white-space:nowrap
+    }
     .btn[disabled]{opacity:.45;cursor:not-allowed}
+    .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid var(--border)}
+    .lang button{background:var(--chip);padding:.5rem .75rem;border:0;color:var(--text);cursor:pointer}
+    .lang button.active{background:var(--gold);color:#000;font-weight:800}
     .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9; white-space:nowrap}
     .nav a:hover{opacity:1}
 
-    /* 언어 토글(테두리 삐져나옴 수정) */
-    .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid var(--border)}
-    .lang button{
-      min-width:40px; /* EN/KR 폭 고정 */
-      background:var(--chip); padding:.5rem .75rem; border:0; color:var(--text);
-      cursor:pointer; font-weight:700; line-height:1; letter-spacing:.2px;
-    }
-    .lang button.active{background:var(--gold);color:#000;font-weight:800}
-
-    /* 모바일 상단바 정렬 보정 */
-    @media(max-width:640px){
-      .topbar{gap:.45rem}
-      .brand{font-size:.95rem}
-      .nav{display:none} /* 아이콘/버튼 우선 */
+    /* Mobile topbar wrap */
+    @media(max-width:680px){
+      .topbar{flex-wrap:wrap;gap:.4rem}
+      .brand{flex:1 1 100%; font-size:1rem}
+      .nav{order:3; width:100%; display:flex; gap:.8rem .6rem; flex-wrap:wrap}
+      .btn{padding:.5rem .7rem}
+      .lang{order:4}
     }
 
-    /* 본문은 고정바 높이만큼 패딩 */
-    .wrap{max-width:1100px;margin:0 auto; padding:calc(var(--topbar-h) + 14px) 1rem 1rem}
-
-    /* 공통 카드/제목 */
+    /* Layout */
+    .wrap{max-width:1100px;margin:0 auto;padding:1rem}
     .card{background:var(--card);border:1px solid var(--border);
       border-radius:18px;padding:16px;margin-top:1rem}
     .section-title{font-size:1.4rem;font-weight:900;margin:.4rem 0 1rem;color:var(--gold)}
@@ -80,6 +79,15 @@
       background:linear-gradient(180deg,rgba(255,255,255,.02),transparent)}
     #countdown{font-weight:900;font-size:1.35rem}
 
+    /* Whitepaper */
+    .wp-grid{display:flex;flex-wrap:wrap;gap:.5rem}
+    .wp-note{margin-top:.5rem}
+
+    /* Addresses */
+    .addr table{width:100%;border-collapse:collapse;font-size:.92rem}
+    .addr td{padding:.45rem .55rem;border-bottom:1px dashed var(--border);word-break:break-all}
+    .addr a{color:var(--gold);text-decoration:none}
+
     /* Galleries */
     .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
     .grid img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;
@@ -87,41 +95,50 @@
     @media(max-width:900px){
       .tok-wrap{grid-template-columns:1fr}
       .grid{grid-template-columns:repeat(2,1fr)}
+      .addr td{font-size:.85rem}
     }
 
     /* Lightbox */
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;
-      align-items:center;justify-content:center;z-index:1500;touch-action:none}
+      align-items:center;justify-content:center;z-index:50;touch-action:none}
     .lightbox.show{display:flex}
     .lb-stage{position:relative;max-width:95vw;max-height:85vh;overflow:hidden;cursor:grab;border-radius:12px}
     .lb-img{user-select:none;pointer-events:auto;transform-origin:center center;display:block;max-width:none}
-    .lb-toolbar{position:fixed;top:calc(8px + var(--topbar-h));right:12px;display:flex;gap:.4rem;z-index:1600}
+    .lb-toolbar{position:fixed;top:12px;right:12px;display:flex;gap:.4rem;z-index:60}
     .lb-toolbar .btn{padding:.4rem .6rem;border-radius:.6rem}
     .lb-hint{position:fixed;bottom:12px;left:12px;color:#ddd;font-size:.85rem;opacity:.8}
 
-    /* Addresses */
-    .addr table{width:100%;border-collapse:collapse;font-size:.92rem}
-    .addr td{padding:.45rem .55rem;border-bottom:1px dashed var(--border);word-break:break-all}
-    .addr a{color:var(--gold);text-decoration:none}
-
-    /* Roadmap hover 효과 */
-    #roadmap .grid{grid-template-columns:repeat(4,1fr)}
-    #roadmap .roadmap-card{transition:transform .25s ease, box-shadow .25s ease}
-    #roadmap .roadmap-card:hover{transform:translateY(-4px); box-shadow:0 4px 15px rgba(212,175,55,.15)}
-    @media(max-width:900px){ #roadmap .grid{grid-template-columns:repeat(2,1fr)} }
+    /* About */
+    .about-section{background:linear-gradient(180deg,#0a0a0a 0%, #111 100%);border:1px solid rgba(212,175,55,.25);
+      border-radius:24px;padding:28px;margin:24px 0;box-shadow:0 10px 30px rgba(0,0,0,.35);color:#f1f1f1}
+    .about-title{font-size:28px;font-weight:800;margin-bottom:8px;color:#f6e8b1}
+    .about-sub{font-size:14px;color:#a0a0a0;margin-bottom:16px}
+    .about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+    .about-card{background:#0e0e0e;border:1px solid rgba(212,175,55,.15);border-radius:16px;padding:16px}
+    .about-bullets{list-style:none;padding:0;margin:12px 0 0 0}
+    .about-bullets li{margin:6px 0;padding-left:18px;position:relative}
+    .about-bullets li:before{content:"✅";position:absolute;left:0;top:0.5px}
+    blockquote.about-quote{margin:12px 0;border-left:4px solid rgba(212,175,55,.5);padding:8px 12px;color:#e9e1c8;font-style:italic}
+    .small-muted{font-size:12px;color:#9a9a9a;margin-top:8px}
 
     /* NFT mint UI */
     .btn-row{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.6rem}
     .btn-gold{background:var(--gold);color:#000;border-radius:.7rem;padding:.55rem .9rem;font-weight:800;border:0;cursor:pointer}
     .select-net{margin:8px 0;padding:.45rem .6rem;border-radius:.6rem;border:1px solid var(--border);background:#0f0e0c;color:var(--text)}
     .mint-log{background:#0f0e0c;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;color:#ddd;font-size:.85rem;min-height:2.2em}
+
+    /* Roadmap */
+    #roadmap .grid{grid-template-columns:repeat(4,1fr)}
+    #roadmap .roadmap-card{transition:transform .25s ease, box-shadow .25s ease}
+    #roadmap .roadmap-card:hover{transform:translateY(-4px); box-shadow:0 4px 15px rgba(212,175,55,.15)}
+    @media(max-width:900px){ #roadmap .grid{grid-template-columns:repeat(2,1fr)} }
   </style>
 
   <!-- ethers CDN -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-  <!-- Top bar (고정) -->
+  <!-- Top bar -->
   <div class="topbar">
     <div class="brand" id="brand">$FLEX is your life. Your life is FLEX.</div>
     <div class="spacer"></div>
@@ -142,35 +159,39 @@
   <div class="wrap">
     <!-- HERO -->
     <section class="card hero">
-      <img id="hero-img" src="/hero/main.jpg" alt="Flexcoin hero" onerror="this.onerror=null;this.src='/hero/1.jpg'">
+      <img id="hero-img" src="/public/hero/main.jpg" alt="Flexcoin hero" onerror="this.onerror=null;this.src='/public/hero/1.jpg'">
     </section>
 
     <!-- About -->
-    <section id="about-flexcoin" class="card">
-      <div class="section-title">About FlexCoin</div>
-      <div class="muted">감성 + 신뢰 결합 (Korean & English)</div>
-      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
-        <div class="card" style="margin:0">
+    <section id="about-flexcoin" class="about-section">
+      <div class="about-title">About FlexCoin</div>
+      <div class="about-sub">감성 + 신뢰 결합 (Korean & English)</div>
+      <div class="about-grid">
+        <div class="about-card">
           <h3 style="margin:0 0 8px 0">한국어</h3>
           <p>FlexCoin은 단순한 밈코인이 아닙니다. 한국에서 “Flex”는 <b>자신의 능력·소비력·자신감</b>을 당당하게 표현하는 문화입니다. FlexCoin은 그 태도를 담은 <b>라이프스타일</b>입니다.</p>
-          <blockquote style="margin:12px 0;border-left:4px solid rgba(212,175,55,.5);padding:8px 12px;color:#e9e1c8;font-style:italic">“Flex는 과시가 아니라, 당신의 삶을 증명하는 것이다.”</blockquote>
-          <ul style="margin:8px 0 0 0">
+          <blockquote class="about-quote">“Flex는 과시가 아니라, 당신의 삶을 증명하는 것이다.”</blockquote>
+          <p>우리는 투명함을 선택했고, 그 투명함이 신뢰를 만든다고 믿습니다.</p>
+          <ul class="about-bullets">
             <li><b>팀 신원 KYC 인증</b></li>
             <li><b>스마트 컨트랙트 Audit(감사)</b></li>
             <li><b>유동성 LP Lock + 소유권 포기</b></li>
             <li><b>Tokenomics · 지갑 배분 100% 공개</b></li>
           </ul>
+          <p class="small-muted">모든 항목은 온체인으로 증명됩니다.</p>
         </div>
-        <div class="card" style="margin:0">
+        <div class="about-card">
           <h3 style="margin:0 0 8px 0">English</h3>
           <p>FlexCoin isn’t just a memecoin. In Korea, “Flex” means proudly expressing your <b>capability, spending power, and confidence</b>. FlexCoin captures that <b>lifestyle</b>.</p>
-          <blockquote style="margin:12px 0;border-left:4px solid rgba(212,175,55,.5);padding:8px 12px;color:#e9e1c8;font-style:italic">“Flexing isn’t showing off — it’s owning your story.”</blockquote>
-          <ul style="margin:8px 0 0 0">
+          <blockquote class="about-quote">“Flexing isn’t showing off — it’s owning your story.”</blockquote>
+          <p>We choose transparency, because transparency creates trust.</p>
+          <ul class="about-bullets">
             <li><b>Team KYC Verified</b></li>
             <li><b>Smart Contract Audit Completed</b></li>
             <li><b>LP Locked + Ownership Renounced</b></li>
             <li><b>100% Public Tokenomics & Wallet Allocation</b></li>
           </ul>
+          <p class="small-muted">Everything is verifiable on-chain.</p>
         </div>
       </div>
     </section>
@@ -211,19 +232,19 @@
     </section>
 
     <!-- Whitepaper -->
-    <section class="card" id="whitepaper">
+    <section id="whitepaper" class="card">
       <div class="section-title">Whitepaper</div>
-      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.5rem">
-        <a class="btn" href="/whitepaper/en.pdf" download target="_blank" rel="noopener">English</a>
-        <a class="btn" href="/whitepaper/ko.pdf" download target="_blank" rel="noopener">Korean</a>
-        <a class="btn" href="/whitepaper/ja.pdf" download target="_blank" rel="noopener">Japanese</a>
-        <a class="btn" href="/whitepaper/zh.pdf" download target="_blank" rel="noopener">Chinese</a>
-        <a class="btn" href="/whitepaper/es.pdf" download target="_blank" rel="noopener">Spanish</a>
-        <a class="btn" href="/whitepaper/de.pdf" download target="_blank" rel="noopener">German</a>
-        <a class="btn" href="/whitepaper/pt.pdf" download target="_blank" rel="noopener">Portuguese</a>
-        <a class="btn" href="/whitepaper/it.pdf" download target="_blank" rel="noopener">Italian</a>
+      <div class="wp-grid">
+        <a class="btn" href="/public/whitepaper/en.pdf" download target="_blank" rel="noopener">English</a>
+        <a class="btn" href="/public/whitepaper/ko.pdf" download target="_blank" rel="noopener">Korean</a>
+        <a class="btn" href="/public/whitepaper/ja.pdf" download target="_blank" rel="noopener">Japanese</a>
+        <a class="btn" href="/public/whitepaper/zh.pdf" download target="_blank" rel="noopener">Chinese</a>
+        <a class="btn" href="/public/whitepaper/es.pdf" download target="_blank" rel="noopener">Spanish</a>
+        <a class="btn" href="/public/whitepaper/de.pdf" download target="_blank" rel="noopener">German</a>
+        <a class="btn" href="/public/whitepaper/pt.pdf" download target="_blank" rel="noopener">Portuguese</a>
+        <a class="btn" href="/public/whitepaper/it.pdf" download target="_blank" rel="noopener">Italian</a>
       </div>
-      <div class="muted" style="margin-top:.5rem">※ 다운로드가 막히면 새 탭에서 열림 → “다른 이름으로 저장”.</div>
+      <div class="muted wp-note">※ 다운로드가 막히면 새 탭에서 열림 → “다른 이름으로 저장”.</div>
     </section>
 
     <!-- Addresses -->
@@ -299,7 +320,9 @@
   <script>
     const $ = (q)=>document.querySelector(q);
 
-    /* ---------- fetch helpers ---------- */
+    /* --------- 유틸 --------- */
+    const deep = (obj, path) => path.split('.').reduce((o,k)=> (o && k in o) ? o[k] : undefined, obj);
+
     async function fetchFirst(paths){
       for(const p of paths){
         try{ const r=await fetch(p,{cache:'no-cache'}); if(r.ok) return r.json(); }catch(_){}
@@ -318,7 +341,7 @@
       } return null;
     }
 
-    /* ---------- Links / addresses ---------- */
+    /* --------- 링크/주소 --------- */
     async function initLinks(){
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
       const set=(id,url)=>{const b=$(id); if(!b) return; if(url){b.href=url; b.removeAttribute('disabled');} else {b.setAttribute('disabled','');}};
@@ -331,13 +354,13 @@
       $('#addr-table').innerHTML = rows.map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`).join('');
     }
 
-    /* ---------- Hero ---------- */
+    /* --------- 히어로 이미지 --------- */
     async function initHero(){
       const src = await firstExistingImage(['/public/hero/main.jpg','/hero/main.jpg','/public/hero/1.jpg','/hero/1.jpg']);
       if(src){ const img=$('#hero-img'); img.src=src; }
     }
 
-    /* ---------- Tokenomics ---------- */
+    /* --------- 토크노믹스 --------- */
     async function initTokenomics(){
       const j = await fetchFirst(['/public/config/allocations.json','/config/allocations.json']);
       const t = j.tokenomics || {lp:54,presale:20,team:15,marketing:10,burn:1};
@@ -372,7 +395,7 @@
       if(links.pinksale_url){ btn.textContent='Open Pinksale'; btn.href=links.pinksale_url; btn.removeAttribute('aria-disabled'); }
     }
 
-    /* ---------- Countdown ---------- */
+    /* --------- 카운트다운 --------- */
     async function initCountdown(){
       let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00';
       const p = await fetchFirst(['/public/config/presale.json','/config/presale.json']);
@@ -389,16 +412,17 @@
       tick(); setInterval(tick,1000);
     }
 
-    /* ---------- Galleries + Lightbox ---------- */
-    function tryImg(path){ return new Promise(res=>{ const i=new Image(); i.onload=()=>res(path); i.onerror=()=>res(null); i.src=path; }); }
+    /* --------- 갤러리 + 라이트박스 --------- */
     async function loadGrid(prefix, targetId){
       const list=Array.from({length:8},(_,i)=>i+1);
-      const decided=await Promise.all(list.map(n=> firstExistingImage([`/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`]))); 
+      const decided=await Promise.all(list.map(n=> firstExistingImage([`/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`])));
       const ok=decided.filter(Boolean);
       const el=$(targetId);
       el.innerHTML = ok.length ? ok.map(src=>`<img src="${src}" alt="">`).join('') : '<div class="muted">Images coming soon.</div>';
       el.querySelectorAll('img').forEach(img=>{ img.style.cursor='zoom-in'; img.addEventListener('click',()=>openLightbox(img.src)); });
     }
+
+    /* 라이트박스 */
     const lb=$('#lightbox'), lbImg=$('#lb-img'), lbStage=$('#lb-stage');
     let scale=0.75, minS=0.5, maxS=6, pos={x:0,y:0}, dragging=false, startPos={x:0,y:0};
     function applyLB(){ lbImg.style.transform=`translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
@@ -413,20 +437,16 @@
     window.addEventListener('mouseup',()=>{ dragging=false; lbStage.style.cursor='grab'; });
     lb.addEventListener('click',(e)=>{ if(e.target===lb) closeLightbox(); });
 
-    /* ---------- i18n (dot-path 지원) ---------- */
-    function getByPath(obj, path){
-      return path.split('.').reduce((o,k)=> (o && (k in o)) ? o[k] : undefined, obj);
-    }
+    /* --------- i18n (딥키 지원) --------- */
     async function setLang(lang){
       const dict=await fetchFirst([`/public/i18n/${lang}.json`,`/i18n/${lang}.json`]);
       document.querySelectorAll('[data-i18n]').forEach(el=>{
-        const key=el.getAttribute('data-i18n');
-        const val=getByPath(dict, key);
-        if(typeof val==='string') el.textContent=val;
+        const k=el.getAttribute('data-i18n');
+        const v = deep(dict, k);             // ← 중첩 키 해결!
+        if(v !== undefined){ el.textContent=v; }
       });
       localStorage.setItem('lang',lang);
       document.querySelectorAll('#lang-pill [data-lang]').forEach(b=>b.classList.toggle('active', b.getAttribute('data-lang')===lang));
-      // 브랜드 문구(영/한별 고정 문구 필요시 여기서 분기)
       $('#brand').textContent='$FLEX is your life. Your life is FLEX.';
     }
     function bindLang(){
@@ -435,7 +455,7 @@
       document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
     }
 
-    /* ---------- Whitepaper 링크 자동 교정 + 해시 내비 ---------- */
+    /* --------- 화이트페이퍼 경로 자동 설정 + #pdf 해시 처리 --------- */
     async function initWhitepapers(){
       const langs=[['en','English'],['ko','Korean'],['ja','Japanese'],['zh','Chinese'],['es','Spanish'],['de','German'],['pt','Portuguese'],['it','Italian']];
       for(const [code] of langs){
@@ -445,16 +465,18 @@
         if(good){ a.setAttribute('href',good); a.setAttribute('download',''); a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
       }
     }
-    function handleHashNav(){
-      const h=(location.hash||'').toLowerCase();
-      if(h==='#pdf' || h==='#whitepaper' || h==='#whitepaperpdf'){
-        const el=document.getElementById('whitepaper');
-        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    function handleHash(){
+      const h = location.hash.toLowerCase();
+      if(h==='#pdf' || h==='#whitepaper'){
+        document.getElementById('whitepaper')?.scrollIntoView({behavior:'smooth', block:'start'});
+        // 기본 언어 PDF(ko)가 있으면 자동 오픈 시도
+        const ko = document.querySelector('a[href$="/whitepaper/ko.pdf"], a[href$="/public/whitepaper/ko.pdf"]');
+        if(ko) window.open(ko.getAttribute('href'),'_blank','noopener');
       }
     }
-    window.addEventListener('hashchange', handleHashNav);
+    window.addEventListener('hashchange', handleHash);
 
-    /* ---------- NFT Mint ---------- */
+    /* --------- NFT Mint --------- */
     const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'},
                    bscMainnet:{chainId:'0x38',name:'BSC',rpc:'https://bsc-dataseed.binance.org'} };
     const DEFAULT_PRICE_BNB = (window.NFT_PRICE_BNB || '0.0001');
@@ -503,7 +525,7 @@
               if(payFixed){ value=ethers.parseEther(DEFAULT_PRICE_BNB); }
               else{ try{ value=await c.price(); }catch{ value=ethers.parseEther(DEFAULT_PRICE_BNB); } }
               let tx;
-              if(c.claim){ // try claim(receiver,qty) then claim(qty)
+              if(c.claim){
                 try{ tx=await c.claim(to,1,{value}); }
                 catch{ tx=await c.claim(1,{value}); }
               }else if(c.mint){ tx=await c.mint(1,{value}); }
@@ -519,9 +541,9 @@
       btnFlex.onclick   = ()=>runMint(true);
     }
 
-    /* ---------- Boot ---------- */
+    /* --------- Boot --------- */
     (async()=>{
-      bindLang();               // i18n(+로드맵 dot-path) 적용
+      bindLang();
       await initLinks();
       await initHero();
       await initTokenomics();
@@ -530,7 +552,7 @@
       await loadGrid('/action', '#action-grid');
       await loadGrid('/nft-preview', '#nft-grid');
       await setupMintUI();
-      handleHashNav();          // #pdf 등 첫 진입 처리
+      handleHash();              // 해시(#pdf 등) 즉시 처리
     })();
   </script>
 </body>
