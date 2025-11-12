@@ -1,6 +1,6 @@
 {
-  "hero_title": "$FLEX — Flexcoin",
-  "hero_sub": "Luxury gold theme • fast • memecoin-ready",
+  "hero_title": "$FLEX – Flexcoin",
+  "hero_sub": "Luxury gold theme · fast · memecoin-ready",
   "cta_presale": "Join Presale",
   "cta_x": "X (Twitter)",
   "cta_tg": "Telegram",
@@ -9,10 +9,16 @@
   "section_nft": "Flex your NFT",
   "mint": "Mint",
   "connect": "Connect Wallet",
-  "footer": "© Flexcoin — All rights reserved.",
-
+  "footer": "© Flexcoin – All rights reserved.",
   "community.title": "Join Community",
-  "community.desc": "Follow and chat with us:",
+  "community.desc": "Follow and chat with us.",
   "nft.title": "NFT Preview",
-  "nft.note": "Upload 1..8.jpg (1600×900) to /public/nft-preview/"
+  "nft.note": "Upload 1..8.jpg (1600×900) to /public/nft-preview/",
+  "roadmap": {
+    "title": "Roadmap",
+    "phase1": { "title": "Phase 1", "desc": "Successful Launch & Survive in the Memecoin Sector" },
+    "phase2": { "title": "Phase 2", "desc": "Community Activation & Achieve 1,000 Holders" },
+    "phase3": { "title": "Phase 3", "desc": "DEX & CEX Exchange Listings" },
+    "phase4": { "title": "Phase 4", "desc": "Ecosystem Expansion (AI & NFT)" }
+  }
 }
