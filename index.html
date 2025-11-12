@@ -4,53 +4,54 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>$FLEX is your life — Flexcoin</title>
-  <link rel="icon" href="/favicon.ico">
+
+  <!-- 파비콘: /public 에 이미 존재하는 ico/svg만 사용 -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
   <style>
     :root{ --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a;
-      --gold:#f4cc4f; --chip:#3a331c; --border:rgba(255,255,255,.08);
-      --topbar-h:64px; }
-
+      --gold:#f4cc4f; --chip:#3a331c; --border:rgba(255,255,255,.08); }
     html,body{margin:0;background:var(--bg);color:var(--text);
       font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial;
       overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none}
-
     *{box-sizing:border-box}
     a{color:inherit; text-decoration:none}
     body.noscroll{overflow:hidden}
 
-    /* Top bar — 고정(fixed) + 그림자 */
+    /* Top bar (스크롤 따라다님) */
     .topbar{
-      position:fixed; inset:0 auto auto 0; width:100%;
-      display:flex; align-items:center; gap:.5rem; padding:.8rem 1rem;
-      background:linear-gradient(180deg,rgba(0,0,0,.75),rgba(0,0,0,.35));
+      position:sticky; top:0; z-index:1000;
+      display:flex;align-items:center;gap:.5rem;padding:.8rem 1rem;
+      background:linear-gradient(180deg,rgba(0,0,0,.65),rgba(0,0,0,.25));
       backdrop-filter:blur(6px);
       border-bottom:1px solid rgba(255,255,255,.06);
-      z-index:1000; transition:box-shadow .2s ease, background .2s ease;
+      box-shadow:0 6px 18px rgba(0,0,0,.25);
     }
-    .topbar.scrolled{ box-shadow:0 6px 18px rgba(0,0,0,.35); }
-    .brand{font-weight:800;color:var(--gold);line-height:1.15}
+    .brand{font-weight:800;color:var(--gold);line-height:1.15;white-space:nowrap}
     .spacer{flex:1}
     .btn{border:none;border-radius:.7rem;padding:.55rem .9rem;cursor:pointer;
       background:var(--gold);color:#000;font-weight:800;display:inline-block;white-space:nowrap}
     .btn[disabled]{opacity:.45;cursor:not-allowed}
-    .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid var(--border)}
-    .lang button{background:var(--chip);padding:.5rem .75rem;border:0;color:var(--text);cursor:pointer}
-    .lang button.active{background:var(--gold);color:#000;font-weight:800}
     .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9; white-space:nowrap}
     .nav a:hover{opacity:1}
+    .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid var(--border)}
+    .lang button{
+      background:var(--chip);padding:.5rem .75rem;border:0;color:var(--text);cursor:pointer;
+      min-width:2.6rem; /* KR가 잘리지 않도록 */
+    }
+    .lang button.active{background:var(--gold);color:#000;font-weight:800}
 
     /* Mobile topbar fix (겹침/잘림 방지) */
-    @media(max-width:600px){
-      .topbar{flex-wrap:wrap;gap:.4rem}
+    @media(max-width:640px){
+      .topbar{flex-wrap:wrap;gap:.45rem}
       .brand{flex:1 1 100%; font-size:1rem}
-      .nav{order:3; width:100%; display:flex; gap:.6rem; margin-top:.2rem; flex-wrap:wrap}
+      .nav{order:3; width:100%; display:flex; gap:.8rem .8rem; flex-wrap:wrap}
       .btn{padding:.5rem .7rem}
       .lang{order:4}
     }
 
-    /* 레이아웃: 상단바 높이만큼 패딩 */
-    .topbar-pad{height:var(--topbar-h)}
-
+    /* Layout */
     .wrap{max-width:1100px;margin:0 auto;padding:1rem}
     .card{background:var(--card);border:1px solid var(--border);
       border-radius:18px;padding:16px;margin-top:1rem}
@@ -133,9 +134,8 @@
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-
-  <!-- Fixed Top bar -->
-  <div class="topbar" id="topbar">
+  <!-- Top bar -->
+  <div class="topbar">
     <div class="brand" id="brand">$FLEX is your life. Your life is FLEX.</div>
     <div class="spacer"></div>
     <div class="nav">
@@ -151,13 +151,11 @@
       <button data-lang="en" class="active">EN</button><button data-lang="ko">KR</button>
     </div>
   </div>
-  <!-- 상단바 높이 만큼 빈 패드 (컨텐츠 덮힘 방지) -->
-  <div class="topbar-pad" id="topbar-pad"></div>
 
   <div class="wrap">
     <!-- HERO -->
     <section class="card hero">
-      <img id="hero-img" src="/hero/main.jpg" alt="Flexcoin hero" onerror="this.onerror=null;this.src='/hero/1.jpg'">
+      <img id="hero-img" src="/hero/main.jpg" alt="Flexcoin hero" onerror="this.onerror=null;this.src='/public/hero/main.jpg'">
     </section>
 
     <!-- About -->
@@ -233,14 +231,15 @@
     <section id="whitepaper" class="card">
       <div class="section-title">Whitepaper</div>
       <div class="wp-grid">
-        <a class="btn" href="/whitepaper/en.pdf" download target="_blank" rel="noopener">English</a>
-        <a class="btn" href="/whitepaper/ko.pdf" download target="_blank" rel="noopener">Korean</a>
-        <a class="btn" href="/whitepaper/ja.pdf" download target="_blank" rel="noopener">Japanese</a>
-        <a class="btn" href="/whitepaper/zh.pdf" download target="_blank" rel="noopener">Chinese</a>
-        <a class="btn" href="/whitepaper/es.pdf" download target="_blank" rel="noopener">Spanish</a>
-        <a class="btn" href="/whitepaper/de.pdf" download target="_blank" rel="noopener">German</a>
-        <a class="btn" href="/whitepaper/pt.pdf" download target="_blank" rel="noopener">Portuguese</a>
-        <a class="btn" href="/whitepaper/it.pdf" download target="_blank" rel="noopener">Italian</a>
+        <!-- id를 부여해서 JS가 안전하게 찾도록 수정 -->
+        <a id="wp-en" class="btn" href="/whitepaper/en.pdf" download target="_blank" rel="noopener">English</a>
+        <a id="wp-ko" class="btn" href="/whitepaper/ko.pdf" download target="_blank" rel="noopener">Korean</a>
+        <a id="wp-ja" class="btn" href="/whitepaper/ja.pdf" download target="_blank" rel="noopener">Japanese</a>
+        <a id="wp-zh" class="btn" href="/whitepaper/zh.pdf" download target="_blank" rel="noopener">Chinese</a>
+        <a id="wp-es" class="btn" href="/whitepaper/es.pdf" download target="_blank" rel="noopener">Spanish</a>
+        <a id="wp-de" class="btn" href="/whitepaper/de.pdf" download target="_blank" rel="noopener">German</a>
+        <a id="wp-pt" class="btn" href="/whitepaper/pt.pdf" download target="_blank" rel="noopener">Portuguese</a>
+        <a id="wp-it" class="btn" href="/whitepaper/it.pdf" download target="_blank" rel="noopener">Italian</a>
       </div>
       <div class="muted wp-note">※ 다운로드가 막히면 새 탭에서 열림 → “다른 이름으로 저장”.</div>
     </section>
@@ -251,7 +250,7 @@
       <table id="addr-table"></table>
     </section>
 
-    <!-- Roadmap (i18n 연결) -->
+    <!-- Roadmap (i18n) -->
     <section id="roadmap" class="card">
       <div class="section-title" data-i18n="roadmap.title">Roadmap</div>
       <div class="grid">
@@ -318,20 +317,7 @@
   <script>
     const $ = (q)=>document.querySelector(q);
 
-    /* --------- Topbar height 동기화 & 스크롤 그림자 --------- */
-    function syncTopbarPad(){
-      const h = document.getElementById('topbar').offsetHeight || 64;
-      document.documentElement.style.setProperty('--topbar-h', h + 'px');
-    }
-    addEventListener('load', syncTopbarPad);
-    addEventListener('resize', syncTopbarPad);
-    addEventListener('orientationchange', syncTopbarPad);
-    addEventListener('scroll', ()=>{
-      const tb = document.getElementById('topbar');
-      if (window.scrollY > 4) tb.classList.add('scrolled'); else tb.classList.remove('scrolled');
-    });
-
-    /* --------- 공통 폴백 유틸 --------- */
+    /* --------- 유틸 --------- */
     async function fetchFirst(paths){
       for(const p of paths){
         try{ const r=await fetch(p,{cache:'no-cache'}); if(r.ok) return r.json(); }catch(_){}
@@ -348,6 +334,11 @@
       for(const p of paths){
         try{ const r=await fetch(p,{method:'HEAD',cache:'no-cache'}); if(r.ok) return p; }catch(_){}
       } return null;
+    }
+    function smoothScrollTo(id){
+      const el=document.querySelector(id);
+      if(!el) return;
+      el.scrollIntoView({behavior:'smooth',block:'start'});
     }
 
     /* --------- 링크/주소 --------- */
@@ -394,8 +385,8 @@
       const hard = p.hardcap_bnb ?? j.hardcap ?? '—';
       $('#caps').textContent=`Softcap: ${soft} BNB / Hardcap: ${hard} BNB`;
 
-      const pres = Number(p.rate_flex_per_bnb ?? (j.rates?.presale||0));
-      const list = Number(p.listing_rate_flex_per_bnb ?? (j.rates?.listing||0));
+      const pres = Number(p.rate_flex_per_bnb ?? (j.rates && j.rates.presale || 0));
+      const list = Number(p.listing_rate_flex_per_bnb ?? (j.rates && j.rates.listing || 0));
       const fmt=(n)=> (Number.isFinite(n)&&n>0)? n.toLocaleString():'—';
       $('#rates').textContent=`Presale Rate: 1 BNB = ${fmt(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmt(list)} FLEX`;
 
@@ -422,7 +413,6 @@
     }
 
     /* --------- 갤러리 + 라이트박스 --------- */
-    function tryImg(path){ return new Promise(res=>{ const i=new Image(); i.onload=()=>res(path); i.onerror=()=>res(null); i.src=path; }); }
     async function loadGrid(prefix, targetId){
       const list=Array.from({length:8},(_,i)=>i+1);
       const decided=await Promise.all(list.map(n=> firstExistingImage([`/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`])));
@@ -450,10 +440,12 @@
     /* --------- i18n --------- */
     async function setLang(lang){
       const dict=await fetchFirst([`/public/i18n/${lang}.json`,`/i18n/${lang}.json`]);
-      document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(k&&dict[k]) el.textContent=dict[k]; });
+      document.querySelectorAll('[data-i18n]').forEach(el=>{
+        const k=el.getAttribute('data-i18n'); if(k&&dict[k]) el.textContent=dict[k];
+      });
       localStorage.setItem('lang',lang);
       document.querySelectorAll('#lang-pill [data-lang]').forEach(b=>b.classList.toggle('active', b.getAttribute('data-lang')===lang));
-      $('#brand').textContent='$FLEX is your life. Your life is FLEX.';
+      $('#brand').textContent= lang==='ko' ? '$FLEX 는 당신의 삶. 당신의 삶은 FLEX.' : '$FLEX is your life. Your life is FLEX.';
     }
     function bindLang(){
       const wanted=new URL(location.href).searchParams.get('lang')||localStorage.getItem('lang')||'en';
@@ -461,16 +453,34 @@
       document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
     }
 
-    /* --------- 화이트페이퍼 경로 자동 설정 --------- */
+    /* --------- 화이트페이퍼 경로 (안전한 id 방식) + 해시 라우팅 --------- */
     async function initWhitepapers(){
-      const langs=[['en','English'],['ko','Korean'],['ja','Japanese'],['zh','Chinese'],['es','Spanish'],['de','German'],['pt','Portuguese'],['it','Italian']]];
-      for(const [code] of langs){
-        const a=document.querySelector(`a[href$="/whitepaper/${code}.pdf"], a[href$="/public/whitepaper/${code}.pdf"]`);
-        if(!a) continue;
+      const map = {
+        en: '#wp-en', ko: '#wp-ko', ja: '#wp-ja', zh: '#wp-zh',
+        es: '#wp-es', de: '#wp-de', pt: '#wp-pt', it: '#wp-it'
+      };
+      // 실제 존재하는 파일 경로로 자동 교체
+      for(const [code, sel] of Object.entries(map)){
+        const a=document.querySelector(sel); if(!a) continue;
         const good=await firstExistingFile([`/public/whitepaper/${code}.pdf`,`/whitepaper/${code}.pdf`]);
         if(good){ a.setAttribute('href',good); a.setAttribute('download',''); a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
       }
     }
+    function handleHash(){
+      const hash = location.hash || '';
+      if(hash === '#whitepaper'){ smoothScrollTo('#whitepaper'); }
+      else if(hash === '#pdf' || hash.startsWith('#pdf=')){
+        // #pdf=ko 형태면 해당 언어 PDF 열고, 섹션으로 스크롤
+        const lang = (hash.split('=')[1] || localStorage.getItem('lang') || 'en').toLowerCase();
+        smoothScrollTo('#whitepaper');
+        const btn = document.querySelector(`#wp-${lang}`) || document.querySelector('#wp-en');
+        if(btn) btn.click();
+      }
+      else if(hash === '#about-flexcoin'){ smoothScrollTo('#about-flexcoin'); }
+      else if(hash === '#roadmap'){ smoothScrollTo('#roadmap'); }
+      else if(hash === '#nft'){ smoothScrollTo('#nft'); }
+    }
+    window.addEventListener('hashchange', handleHash);
 
     /* --------- NFT Mint (claim & mint 자동 시도) --------- */
     const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'},
@@ -492,7 +502,7 @@
       }catch(e){
         if(e && e.code===4902){
           await ethereum.request({method:'wallet_addEthereumChain',
-            params:[{chainId:target.chainId,chainName:target.name,rpcUrls:[target.rpc],nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18}]}]);
+            params:[{chainId:target.chainId,chainName:target.name,rpcUrls:[target.rpc],nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18}}]});
         }else{ throw e; }
       }
       const provider=new ethers.BrowserProvider(ethereum);
@@ -521,10 +531,10 @@
               if(payFixed){ value=ethers.parseEther(DEFAULT_PRICE_BNB); }
               else{ try{ value=await c.price(); }catch{ value=ethers.parseEther(DEFAULT_PRICE_BNB); } }
               let tx;
-              if(c.claim){
+              if(typeof c.claim==='function'){
                 try{ tx=await c.claim(to,1,{value}); }
                 catch{ tx=await c.claim(1,{value}); }
-              }else if(c.mint){ tx=await c.mint(1,{value}); }
+              }else if(typeof c.mint==='function'){ tx=await c.mint(1,{value}); }
               else{ throw new Error('지원하지 않는 민팅 방식'); }
               write('Minting... TX: '+tx.hash); await tx.wait(); write('Minted!'); return;
             }catch(e){ last=e; }
@@ -533,8 +543,8 @@
         }catch(e){ write('Mint error: '+((e&&e.message)||String(e))); }
       }
 
-      btnLegacy.onclick = ()=>runMint(false);   // price() 우선
-      btnFlex.onclick   = ()=>runMint(true);    // 고정가
+      btnLegacy.onclick = ()=>runMint(false);
+      btnFlex.onclick   = ()=>runMint(true);
     }
 
     /* --------- Boot --------- */
@@ -548,7 +558,7 @@
       await loadGrid('/action', '#action-grid');
       await loadGrid('/nft-preview', '#nft-grid');
       await setupMintUI();
-      syncTopbarPad(); // 최종 보정
+      handleHash(); // 첫 진입 시 해시 처리 (#pdf 등)
     })();
   </script>
 </body>
