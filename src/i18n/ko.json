@@ -1,6 +1,6 @@
 {
-  "hero_title": "$FLEX — 플렉스코인",
-  "hero_sub": "럭셔리 골드 테마 • 빠름 • 밈코인 준비 완료",
+  "hero_title": "$FLEX – 플렉스코인",
+  "hero_sub": "럭셔리 골드 테마 · 빠름 · 밈코인 준비 완료",
   "cta_presale": "프리세일 참여",
   "cta_x": "X (트위터)",
   "cta_tg": "텔레그램",
@@ -9,10 +9,16 @@
   "section_nft": "NFT 뽐내기",
   "mint": "민팅",
   "connect": "지갑 연결",
-  "footer": "© Flexcoin — 모든 권리 보유.",
-
+  "footer": "© Flexcoin – 모든 권리 보유.",
   "community.title": "커뮤니티 합류",
-  "community.desc": "팔로우하고 소통하세요:",
+  "community.desc": "팔로우하고 소통하세요.",
   "nft.title": "NFT 프리뷰",
-  "nft.note": "/public/nft-preview/ 폴더에 1..8.jpg (1600×900) 업로드"
+  "nft.note": "/public/nft-preview/ 폴더에 1..8.jpg (1600×900) 업로드",
+  "roadmap": {
+    "title": "로드맵",
+    "phase1": { "title": "1단계", "desc": "성공적 런칭 & memecoin 섹터에서 살아남기" },
+    "phase2": { "title": "2단계", "desc": "커뮤니티 활성화 및 보유자 1000명 확보" },
+    "phase3": { "title": "3단계", "desc": "DEX & CEX 거래소 상장" },
+    "phase4": { "title": "4단계", "desc": "생태계 확장 (AI & NFT)" }
+  }
 }
