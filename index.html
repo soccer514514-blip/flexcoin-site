@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>$FLEX is your life — Flexcoin</title>
 
-  <!-- Favicon (루트/퍼블릭 모두 대응 + 캐시 버스팅) -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
-  <link rel="mask-icon" href="/favicon.svg?v=4" color="#f4cc4f">
-  <link rel="icon" type="image/x-icon" sizes="any" href="/favicon.ico?v=4">
-  <link rel="shortcut icon" href="/favicon.ico?v=4">
-  <link rel="alternate icon" href="/public/favicon.ico?v=4">
+  <!-- Favicon: /public 우선, 루트 없을 때 404 회피 -->
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg?v=5">
+  <link rel="mask-icon" href="/public/favicon.svg?v=5" color="#f4cc4f">
+  <link rel="icon" type="image/x-icon" sizes="any" href="/public/favicon.ico?v=5">
+  <link rel="shortcut icon" href="/public/favicon.ico?v=5">
 
-  <!-- Hero 프리로드(있으면 빠르게) -->
+  <!-- Hero preload -->
   <link rel="preload" as="image" href="/public/hero/main.jpg" imagesizes="(max-width:1100px) 100vw, 1100px">
 
   <!-- Whitepaper discoverability -->
@@ -26,140 +25,54 @@
   <link rel="alternate" hreflang="it" href="/public/whitepaper/it.pdf">
 
   <style>
-    :root{
-      --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a;
-      --gold:#f4cc4f; --chip:#3a331c; --border:rgba(255,255,255,.08);
-    }
-    html,body{
-      margin:0; background:var(--bg); color:var(--text);
-      font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial;
-      overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none
-    }
-    body{ padding-top:64px; }
-    *{box-sizing:border-box}
-    a{color:inherit; text-decoration:none}
-    body.noscroll{overflow:hidden}
-
-    .topbar{
-      position:fixed; inset:0 auto auto 0; right:0; top:0;
-      display:flex; align-items:center; gap:.5rem; padding:.8rem 1rem;
-      background:linear-gradient(180deg,rgba(0,0,0,.75),rgba(0,0,0,.35));
-      backdrop-filter:blur(6px); z-index:9999; border-bottom:1px solid var(--border);
-    }
-    .brand{font-weight:800;color:var(--gold);line-height:1.15;white-space:nowrap}
-    .spacer{flex:1}
-    .btn{
-      border:none;border-radius:.7rem;padding:.55rem .9rem;cursor:pointer;
-      background:var(--gold);color:#000;font-weight:800;display:inline-block;white-space:nowrap
-    }
-    .btn[disabled]{opacity:.45;cursor:not-allowed}
-    .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid var(--border)}
-    .lang button{background:var(--chip);padding:.5rem .75rem;border:0;color:var(--text);cursor:pointer}
-    .lang button.active{background:var(--gold);color:#000;font-weight:800}
-    .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9; white-space:nowrap}
-    .nav a:hover{opacity:1}
-
-    @media(max-width:680px){
-      .topbar{flex-wrap:wrap;gap:.4rem}
-      .brand{flex:1 1 100%; font-size:1rem}
-      .nav{order:3; width:100%; display:flex; gap:.8rem .6rem; flex-wrap:wrap}
-      .btn{padding:.5rem .7rem}
-      .lang{order:4}
-    }
-
-    .wrap{max-width:1100px;margin:0 auto;padding:1rem}
-    .card{background:var(--card);border:1px solid var(--border);
-      border-radius:18px;padding:16px;margin-top:1rem}
-    .section-title{font-size:1.4rem;font-weight:900;margin:.4rem 0 1rem;color:var(--gold)}
-    .muted{color:var(--muted);font-size:.95rem}
-
-    .hero{background:#0f0e0c;border-radius:18px;overflow:hidden;border:1px solid var(--border)}
-    .hero img{display:block;width:100%;height:auto}
-
-    .tok-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px}
-    canvas{background:#0f0e0c;border-radius:14px}
-    ul.legend{list-style:none;padding:0;margin:0}
-    ul.legend li{margin:.2rem 0}
-    #caps,#rates{margin-top:.35rem}
-    #btn-pinksale{margin-top:12px;display:inline-block}
-
-    .countbox{border:1px solid var(--border);border-radius:14px;padding:14px;
-      background:linear-gradient(180deg,rgba(255,255,255,.02),transparent)}
-    #countdown{font-weight:900;font-size:1.35rem}
-
-    .wp-grid{display:flex;flex-wrap:wrap;gap:.5rem}
-    .wp-note{margin-top:.5rem}
-
-    .addr table{width:100%;border-collapse:collapse;font-size:.92rem}
-    .addr td{padding:.45rem .55rem;border-bottom:1px dashed var(--border);word-break:break-all}
-    .addr a{color:var(--gold);text-decoration:none}
-
-    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .grid picture{display:block}
-    .grid img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;
-      border-radius:12px;border:1px solid var(--border);background:#0f0e0c}
-    @media(max-width:900px){
-      .tok-wrap{grid-template-columns:1fr}
-      .grid{grid-template-columns:repeat(2,1fr)}
-      .addr td{font-size:.85rem}
-    }
-
-    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;
-      align-items:center;justify-content:center;z-index:50;touch-action:none}
-    .lightbox.show{display:flex}
-    .lb-stage{position:relative;max-width:95vw;max-height:85vh;overflow:hidden;cursor:grab;border-radius:12px}
-    .lb-img{user-select:none;pointer-events:auto;transform-origin:center center;display:block;max-width:none}
-    .lb-toolbar{position:fixed;top:12px;right:12px;display:flex;gap:.4rem;z-index:60}
-    .lb-toolbar .btn{padding:.4rem .6rem;border-radius:.6rem}
-    .lb-hint{position:fixed;bottom:12px;left:12px;color:#ddd;font-size:.85rem;opacity:.8}
-
-    .about-section{background:linear-gradient(180deg,#0a0a0a 0%, #111 100%);border:1px solid rgba(212,175,55,.25);
-      border-radius:24px;padding:28px;margin:24px 0;box-shadow:0 10px 30px rgba(0,0,0,.35);color:#f1f1f1}
-    .about-title{font-size:28px;font-weight:800;margin-bottom:8px;color:#f6e8b1}
-    .about-sub{font-size:14px;color:#a0a0a0;margin-bottom:16px}
-    .about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
-    .about-card{background:#0e0e0e;border:1px solid rgba(212,175,55,.15);border-radius:16px;padding:16px}
-    .about-bullets{list-style:none;padding:0;margin:12px 0 0 0}
-    .about-bullets li{margin:6px 0;padding-left:18px;position:relative}
-    .about-bullets li:before{content:"✅";position:absolute;left:0;top:0.5px}
-    blockquote.about-quote{margin:12px 0;border-left:4px solid rgba(212,175,55,.5);padding:8px 12px;color:#e9e1c8;font-style:italic}
-    .small-muted{font-size:12px;color:#9a9a9a;margin-top:8px}
-
-    .btn-row{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.6rem}
-    .btn-gold{background:var(--gold);color:#000;border-radius:.7rem;padding:.55rem .9rem;font-weight:800;border:0;cursor:pointer}
-    .select-net{margin:8px 0;padding:.45rem .6rem;border-radius:.6rem;border:1px solid var(--border);background:#0f0e0c;color:var(--text)}
-    .mint-log{background:#0f0e0c;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;color:#ddd;font-size:.85rem;min-height:2.2em;white-space:pre-wrap}
-
-    #roadmap .grid{grid-template-columns:repeat(4,1fr)}
-    #roadmap .roadmap-card{transition:transform .25s ease, box-shadow .25s ease}
-    #roadmap .roadmap-card:hover{transform:translateY(-4px); box-shadow:0 4px 15px rgba(212,175,55,.15)}
-    @media(max-width:900px){ #roadmap .grid{grid-template-columns:repeat(2,1fr)} }
+    :root{ --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a; --gold:#f4cc4f; --chip:#3a331c; --border:rgba(255,255,255,.08) }
+    html,body{ margin:0; background:var(--bg); color:var(--text); font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial; overflow-x:hidden; max-width:100vw }
+    body{ padding-top:64px }
+    *{ box-sizing:border-box } a{ color:inherit; text-decoration:none } body.noscroll{ overflow:hidden }
+    .topbar{ position:fixed; inset:0 auto auto 0; right:0; top:0; display:flex; align-items:center; gap:.5rem; padding:.8rem 1rem; background:linear-gradient(180deg,rgba(0,0,0,.75),rgba(0,0,0,.35)); backdrop-filter:blur(6px); z-index:9999; border-bottom:1px solid var(--border) }
+    .brand{ font-weight:800; color:var(--gold); white-space:nowrap } .spacer{ flex:1 }
+    .btn{ border:none; border-radius:.7rem; padding:.55rem .9rem; cursor:pointer; background:var(--gold); color:#000; font-weight:800; display:inline-block; white-space:nowrap }
+    .btn[disabled]{ opacity:.45; cursor:not-allowed }
+    .lang{ display:inline-flex; border-radius:.6rem; overflow:hidden; border:1px solid var(--border) }
+    .lang button{ background:var(--chip); padding:.5rem .75rem; border:0; color:var(--text); cursor:pointer }
+    .lang button.active{ background:var(--gold); color:#000; font-weight:800 }
+    .nav a{ margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9 } .nav a:hover{ opacity:1 }
+    @media(max-width:680px){ .topbar{flex-wrap:wrap;gap:.4rem} .brand{flex:1 1 100%;font-size:1rem} .nav{order:3;width:100%;display:flex;gap:.8rem .6rem;flex-wrap:wrap} .btn{padding:.5rem .7rem} .lang{order:4}}
+    .wrap{ max-width:1100px; margin:0 auto; padding:1rem }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:18px; padding:16px; margin-top:1rem }
+    .section-title{ font-size:1.4rem; font-weight:900; margin:.4rem 0 1rem; color:var(--gold) }
+    .muted{ color:var(--muted); font-size:.95rem }
+    .hero{ background:#0f0e0c; border-radius:18px; overflow:hidden; border:1px solid var(--border) }
+    .hero img{ display:block; width:100%; height:auto }
+    .tok-wrap{ display:grid; grid-template-columns:320px 1fr; gap:18px } canvas{ background:#0f0e0c; border-radius:14px }
+    ul.legend{ list-style:none; padding:0; margin:0 } ul.legend li{ margin:.2rem 0 } #caps,#rates{ margin-top:.35rem } #btn-pinksale{ margin-top:12px; display:inline-block }
+    .countbox{ border:1px solid var(--border); border-radius:14px; padding:14px; background:linear-gradient(180deg,rgba(255,255,255,.02),transparent) } #countdown{ font-weight:900; font-size:1.35rem }
+    .wp-grid{ display:flex; flex-wrap:wrap; gap:.5rem } .wp-note{ margin-top:.5rem }
+    .addr table{ width:100%; border-collapse:collapse; font-size:.92rem } .addr td{ padding:.45rem .55rem; border-bottom:1px dashed var(--border); word-break:break-all } .addr a{ color:var(--gold) }
+    .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px } .grid img{ width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:12px; border:1px solid var(--border); background:#0f0e0c }
+    @media(max-width:900px){ .tok-wrap{grid-template-columns:1fr} .grid{grid-template-columns:repeat(2,1fr)} .addr td{font-size:.85rem} }
+    .btn-row{ display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; margin-top:.6rem }
+    .btn-gold{ background:var(--gold); color:#000; border-radius:.7rem; padding:.55rem .9rem; font-weight:800; border:0; cursor:pointer }
+    .select-net{ margin:8px 0; padding:.45rem .6rem; border-radius:.6rem; border:1px solid var(--border); background:#0f0e0c; color:var(--text) }
+    .mint-log{ background:#0f0e0c; border:1px solid var(--border); border-radius:12px; padding:10px; margin-top:10px; color:#ddd; font-size:.85rem; min-height:2.2em; white-space:pre-wrap }
   </style>
 
-  <!-- ethers CDN -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js" defer></script>
 </head>
 <body>
-  <!-- Top bar -->
   <div class="topbar">
     <div class="brand" id="brand">$FLEX is your life. Your life is FLEX.</div>
     <div class="spacer"></div>
     <div class="nav">
-      <a href="#about-flexcoin">About</a>
-      <a href="#whitepaper">Whitepaper</a>
-      <a href="#roadmap">Roadmap</a>
-      <a href="#nft">NFT</a>
+      <a href="#about-flexcoin">About</a><a href="#whitepaper">Whitepaper</a><a href="#roadmap">Roadmap</a><a href="#nft">NFT</a>
     </div>
     <a id="btn-x" class="btn" href="#" target="_blank" rel="noopener">X</a>
     <a id="btn-tg" class="btn" href="#" target="_blank" rel="noopener">Telegram</a>
     <a id="btn-pcs" class="btn" href="#" target="_blank" rel="noopener">Buy on PancakeSwap</a>
-    <div class="lang" aria-label="language" id="lang-pill">
-      <button data-lang="en" class="active">EN</button><button data-lang="ko">KR</button>
-    </div>
+    <div class="lang" id="lang-pill"><button data-lang="en" class="active">EN</button><button data-lang="ko">KR</button></div>
   </div>
 
   <div class="wrap">
-    <!-- HERO (이미지 최적화: WebP/AVIF 탐지 + fallback) -->
     <section class="card hero">
       <img id="hero-img" src="/public/hero/main.jpg" alt="Flexcoin hero"
            loading="eager" decoding="async"
@@ -167,45 +80,15 @@
            onerror="this.onerror=null;this.src='/public/hero/1.jpg'">
     </section>
 
-    <!-- About -->
-    <section id="about-flexcoin" class="about-section">
-      <div class="about-title">About FlexCoin</div>
-      <div class="about-sub">감성 + 신뢰 결합 (Korean & English)</div>
-      <div class="about-grid">
-        <div class="about-card">
-          <h3 style="margin:0 0 8px 0">한국어</h3>
-          <p>FlexCoin은 단순한 밈코인이 아닙니다. 한국에서 “Flex”는 <b>자신의 능력·소비력·자신감</b>을 당당하게 표현하는 문화입니다. FlexCoin은 그 태도를 담은 <b>라이프스타일</b>입니다.</p>
-          <blockquote class="about-quote">“Flex는 과시가 아니라, 당신의 삶을 증명하는 것이다.”</blockquote>
-          <p>우리는 투명함을 선택했고, 그 투명함이 신뢰를 만든다고 믿습니다.</p>
-          <ul class="about-bullets">
-            <li><b>팀 신원 KYC 인증</b></li>
-            <li><b>스마트 컨트랙트 Audit(감사)</b></li>
-            <li><b>유동성 LP Lock + 소유권 포기</b></li>
-            <li><b>Tokenomics · 지갑 배분 100% 공개</b></li>
-          </ul>
-          <p class="small-muted">모든 항목은 온체인으로 증명됩니다.</p>
-        </div>
-        <div class="about-card">
-          <h3 style="margin:0 0 8px 0">English</h3>
-          <p>FlexCoin isn’t just a memecoin. In Korea, “Flex” means proudly expressing your <b>capability, spending power, and confidence</b>. FlexCoin captures that <b>lifestyle</b>.</p>
-          <blockquote class="about-quote">“Flexing isn’t showing off — it’s owning your story.”</blockquote>
-          <p>We choose transparency, because transparency creates trust.</p>
-          <ul class="about-bullets">
-            <li><b>Team KYC Verified</b></li>
-            <li><b>Smart Contract Audit Completed</b></li>
-            <li><b>LP Locked + Ownership Renounced</b></li>
-            <li><b>100% Public Tokenomics & Wallet Allocation</b></li>
-          </ul>
-          <p class="small-muted">Everything is verifiable on-chain.</p>
-        </div>
-      </div>
+    <section id="about-flexcoin" class="card">
+      <div class="section-title">About FlexCoin</div>
+      <div class="muted">Flex = 능력/소비력/자신감 · Transparency → Trust</div>
     </section>
 
-    <!-- Tokenomics -->
     <section class="card">
-      <div class="section-title" data-i18n="section_tokenomics">Tokenomics</div>
+      <div class="section-title">Tokenomics</div>
       <div class="tok-wrap">
-        <canvas id="donut" width="300" height="300" aria-label="Tokenomics donut"></canvas>
+        <canvas id="donut" width="300" height="300"></canvas>
         <div>
           <ul class="legend" id="legend"></ul>
           <div id="caps" class="muted"></div>
@@ -215,91 +98,53 @@
       </div>
     </section>
 
-    <!-- Countdown -->
     <section class="card">
       <div class="section-title">Presale Countdown</div>
-      <div class="countbox">
-        <div id="countdown">—</div>
-        <div id="countdown-range" class="muted">—</div>
-      </div>
+      <div class="countbox"><div id="countdown">—</div><div id="countdown-range" class="muted">—</div></div>
     </section>
 
-    <!-- Action Preview -->
-    <section class="card">
-      <div class="section-title">Action Preview</div>
-      <div class="grid" id="action-grid"></div>
-    </section>
+    <section class="card"><div class="section-title">Action Preview</div><div class="grid" id="action-grid"></div></section>
+    <section class="card"><div class="section-title">NFT Preview</div><div class="grid" id="nft-grid"></div></section>
 
-    <!-- NFT Preview -->
-    <section class="card">
-      <div class="section-title" data-i18n="nft.title">NFT Preview</div>
-      <div class="grid" id="nft-grid"></div>
-    </section>
-
-    <!-- Whitepaper -->
     <section id="whitepaper" class="card">
       <div class="section-title">Whitepaper</div>
       <div class="wp-grid">
-        <a class="btn" href="/public/whitepaper/en.pdf" download target="_blank" rel="noopener">English</a>
-        <a class="btn" href="/public/whitepaper/ko.pdf" download target="_blank" rel="noopener">Korean</a>
-        <a class="btn" href="/public/whitepaper/ja.pdf" download target="_blank" rel="noopener">Japanese</a>
-        <a class="btn" href="/public/whitepaper/zh.pdf" download target="_blank" rel="noopener">Chinese</a>
-        <a class="btn" href="/public/whitepaper/es.pdf" download target="_blank" rel="noopener">Spanish</a>
-        <a class="btn" href="/public/whitepaper/de.pdf" download target="_blank" rel="noopener">German</a>
-        <a class="btn" href="/public/whitepaper/pt.pdf" download target="_blank" rel="noopener">Portuguese</a>
-        <a class="btn" href="/public/whitepaper/it.pdf" download target="_blank" rel="noopener">Italian</a>
+        <a class="btn" href="/public/whitepaper/en.pdf" download>English</a>
+        <a class="btn" href="/public/whitepaper/ko.pdf" download>Korean</a>
+        <a class="btn" href="/public/whitepaper/ja.pdf" download>Japanese</a>
+        <a class="btn" href="/public/whitepaper/zh.pdf" download>Chinese</a>
+        <a class="btn" href="/public/whitepaper/es.pdf" download>Spanish</a>
+        <a class="btn" href="/public/whitepaper/de.pdf" download>German</a>
+        <a class="btn" href="/public/whitepaper/pt.pdf" download>Portuguese</a>
+        <a class="btn" href="/public/whitepaper/it.pdf" download>Italian</a>
       </div>
-      <div class="muted wp-note">※ 다운로드가 막히면 새 탭에서 열림 → “다른 이름으로 저장”.</div>
     </section>
 
-    <!-- Addresses -->
     <section class="card addr">
       <div class="section-title">Addresses</div>
       <table id="addr-table"></table>
     </section>
 
-    <!-- Roadmap (i18n) -->
     <section id="roadmap" class="card">
-      <div class="section-title" data-i18n="roadmap.title">Roadmap</div>
+      <div class="section-title">Roadmap</div>
       <div class="grid">
-        <div class="roadmap-card card">
-          <div class="muted" data-i18n="roadmap.phase1.title">Phase 1</div>
-          <div style="font-weight:800;margin-top:.2rem" data-i18n="roadmap.phase1.desc">
-            Successful Launch & Survive in the Memecoin Sector
-          </div>
-        </div>
-        <div class="roadmap-card card">
-          <div class="muted" data-i18n="roadmap.phase2.title">Phase 2</div>
-          <div style="font-weight:800;margin-top:.2rem" data-i18n="roadmap.phase2.desc">
-            Community Activation & Achieve 1,000 Holders
-          </div>
-        </div>
-        <div class="roadmap-card card">
-          <div class="muted" data-i18n="roadmap.phase3.title">Phase 3</div>
-          <div style="font-weight:800;margin-top:.2rem" data-i18n="roadmap.phase3.desc">
-            DEX & CEX Exchange Listings
-          </div>
-        </div>
-        <div class="roadmap-card card">
-          <div class="muted" data-i18n="roadmap.phase4.title">Phase 4</div>
-          <div style="font-weight:800;margin-top:.2rem" data-i18n="roadmap.phase4.desc">
-            Ecosystem Expansion (AI & NFT)
-          </div>
-        </div>
+        <img src="/public/hero/1.jpg" alt="" loading="lazy">
+        <img src="/public/hero/2.jpg" alt="" loading="lazy">
+        <img src="/public/hero/3.jpg" alt="" loading="lazy">
+        <img src="/public/hero/4.jpg" alt="" loading="lazy">
       </div>
     </section>
 
-    <!-- NFT MINT -->
     <section id="nft" class="card">
-      <div class="section-title" data-i18n="section_nft">FLEX NFT MINT</div>
-      <p class="muted" style="margin-top:-6px">Mint your official <b>FlexNFT</b> on BNB Smart Chain</p>
+      <div class="section-title">FLEX NFT MINT</div>
+      <p class="muted">Mint your official <b>FlexNFT</b> on BNB Smart Chain</p>
       <div style="text-align:center;">
         <select id="net" class="select-net">
           <option value="bscMainnet">BNB Mainnet</option>
           <option value="bscTestnet">BNB Testnet</option>
         </select>
         <div class="btn-row">
-          <button id="connect" class="btn-gold" data-i18n="connect">Connect Wallet</button>
+          <button id="connect" class="btn-gold">Connect Wallet</button>
           <button id="mint" class="btn-gold">Mint NFT (Legacy)</button>
           <button id="mint-flex" class="btn-gold">Mint FlexNFT (0.0001 BNB)</button>
         </div>
@@ -308,375 +153,128 @@
     </section>
   </div>
 
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog">
-    <div class="lb-toolbar">
-      <button class="btn" id="lb-zoom-in">+</button>
-      <button class="btn" id="lb-zoom-out">−</button>
-      <button class="btn" id="lb-reset">75%</button>
-      <button class="btn" id="lb-close">Close</button>
-    </div>
-    <div class="lb-hint">Wheel/핀치로 확대, 드래그로 이동, ESC 닫기</div>
-    <div class="lb-stage" id="lb-stage">
-      <img id="lb-img" class="lb-img" alt="preview">
-    </div>
-  </div>
-
   <script>
-    const $ = (q)=>document.querySelector(q);
+    const $ = q => document.querySelector(q);
 
-    /* -------------- Whitepaper Direct Router -------------- */
-    (function directWhitepaperRouter(){
-      const langCodes = ['en','ko','ja','zh','es','de','pt','it'];
-      const lower = (s)=> (s||'').toLowerCase();
-
-      function findBestPdf(code){
-        const tryList = [
-          `/public/whitepaper/${code}.pdf`,
-          `/whitepaper/${code}.pdf`
-        ];
-        return Promise.all(tryList.map(p=>fetch(p,{method:'HEAD',cache:'no-cache'}).then(r=>r.ok?p:null).catch(()=>null)))
-          .then(arr=>arr.find(Boolean));
-      }
-
-      async function handlePath(){
-        const p = lower(location.pathname);
-        const m = p.match(/^\/(whitepaper|wp|pdf)(?:\/)?([a-z]{2})?(?:\.pdf)?$/);
-        if(!m) return false;
-        const code = (m[2] && langCodes.includes(m[2])) ? m[2] : 'ko';
-        const url = await findBestPdf(code);
-        if(url){
-          const a = document.createElement('a');
-          a.href = url; a.download = `flexcoin_whitepaper_${code}.pdf`;
-          document.body.appendChild(a); a.click(); a.remove();
-          window.open(url,'_blank','noopener');
-          return true;
-        }
-        return false;
-      }
-
-      async function handleHash(){
-        const h = lower(location.hash);
-        let code = null;
-        const mh = h.match(/^#(?:whitepaper|pdf)(?:[-_]?([a-z]{2}))?$/);
-        if(mh){ code = mh[1] || 'ko'; }
-        if(!code) return false;
-        const url = await findBestPdf(code);
-        if(url){
-          const a = document.createElement('a');
-          a.href = url; a.download = `flexcoin_whitepaper_${code}.pdf`;
-          document.body.appendChild(a); a.click(); a.remove();
-          window.open(url,'_blank','noopener');
-          return true;
-        }
-        return false;
-      }
-      handlePath().then(hit=>{ if(!hit) handleHash(); });
-      window.addEventListener('hashchange', handleHash);
-    })();
-
-    /* -------------------- 유틸 -------------------- */
-    const deep = (obj, path) => path.split('.').reduce((o,k)=> (o && k in o) ? o[k] : undefined, obj);
-
-    async function fetchFirst(paths){
+    // -------- small helpers --------
+    async function fetchJSONSafe(url){
+      try{
+        const r = await fetch(url, {cache:'no-cache'});
+        if(!r.ok) return null;
+        return await r.json().catch(()=>null);
+      }catch{ return null; }
+    }
+    async function firstJSON(paths){
       for(const p of paths){
-        try{ const r=await fetch(p,{cache:'no-cache'}); if(r.ok) return r.json(); }catch(_){}
-      } return {};
-    }
-    function firstExistingImage(paths){
-      return new Promise(resolve=>{
-        let i=0; const next=()=>{ if(i>=paths.length) return resolve(null);
-          const img=new Image(); img.onload=()=>resolve(paths[i]); img.onerror=()=>{ i++; next(); }; img.src=paths[i]; };
-        next();
-      });
-    }
-    async function firstExistingFile(paths){
-      for(const p of paths){
-        try{ const r=await fetch(p,{method:'HEAD',cache:'no-cache'}); if(r.ok) return p; }catch(_){}
-      } return null;
+        const j = await fetchJSONSafe(p);
+        if(j) return j;
+      }
+      return {};
     }
 
-    /* -------------- 링크/주소 -------------- */
+    // -------- links / addresses --------
     async function initLinks(){
-      const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
-      const set=(id,url)=>{const b=$(id); if(!b) return; if(url){b.href=url; b.removeAttribute('disabled');} else {b.setAttribute('disabled','');}};
+      const links = await firstJSON(['/public/config/links.json','/config/links.json']);
+      const set=(id,url)=>{const el=$(id); if(!el) return; if(url){el.href=url}else{el.setAttribute('disabled','')}};
       set('#btn-x',links.x_url); set('#btn-tg',links.tg_url); set('#btn-pcs',links.pancakeswap_url);
 
-      const addr = await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
-      const toScan=(a)=>a?`https://bscscan.com/address/${a}`:'#';
+      const addr = await firstJSON(['/public/config/addresses.json','/config/addresses.json']);
+      const toScan=a=>a?`https://bscscan.com/address/${a}`:'#';
       const rows=[['Token',addr.token],['Team/Lock',addr.team_lock||addr.team],['Marketing',addr.marketing],
                   ['Presale',addr.presale],['Burn',addr.burn],['User',addr.user]];
       $('#addr-table').innerHTML = rows.map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`).join('');
+      return addr;
     }
 
-    /* -------------- 히어로 이미지 최적화 -------------- */
-    async function initHero(){
-      // avif > webp > jpg 순으로 탐색
-      const src = await firstExistingImage([
-        '/public/hero/main.avif','/hero/main.avif',
-        '/public/hero/main.webp','/hero/main.webp',
-        '/public/hero/main.jpg','/hero/main.jpg',
-        '/public/hero/1.webp','/hero/1.webp',
-        '/public/hero/1.jpg','/hero/1.jpg'
-      ]);
-      if(src){ const img=$('#hero-img'); img.src=src; img.loading='eager'; img.decoding='async'; img.sizes='(max-width:1100px) 100vw, 1100px'; }
-    }
+    // -------- hero --------
+    (function(){ const img=$('#hero-img'); const test=['/public/hero/main.avif','/public/hero/main.webp','/public/hero/main.jpg','/public/hero/1.jpg']; (async()=>{for(const p of test){ try{const r=await fetch(p,{method:'HEAD'}); if(r.ok){img.src=p; break}}catch{}})() })();
 
-    /* -------------- 토크노믹스 -------------- */
+    // -------- tokenomics / countdown --------
     async function initTokenomics(){
-      const j = await fetchFirst(['/public/config/allocations.json','/config/allocations.json']);
+      const j = await firstJSON(['/public/config/allocations.json','/config/allocations.json']);
       const t = j.tokenomics || {lp:54,presale:20,team:15,marketing:10,burn:1};
-      const ctx=$('#donut').getContext('2d');
-      const vals=[t.lp,t.presale,t.team,t.marketing,t.burn];
-      const names=['LP','Presale','Team','Marketing','Burn'];
-      const cols=['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'];
-
-      ctx.clearRect(0,0,300,300);
-      let start=-Math.PI/2;
-      vals.forEach((v,i)=>{ const a=start+2*Math.PI*(v/100);
-        ctx.beginPath();ctx.moveTo(150,150);ctx.arc(150,150,140,start,a);ctx.closePath();
-        ctx.fillStyle=cols[i];ctx.fill();start=a; });
-      ctx.globalCompositeOperation='destination-out';
-      ctx.beginPath();ctx.arc(150,150,82,0,2*Math.PI);ctx.fill();
-      ctx.globalCompositeOperation='source-over';
-
+      const ctx=$('#donut').getContext('2d'), vals=[t.lp,t.presale,t.team,t.marketing,t.burn], names=['LP','Presale','Team','Marketing','Burn'], cols=['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'];
+      ctx.clearRect(0,0,300,300); let s=-Math.PI/2; vals.forEach((v,i)=>{const a=s+2*Math.PI*(v/100); ctx.beginPath(); ctx.moveTo(150,150); ctx.arc(150,150,140,s,a); ctx.closePath(); ctx.fillStyle=cols[i]; ctx.fill(); s=a}); ctx.globalCompositeOperation='destination-out'; ctx.beginPath(); ctx.arc(150,150,82,0,2*Math.PI); ctx.fill(); ctx.globalCompositeOperation='source-over';
       $('#legend').innerHTML = names.map((n,i)=>`<li>• ${n} ${vals[i]}%</li>`).join(' · ');
-
-      const p = j.presale || {};
-      const soft = p.softcap_bnb ?? j.softcap ?? '—';
-      const hard = p.hardcap_bnb ?? j.hardcap ?? '—';
+      const p = j.presale || {}; const soft = p.softcap_bnb ?? j.softcap ?? '—', hard = p.hardcap_bnb ?? j.hardcap ?? '—';
       $('#caps').textContent=`Softcap: ${soft} BNB / Hardcap: ${hard} BNB`;
-
-      const pres = Number(p.rate_flex_per_bnb ?? (j.rates?.presale||0));
-      const list = Number(p.listing_rate_flex_per_bnb ?? (j.rates?.listing||0));
-      const fmt=(n)=> (Number.isFinite(n)&&n>0)? n.toLocaleString():'—';
+      const pres=Number(p.rate_flex_per_bnb ?? (j.rates?.presale||0)), list=Number(p.listing_rate_flex_per_bnb ?? (j.rates?.listing||0));
+      const fmt=n=>(Number.isFinite(n)&&n>0)?n.toLocaleString():'—';
       $('#rates').textContent=`Presale Rate: 1 BNB = ${fmt(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmt(list)} FLEX`;
-
-      const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
-      const btn = $('#btn-pinksale');
-      if(links.pinksale_url){ btn.textContent='Open Pinksale'; btn.href=links.pinksale_url; btn.removeAttribute('aria-disabled'); }
+      const links = await firstJSON(['/public/config/links.json','/config/links.json']); const btn=$('#btn-pinksale'); if(links?.pinksale_url){ btn.textContent='Open Pinksale'; btn.href=links.pinksale_url; btn.removeAttribute('aria-disabled'); }
     }
-
-    /* -------------- 카운트다운 -------------- */
     async function initCountdown(){
       let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00';
-      const p = await fetchFirst(['/public/config/presale.json','/config/presale.json']);
-      if(p.presale_start||p.start){ const x=(p.presale_start||p.start); sISO=x+(String(x).includes('+')?'':'+09:00'); }
-      if(p.presale_end||p.end){ const y=(p.presale_end||p.end); eISO=y+(String(y).includes('+')?'':'+09:00'); }
-      const s=new Date(sISO), e=new Date(eISO);
-      const range=$('#countdown-range'),count=$('#countdown');
-      const z=(n)=>String(n).padStart(2,'0');
-      const fmt=(d)=>`${d.getFullYear()}. ${z(d.getMonth()+1)}. ${z(d.getDate())}. ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;
-      range.textContent=`${fmt(s)} → ${fmt(e)}`;
-      const tick=()=>{ const now=new Date(); let t=s-now; if(t<0) t=e-now; if(t<=0){ count.textContent='—'; return; }
-        const d=Math.floor(t/86400000); t%=86400000; const h=Math.floor(t/3600000); t%=3600000; const m=Math.floor(t/60000); t%=60000; const s2=Math.floor(t/1000);
-        count.textContent=`${d}d ${z(h)}:${z(m)}:${z(s2)}`; };
+      const p = await firstJSON(['/public/config/presale.json','/config/presale.json']);
+      if(p.presale_start||p.start) sISO=(p.presale_start||p.start).replace(' ', 'T')+(String(p.presale_start||p.start).includes('+')?'':'+09:00');
+      if(p.presale_end||p.end)   eISO=(p.presale_end||p.end).replace(' ', 'T')+(String(p.presale_end||p.end).includes('+')?'':'+09:00');
+      const s=new Date(sISO), e=new Date(eISO), z=n=>String(n).padStart(2,'0'), fmt=d=>`${d.getFullYear()}. ${z(d.getMonth()+1)}. ${z(d.getDate())}. ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;
+      $('#countdown-range').textContent=`${fmt(s)} → ${fmt(e)}`;
+      const tick=()=>{ const now=new Date(); let t=s-now; if(t<0) t=e-now; if(t<=0) return $('#countdown').textContent='—'; const d=Math.floor(t/86400000); t%=86400000; const h=Math.floor(t/3600000); t%=3600000; const m=Math.floor(t/60000); t%=60000; const s2=Math.floor(t/1000); $('#countdown').textContent=`${d}d ${z(h)}:${z(m)}:${z(s2)}` };
       tick(); setInterval(tick,1000);
     }
 
-    /* -------------- 그리드 이미지 최적화 -------------- */
-    function pictureHTML(srcBase){
-      // srcBase: '/public/action/1' 등. avif > webp > jpg
-      const avif = `${srcBase}.avif`, webp = `${srcBase}.webp`, jpg = `${srcBase}.jpg`;
-      return `
-        <picture>
-          <source type="image/avif" srcset="${avif}">
-          <source type="image/webp" srcset="${webp}">
-          <img src="${jpg}" alt="" loading="lazy" decoding="async"
-               sizes="(max-width:900px) 50vw, 25vw">
-        </picture>`;
-    }
-    async function loadGrid(prefix, targetId){
-      const list=Array.from({length:8},(_,i)=>i+1);
-      const el=$(targetId);
-      // jpg가 최소 보장. avif/webp는 브라우저가 자동 선택.
-      el.innerHTML = list.map(n=> pictureHTML(`/public${prefix}/${n}`)).join('');
-      // 라이트박스 연결
-      el.querySelectorAll('img').forEach(img=>{
-        img.style.cursor='zoom-in';
-        img.addEventListener('click',()=>openLightbox(img.currentSrc || img.src),{passive:true});
-      });
-    }
+    // -------- preview grids --------
+    function gridHTML(base){ return Array.from({length:8},(_,i)=>i+1).map(n=>`<picture><source type="image/avif" srcset="/public/${base}/${n}.avif"><source type="image/webp" srcset="/public/${base}/${n}.webp"><img src="/public/${base}/${n}.jpg" loading="lazy" decoding="async" alt=""></picture>`).join('') }
+    $('#action-grid').innerHTML = gridHTML('action'); $('#nft-grid').innerHTML = gridHTML('nft-preview');
 
-    /* -------------- 라이트박스 -------------- */
-    const lb=$('#lightbox'), lbImg=$('#lb-img'), lbStage=$('#lb-stage');
-    let scale=0.75, minS=0.5, maxS=6, pos={x:0,y:0}, dragging=false, startPos={x:0,y:0};
-    function applyLB(){ lbImg.style.transform=`translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
-    function openLightbox(src){ lbImg.src=src; scale=0.75; pos={x:0,y:0}; applyLB(); lb.classList.add('show'); document.body.classList.add('noscroll'); }
-    function closeLightbox(){ lb.classList.remove('show'); document.body.classList.remove('noscroll'); }
-    $('#lb-close').onclick=closeLightbox; $('#lb-reset').onclick=()=>{scale=0.75;pos={x:0,y:0};applyLB();};
-    $('#lb-zoom-in').onclick=()=>{ scale=Math.min(maxS,scale*1.2); applyLB(); };
-    $('#lb-zoom-out').onclick=()=>{ scale=Math.max(minS,scale/1.2); applyLB(); };
-    lbStage.addEventListener('wheel',(e)=>{ e.preventDefault(); const k=e.deltaY>0?1.2:1/1.2; scale=Math.min(maxS,Math.max(minS,scale*k)); applyLB(); },{passive:false});
-    lbStage.addEventListener('mousedown',(e)=>{ dragging=true; lbStage.style.cursor='grabbing'; startPos={x:e.clientX-pos.x,y:e.clientY-pos.y}; });
-    window.addEventListener('mousemove',(e)=>{ if(!dragging) return; pos={x:e.clientX-startPos.x,y:e.clientY-startPos.y}; applyLB(); });
-    window.addEventListener('mouseup',()=>{ dragging=false; lbStage.style.cursor='grab'; });
-    lb.addEventListener('click',(e)=>{ if(e.target===lb) closeLightbox(); });
-
-    /* -------------- i18n -------------- */
-    async function setLang(lang){
-      const dict=await fetchFirst([`/public/i18n/${lang}.json`,`/i18n/${lang}.json`]);
-      document.querySelectorAll('[data-i18n]').forEach(el=>{
-        const k=el.getAttribute('data-i18n');
-        const v = deep(dict, k);
-        if(v !== undefined){ el.textContent=v; }
-      });
-      localStorage.setItem('lang',lang);
-      document.querySelectorAll('#lang-pill [data-lang]').forEach(b=>b.classList.toggle('active', b.getAttribute('data-lang')===lang));
-      $('#brand').textContent='$FLEX is your life. Your life is FLEX.';
-    }
-    function bindLang(){
-      const wanted=new URL(location.href).searchParams.get('lang')||localStorage.getItem('lang')||'en';
-      setLang(wanted);
-      document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
-    }
-
-    /* -------------- 화이트페이퍼 링크 보정 -------------- */
-    async function initWhitepapers(){
-      const langs=[['en','English'],['ko','Korean'],['ja','Japanese'],['zh','Chinese'],['es','Spanish'],['de','German'],['pt','Portuguese'],['it','Italian']];
-      for(const [code] of langs){
-        const a=document.querySelector(`a[href$="/whitepaper/${code}.pdf"], a[href$="/public/whitepaper/${code}.pdf"]`);
-        if(!a) continue;
-        const good=await firstExistingFile([`/public/whitepaper/${code}.pdf`,`/whitepaper/${code}.pdf`]);
-        if(good){ a.setAttribute('href',good); a.setAttribute('download',''); a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
-      }
-    }
-
-    /* -------------- NFT Mint (오류내성 강화판) -------------- */
-    const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'},
-                   bscMainnet:{chainId:'0x38',name:'BSC',rpc:'https://bsc-dataseed.binance.org'} };
-    const DEFAULT_PRICE_BNB = (window.NFT_PRICE_BNB || '0.0001');
-
-    // ABI 후보 (claim(receiver,qty), claim(qty), mint(qty)) + price()
+    // -------- mint (resilient) --------
+    const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'}, bscMainnet:{chainId:'0x38',name:'BSC',rpc:'https://bsc-dataseed.binance.org'} };
     const ABI_VARIANTS = [
       ["function claim(address receiver, uint256 quantity) payable","function price() view returns (uint256)"],
       ["function claim(uint256 quantity) payable","function price() view returns (uint256)"],
-      ["function mint(uint256 quantity) payable","function price() view returns (uint256)"],
+      ["function mint(uint256 quantity) payable","function price() view returns (uint256)"]
     ];
-    let NFT_ADDR={ bscMainnet:'0xYourMainnetNFTAddress', bscTestnet:'0xYourTestnetNFTAddress' };
+    const DEFAULT_PRICE_BNB = '0.0001';
+    let NFT_ADDR={ bscMainnet:'', bscTestnet:'' };
 
-    function logMint(msg){ const el=$('#mint-log'); el.textContent += (el.textContent.trim()? "\n" :"") + msg; }
-
+    function logMint(m){ const el=$('#mint-log'); el.textContent = (el.textContent.trim()? el.textContent+"\n":"")+m }
     async function connect(chainKey){
-      const { ethereum } = window;
-      if(!ethereum) throw new Error('지갑이 없습니다. MetaMask를 설치하세요.');
-      const target=CHAINS[chainKey];
-      try{
-        await ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:target.chainId}]});
-      }catch(e){
-        if(e && e.code===4902){
-          await ethereum.request({method:'wallet_addEthereumChain',
-            params:[{chainId:target.chainId,chainName:target.name,rpcUrls:[target.rpc],nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18}}]});
-        }else{ throw e; }
-      }
-      const provider=new ethers.BrowserProvider(ethereum);
-      const net = await provider.getNetwork();
-      if(net.chainId !== BigInt(target.chainId)) {
-        // 일부 지갑에서 즉시 반영 안됐을 때 재확인
-        await new Promise(r=>setTimeout(r,350));
-      }
-      return await provider.getSigner();
+      const { ethereum } = window; if(!ethereum) throw new Error('Install MetaMask.');
+      const t=CHAINS[chainKey];
+      try{ await ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:t.chainId}]}); }
+      catch(e){ if(e?.code===4902){ await ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:t.chainId,chainName:t.name,rpcUrls:[t.rpc],nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18}}]}); } else { throw e; } }
+      const provider=new ethers.BrowserProvider(ethereum); return await provider.getSigner();
     }
-
-    async function safePrice(contract){
-      try{ const v=await contract.price(); return v; }catch(_){
-        // price() 없으면 고정가 사용
-        return ethers.parseEther(DEFAULT_PRICE_BNB);
-      }
-    }
-
-    async function runMintInternal(signer, contract, to){
-      // 지갑 잔고 검사(부족 시 명확히 표시)
-      const bal = await signer.provider.getBalance(await signer.getAddress());
-      const ask = await safePrice(contract);
-      if(bal < ask){ throw new Error(`Insufficient BNB. Need ${ethers.formatEther(ask)} BNB.`); }
-
-      // 가스 추정 + 여유치 20%, 레거시 트랜잭션(type:0) 우선 시도
-      let tx;
-      try{
-        const est = await contract.claim ? contract.estimateGas.claim(to,1,{ value: ask }).catch(()=>contract.estimateGas.claim(1,{ value: ask }))
-                  : contract.estimateGas.mint(1,{ value: ask });
-        const gasLimit = est ? (est * 12n / 10n) : undefined;
-
-        if(contract.claim){
-          try{ tx=await contract.claim(to,1,{ value: ask, gasLimit, type:0 }); }
-          catch{ tx=await contract.claim(1,{ value: ask, gasLimit, type:0 }); }
-        }else{
-          tx=await contract.mint(1,{ value: ask, gasLimit, type:0 });
-        }
-      }catch(e){
-        // 레거시 타입 실패 시 EIP-1559 재시도
-        if(contract.claim){
-          try{ tx=await contract.claim(to,1,{ value: await safePrice(contract) }); }
-          catch{ tx=await contract.claim(1,{ value: await safePrice(contract) }); }
-        }else{
-          tx=await contract.mint(1,{ value: await safePrice(contract) });
-        }
-      }
-      logMint('Minting... TX: '+tx.hash);
-      await tx.wait();
-      logMint('✅ Minted!');
+    async function safePrice(c){ try{ return await c.price(); }catch{ return ethers.parseEther(DEFAULT_PRICE_BNB); } }
+    async function runMintInternal(signer, c, to, forceFixed){
+      const value = forceFixed ? ethers.parseEther(DEFAULT_PRICE_BNB) : await safePrice(c);
+      let tx; try{
+        const est = c.claim ? (await (async()=>{ try{return await c.estimateGas.claim(to,1,{value})}catch{return await c.estimateGas.claim(1,{value})} })()) : await c.estimateGas.mint(1,{value});
+        const gasLimit = est ? (est*12n/10n) : undefined;
+        if(c.claim){ try{ tx=await c.claim(to,1,{value,gasLimit,type:0}); } catch{ tx=await c.claim(1,{value,gasLimit}); } }
+        else { tx=await c.mint(1,{value,gasLimit,type:0}); }
+      }catch{ if(c.claim){ try{ tx=await c.claim(to,1,{value}); } catch{ tx=await c.claim(1,{value}); } } else { tx=await c.mint(1,{value}); } }
+      logMint('Minting... TX: '+tx.hash); await tx.wait(); logMint('✅ Minted!');
     }
 
     async function setupMintUI(){
-      const addr=await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
-      if(addr.nft_mainnet) NFT_ADDR.bscMainnet=addr.nft_mainnet;
-      if(addr.nft_testnet) NFT_ADDR.bscTestnet=addr.nft_testnet;
+      const addr = await initLinks(); // links + table 렌더 + 주소 확보
+      NFT_ADDR.bscMainnet = addr.nft_mainnet || '';
+      NFT_ADDR.bscTestnet = addr.nft_testnet || '';
 
-      const sel=$('#net'), btnC=$('#connect'), btnLegacy=$('#mint'), btnFlex=$('#mint-flex'), logEl=$('#mint-log');
-      const setLog=(s)=>{ logEl.textContent=s; };
+      await initTokenomics();
+      await initCountdown();
 
-      btnC.onclick=async()=>{ try{ const s=await connect(sel.value); setLog('Connected: '+await s.getAddress()); }catch(e){ setLog('Connect error: '+(e.message||e)); } };
+      const sel=$('#net'), btnC=$('#connect'), btnLegacy=$('#mint'), btnFlex=$('#mint-flex');
+      btnC.onclick=async()=>{ try{ const s=await connect(sel.value); $('#mint-log').textContent='Connected: '+await s.getAddress(); }catch(e){ $('#mint-log').textContent='Connect error: '+(e.message||e) } };
 
-      async function runMint(payFixed){
+      async function runMint(forceFixed){
         try{
-          const chainKey=sel.value; const signer=await connect(chainKey); const to=await signer.getAddress();
-          const target=NFT_ADDR[chainKey]; if(!target || target.length<20) throw new Error('NFT 컨트랙트 주소가 설정되지 않았습니다.');
-          setLog('Preparing mint...');
-          let last=null;
-
+          const chainKey=sel.value, signer=await connect(chainKey), to=await signer.getAddress();
+          const target=NFT_ADDR[chainKey]; if(!target) throw new Error('NFT contract address not set.');
           for(const abi of ABI_VARIANTS){
-            try{
-              const c=new ethers.Contract(target, abi, signer);
-              // payFixed면 price() 무시하고 고정가
-              if(payFixed){
-                const value = ethers.parseEther(DEFAULT_PRICE_BNB);
-                // 추정 및 전송
-                const est = (c.claim ? (await (async()=>{ try{return await c.estimateGas.claim(to,1,{value});}catch{return await c.estimateGas.claim(1,{value});}})())
-                                      : await c.estimateGas.mint(1,{value})).catch?.(()=>null);
-                const gasLimit = est ? (est * 12n / 10n) : undefined;
-                let tx;
-                try{ tx = c.claim ? await c.claim(to,1,{value,gasLimit,type:0}) : await c.mint(1,{value,gasLimit,type:0}); }
-                catch{ tx = c.claim ? await c.claim(1,{value}) : await c.mint(1,{value}); }
-                logMint('Minting... TX: '+tx.hash); await tx.wait(); setLog('✅ Minted!'); return;
-              }else{
-                await runMintInternal(signer, c, to); setLog('✅ Minted!'); return;
-              }
-            }catch(e){ last=e; }
+            try{ const c=new ethers.Contract(target, abi, signer); await runMintInternal(signer, c, to, forceFixed); return; }catch{}
           }
-          throw last || new Error('민팅 실패');
-        }catch(e){
-          const code = (e && (e.code||e.error?.code)) ?? '';
-          setLog(`Mint error: ${code} ${e.message||e}`);
-        }
+          throw new Error('Mint failed with all ABI variants.');
+        }catch(e){ $('#mint-log').textContent='Mint error: '+(e.message||e); }
       }
-
       btnLegacy.onclick = ()=>runMint(false);
       btnFlex.onclick   = ()=>runMint(true);
     }
 
-    /* -------------- Boot -------------- */
-    (async()=>{
-      bindLang();
-      await initLinks();
-      await initHero();
-      await initTokenomics();
-      await initCountdown();
-      await initWhitepapers();
-      await loadGrid('/action', '#action-grid');
-      await loadGrid('/nft-preview', '#nft-grid');
-      await setupMintUI();
-    })();
+    // boot
+    (async()=>{ await setupMintUI(); })();
   </script>
 </body>
 </html>
