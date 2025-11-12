@@ -10,6 +10,16 @@
   <link rel="alternate icon" href="/public/favicon.ico">
   <link rel="alternate icon" href="/favicon.ico">
 
+  <!-- Whitepaper discoverability (선택): 검색·공유용 힌트 -->
+  <link rel="alternate" hreflang="en" href="/public/whitepaper/en.pdf">
+  <link rel="alternate" hreflang="ko" href="/public/whitepaper/ko.pdf">
+  <link rel="alternate" hreflang="ja" href="/public/whitepaper/ja.pdf">
+  <link rel="alternate" hreflang="zh" href="/public/whitepaper/zh.pdf">
+  <link rel="alternate" hreflang="es" href="/public/whitepaper/es.pdf">
+  <link rel="alternate" hreflang="de" href="/public/whitepaper/de.pdf">
+  <link rel="alternate" hreflang="pt" href="/public/whitepaper/pt.pdf">
+  <link rel="alternate" hreflang="it" href="/public/whitepaper/it.pdf">
+
   <style>
     :root{
       --bg:#11100d; --card:#1b1915; --text:#eadfbb; --muted:#b9a97a;
@@ -20,13 +30,13 @@
       font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial;
       overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none
     }
-    /* 상단바를 fixed로 고정하므로, 본문이 가려지지 않게 패딩 부여 */
+    /* 상단바 고정 → 본문 패딩 */
     body{ padding-top:64px; }
     *{box-sizing:border-box}
     a{color:inherit; text-decoration:none}
     body.noscroll{overflow:hidden}
 
-    /* Top bar (고정 + z-index ↑) */
+    /* Top bar (fixed) */
     .topbar{
       position:fixed; inset:0 auto auto 0; right:0; top:0;
       display:flex; align-items:center; gap:.5rem; padding:.8rem 1rem;
@@ -46,7 +56,6 @@
     .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9; white-space:nowrap}
     .nav a:hover{opacity:1}
 
-    /* Mobile topbar wrap */
     @media(max-width:680px){
       .topbar{flex-wrap:wrap;gap:.4rem}
       .brand{flex:1 1 100%; font-size:1rem}
@@ -55,18 +64,15 @@
       .lang{order:4}
     }
 
-    /* Layout */
     .wrap{max-width:1100px;margin:0 auto;padding:1rem}
     .card{background:var(--card);border:1px solid var(--border);
       border-radius:18px;padding:16px;margin-top:1rem}
     .section-title{font-size:1.4rem;font-weight:900;margin:.4rem 0 1rem;color:var(--gold)}
     .muted{color:var(--muted);font-size:.95rem}
 
-    /* Hero */
     .hero{background:#0f0e0c;border-radius:18px;overflow:hidden;border:1px solid var(--border)}
     .hero img{display:block;width:100%;height:auto}
 
-    /* Tokenomics */
     .tok-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px}
     canvas{background:#0f0e0c;border-radius:14px}
     ul.legend{list-style:none;padding:0;margin:0}
@@ -74,21 +80,17 @@
     #caps,#rates{margin-top:.35rem}
     #btn-pinksale{margin-top:12px;display:inline-block}
 
-    /* Countdown */
     .countbox{border:1px solid var(--border);border-radius:14px;padding:14px;
       background:linear-gradient(180deg,rgba(255,255,255,.02),transparent)}
     #countdown{font-weight:900;font-size:1.35rem}
 
-    /* Whitepaper */
     .wp-grid{display:flex;flex-wrap:wrap;gap:.5rem}
     .wp-note{margin-top:.5rem}
 
-    /* Addresses */
     .addr table{width:100%;border-collapse:collapse;font-size:.92rem}
     .addr td{padding:.45rem .55rem;border-bottom:1px dashed var(--border);word-break:break-all}
     .addr a{color:var(--gold);text-decoration:none}
 
-    /* Galleries */
     .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
     .grid img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;
       border-radius:12px;border:1px solid var(--border);background:#0f0e0c}
@@ -98,7 +100,6 @@
       .addr td{font-size:.85rem}
     }
 
-    /* Lightbox */
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;
       align-items:center;justify-content:center;z-index:50;touch-action:none}
     .lightbox.show{display:flex}
@@ -108,7 +109,6 @@
     .lb-toolbar .btn{padding:.4rem .6rem;border-radius:.6rem}
     .lb-hint{position:fixed;bottom:12px;left:12px;color:#ddd;font-size:.85rem;opacity:.8}
 
-    /* About */
     .about-section{background:linear-gradient(180deg,#0a0a0a 0%, #111 100%);border:1px solid rgba(212,175,55,.25);
       border-radius:24px;padding:28px;margin:24px 0;box-shadow:0 10px 30px rgba(0,0,0,.35);color:#f1f1f1}
     .about-title{font-size:28px;font-weight:800;margin-bottom:8px;color:#f6e8b1}
@@ -121,13 +121,11 @@
     blockquote.about-quote{margin:12px 0;border-left:4px solid rgba(212,175,55,.5);padding:8px 12px;color:#e9e1c8;font-style:italic}
     .small-muted{font-size:12px;color:#9a9a9a;margin-top:8px}
 
-    /* NFT mint UI */
     .btn-row{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.6rem}
     .btn-gold{background:var(--gold);color:#000;border-radius:.7rem;padding:.55rem .9rem;font-weight:800;border:0;cursor:pointer}
     .select-net{margin:8px 0;padding:.45rem .6rem;border-radius:.6rem;border:1px solid var(--border);background:#0f0e0c;color:var(--text)}
     .mint-log{background:#0f0e0c;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;color:#ddd;font-size:.85rem;min-height:2.2em}
 
-    /* Roadmap */
     #roadmap .grid{grid-template-columns:repeat(4,1fr)}
     #roadmap .roadmap-card{transition:transform .25s ease, box-shadow .25s ease}
     #roadmap .roadmap-card:hover{transform:translateY(-4px); box-shadow:0 4px 15px rgba(212,175,55,.15)}
@@ -320,6 +318,72 @@
   <script>
     const $ = (q)=>document.querySelector(q);
 
+    /* ---------------- Whitepaper Direct Router ----------------
+       주소창에 다음 형태를 넣으면 즉시 PDF로 리다이렉트/다운로드:
+       - /whitepaper               → ko.pdf (기본)
+       - /whitepaper/en            → en.pdf
+       - /whitepaper/ko.pdf        → ko.pdf
+       - /wp/en , /pdf/en          → en.pdf
+       - #whitepaper-en , #pdf-en  → en.pdf (해시)
+    ----------------------------------------------------------- */
+    (function directWhitepaperRouter(){
+      const langCodes = ['en','ko','ja','zh','es','de','pt','it'];
+      const lower = (s)=> (s||'').toLowerCase();
+
+      function findBestPdf(code){
+        const tryList = [
+          `/public/whitepaper/${code}.pdf`,
+          `/whitepaper/${code}.pdf`
+        ];
+        return Promise.all(tryList.map(p=>fetch(p,{method:'HEAD',cache:'no-cache'}).then(r=>r.ok?p:null).catch(()=>null)))
+          .then(arr=>arr.find(Boolean));
+      }
+
+      async function handlePath(){
+        const p = lower(location.pathname);
+        const m = p.match(/^\/(whitepaper|wp|pdf)(?:\/)?([a-z]{2})?(?:\.pdf)?$/);
+        if(!m) return false;
+        const code = (m[2] && langCodes.includes(m[2])) ? m[2] : 'ko';
+        const url = await findBestPdf(code);
+        if(url){
+          // 자동 다운로드 유도
+          const a = document.createElement('a');
+          a.href = url; a.download = `flexcoin_whitepaper_${code}.pdf`;
+          document.body.appendChild(a); a.click(); a.remove();
+          // 동시에 새 탭 열기(브라우저에 따라)
+          window.open(url,'_blank','noopener');
+          return true;
+        }
+        return false;
+      }
+
+      async function handleHash(){
+        const h = lower(location.hash);
+        // #whitepaper, #pdf → 기본 ko
+        // #whitepaper-en / #pdf-en → 언어 지정
+        let code = null;
+        const mh = h.match(/^#(?:whitepaper|pdf)(?:[-_]?([a-z]{2}))?$/);
+        if(mh){ code = mh[1] || 'ko'; }
+        if(!code) return false;
+        const url = await findBestPdf(code);
+        if(url){
+          const a = document.createElement('a');
+          a.href = url; a.download = `flexcoin_whitepaper_${code}.pdf`;
+          document.body.appendChild(a); a.click(); a.remove();
+          window.open(url,'_blank','noopener');
+          return true;
+        }
+        return false;
+      }
+
+      // 즉시 처리
+      handlePath().then(hit=>{
+        if(!hit) handleHash();
+      });
+      // 해시 변경에도 반응
+      window.addEventListener('hashchange', handleHash);
+    })();
+
     /* --------- 유틸 --------- */
     const deep = (obj, path) => path.split('.').reduce((o,k)=> (o && k in o) ? o[k] : undefined, obj);
 
@@ -437,12 +501,12 @@
     window.addEventListener('mouseup',()=>{ dragging=false; lbStage.style.cursor='grab'; });
     lb.addEventListener('click',(e)=>{ if(e.target===lb) closeLightbox(); });
 
-    /* --------- i18n (딥키 지원) --------- */
+    /* --------- i18n --------- */
     async function setLang(lang){
       const dict=await fetchFirst([`/public/i18n/${lang}.json`,`/i18n/${lang}.json`]);
       document.querySelectorAll('[data-i18n]').forEach(el=>{
         const k=el.getAttribute('data-i18n');
-        const v = deep(dict, k);             // ← 중첩 키 해결!
+        const v = deep(dict, k);
         if(v !== undefined){ el.textContent=v; }
       });
       localStorage.setItem('lang',lang);
@@ -455,7 +519,7 @@
       document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
     }
 
-    /* --------- 화이트페이퍼 경로 자동 설정 + #pdf 해시 처리 --------- */
+    /* --------- 화이트페이퍼 링크 보정 (#whitepaper/#pdf) --------- */
     async function initWhitepapers(){
       const langs=[['en','English'],['ko','Korean'],['ja','Japanese'],['zh','Chinese'],['es','Spanish'],['de','German'],['pt','Portuguese'],['it','Italian']];
       for(const [code] of langs){
@@ -465,16 +529,6 @@
         if(good){ a.setAttribute('href',good); a.setAttribute('download',''); a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
       }
     }
-    function handleHash(){
-      const h = location.hash.toLowerCase();
-      if(h==='#pdf' || h==='#whitepaper'){
-        document.getElementById('whitepaper')?.scrollIntoView({behavior:'smooth', block:'start'});
-        // 기본 언어 PDF(ko)가 있으면 자동 오픈 시도
-        const ko = document.querySelector('a[href$="/whitepaper/ko.pdf"], a[href$="/public/whitepaper/ko.pdf"]');
-        if(ko) window.open(ko.getAttribute('href'),'_blank','noopener');
-      }
-    }
-    window.addEventListener('hashchange', handleHash);
 
     /* --------- NFT Mint --------- */
     const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'},
@@ -552,7 +606,6 @@
       await loadGrid('/action', '#action-grid');
       await loadGrid('/nft-preview', '#nft-grid');
       await setupMintUI();
-      handleHash();              // 해시(#pdf 등) 즉시 처리
     })();
   </script>
 </body>
