@@ -1,12 +1,13 @@
 {
   "chain": { "name": "BSC", "chainId": 56, "explorer": "https://bscscan.com/address/" },
+
   "token": "0xBa29562241F0489504C493c47aCBA16d7a98998f",
   "team_lock": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
-  "marketing": "0xF3A2159474dCE4eF86F6eE56cE1b55C60E2C467e",
-  "presale": "0x66F4cEb1C3dEb2084cdc02Aa3c318CF680E0A672",
-  "burn": "0x388a9106d392937938721d6dd09cf1f331c2860f",
-  "user": "0xCDcA475e1C6D89A14158fB8d05fA8275Bf5A06Ea"
+  "marketing": "0xF3A2159474dCE4eF86F6eE56cE1b55C602C467e",
+  "presale": "0x96cf4EbC1b3CdEba4028cd02a3c318C6080A672",
+  "burn": "0x388a9106d39293798372d16dd09c1f3318c260f",
+  "user": "0xCDcA475e1C6D89A14158fB8D05fA8275bF5A06Ea",
 
-   "nft_mainnet": "0x834586083e355ae80D88f479178935085dD3Bf75",
+  "nft_mainnet": "0x834586083e355ae80D88f479178935085dD3Bf75",
   "nft_testnet": "0x8ce19090fAf32b48Adb78DB0d029aA3CCd0Cc0b8"
 }
