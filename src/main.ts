@@ -1,162 +1,231 @@
-// src/main.ts
-type AllocCfg = {
-  lp:number; presale:number; team:number; marketing:number; burn:number;
-  rates?:{ presale?:string; listing?:string }; softcap?:number; hardcap?:number;
+// src/modules/mint.ts
+// -------------------------------------------------------------
+// FLEX NFT 민팅 모듈 (ethers + thirdweb 하이브리드, 오류내성 보강)
+// - 체인 스위치/추가 자동
+// - /config/addresses.json 또는 /public/config/addresses.json 에서 nft 주소 자동 로드
+// - mint(1, {value}) -> 실패 시 mint({value}) 폴백
+// - price() 없으면 고정가 0.0001 BNB 폴백
+// - thirdweb clientId 가 있으면 claim() 경로도 시도 (없어도 정상 동작)
+// -------------------------------------------------------------
+
+import { BrowserProvider, Contract, parseEther } from "ethers";
+import {
+  createThirdwebClient,
+  getContract,
+  prepareContractCall,
+  sendTransaction,
+} from "thirdweb";
+import { BNBChain } from "thirdweb/chains";
+
+// ===== 체인 정의 =====
+const CHAINS: Record<
+  "bscTestnet" | "bscMainnet",
+  { chainId: `0x${string}`; name: string; rpc: string }
+> = {
+  bscTestnet: {
+    chainId: "0x61",
+    name: "BSC Testnet",
+    rpc: "https://data-seed-prebsc-1-s3.binance.org:8545",
+  },
+  bscMainnet: {
+    chainId: "0x38",
+    name: "BSC",
+    rpc: "https://bsc-dataseed.binance.org",
+  },
 };
-type AddrCfg = {
-  chainId?: number;
-  token?: string; team?: string; marketing?: string; presale?: string; burn?: string; user?: string;
-};
-type PresaleCfg = {
-  pinksale_url?: string; pancakeswap_url?: string;
-  start?: string; end?: string;
-  rates?: { presale?:string; listing?:string };
-  softcap?: number; hardcap?: number;
+
+// ===== 기본 주소(폴백) =====
+const DEFAULT_ADDR = {
+  bscTestnet: "0xYourTestnetNFTAddress",
+  bscMainnet: "0x834586083e355ae80b88f479178935085dD3Bf75", // FlexNFT mainnet
 };
 
-// ---------- helpers ----------
-const $ = <T extends HTMLElement>(sel:string)=>document.querySelector<T>(sel)!;
+// ===== 컨트랙트 ABI (오버로드 대응) =====
+const ABI = [
+  "function mint(uint256 quantity) payable",
+  "function mint() payable",
+  "function price() view returns (uint256)",
+];
 
-async function json<T=any>(url:string, fallback:T):Promise<T>{
-  try{ return await (await fetch(url,{cache:"no-cache"})).json(); }
-  catch{ return fallback; }
-}
-function pct(n:number){ return `${(+n).toFixed(0)}%`; }
-function link(el:HTMLElement | null, href?:string){ if(!el) return; if(href){ (el as HTMLAnchorElement).href = href; el.removeAttribute("aria-disabled"); } else { el.setAttribute("aria-disabled","true"); } }
+// ===== thirdweb (선택적) =====
+const THIRDWEB_CLIENT_ID =
+  (window as any)?.THIRDWEB_CLIENT_ID ||
+  (window as any)?.env?.THIRDWEB_CLIENT_ID ||
+  "YOUR_THIRDWEB_CLIENT_ID"; // 없으면 그냥 ethers 경로만 사용
 
-// ---------- hero loader ----------
-function resolveHero(): string {
-  // prefer /hero/main.jpg -> fallback /hero/1.jpg
-  return "/hero/main.jpg";
-}
+const twClient =
+  THIRDWEB_CLIENT_ID && THIRDWEB_CLIENT_ID !== "YOUR_THIRDWEB_CLIENT_ID"
+    ? createThirdwebClient({ clientId: THIRDWEB_CLIENT_ID })
+    : undefined;
 
-// ---------- donut ----------
-function drawDonut(cfg:AllocCfg){
-  const total = cfg.lp+cfg.presale+cfg.team+cfg.marketing+cfg.burn || 100;
-  const parts = [
-    {k:"lp",        v:cfg.lp,        color:"#f7c843"},
-    {k:"presale",   v:cfg.presale,   color:"#ff8f3a"},
-    {k:"team",      v:cfg.team,      color:"#7ddc7a"},
-    {k:"marketing", v:cfg.marketing, color:"#67b7ff"},
-    {k:"burn",      v:cfg.burn,      color:"#ec6a6a"},
-  ];
-  const R=45, C=60, ST=16, Circ=2*Math.PI*R;
-  const svg = $("#donut") as unknown as SVGSVGElement;
-  svg.innerHTML = `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="#2a2418" stroke-width="${ST}"></circle>`;
-  let offset=0;
-  parts.forEach(p=>{
-    const frac = Math.max(0, p.v/total);
-    const len = frac * Circ;
-    const path = document.createElementNS("http://www.w3.org/2000/svg","circle");
-    path.setAttribute("cx", String(C));
-    path.setAttribute("cy", String(C));
-    path.setAttribute("r", String(R));
-    path.setAttribute("fill","none");
-    path.setAttribute("stroke", p.color);
-    path.setAttribute("stroke-width", String(ST));
-    path.setAttribute("stroke-dasharray", `${len} ${Circ-len}`);
-    path.setAttribute("stroke-dashoffset", String(-offset));
-    path.setAttribute("transform", `rotate(-90 ${C} ${C})`);
-    svg.appendChild(path);
-    offset += len;
-  });
-
-  // legend %
-  (document.querySelector('[data-tok-lp]') as HTMLElement).textContent = pct(cfg.lp);
-  (document.querySelector('[data-tok-presale]') as HTMLElement).textContent = pct(cfg.presale);
-  (document.querySelector('[data-tok-team]') as HTMLElement).textContent = pct(cfg.team);
-  (document.querySelector('[data-tok-mkt]') as HTMLElement).textContent = pct(cfg.marketing);
-  (document.querySelector('[data-tok-burn]') as HTMLElement).textContent = pct(cfg.burn);
+// 유틸: JSON 폴백 로더
+async function fetchFirst<T = any>(
+  paths: string[],
+  fallback: T
+): Promise<T> {
+  for (const p of paths) {
+    try {
+      const r = await fetch(p, { cache: "no-cache" });
+      if (r.ok) return (await r.json()) as T;
+    } catch (_) {}
+  }
+  return fallback;
 }
 
-// ---------- countdown ----------
-function startCountdown(startISO?:string, endISO?:string){
-  const el=$("#countdown");
-  const win=$("#presale-window");
-  if(!startISO || !endISO){ el.textContent="—"; win.textContent="—"; return; }
+// 지갑 연결 & 체인 스위치
+async function connect(chainKey: "bscMainnet" | "bscTestnet") {
+  const eth = (window as any).ethereum;
+  if (!eth) throw new Error("지갑이 없습니다. MetaMask를 설치하세요.");
+  const target = CHAINS[chainKey];
 
-  const start = new Date(startISO).getTime();
-  const end   = new Date(endISO).getTime();
-  win.textContent = new Date(startISO).toLocaleString() + " → " + new Date(endISO).toLocaleString();
-
-  function fmt(ms:number){
-    const s=Math.max(0,Math.floor(ms/1000));
-    const d=Math.floor(s/86400), h=Math.floor((s%86400)/3600), m=Math.floor((s%3600)/60), ss=s%60;
-    return `${d}d ${h}h ${m}m ${ss}s`;
+  try {
+    await eth.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: target.chainId }],
+    });
+  } catch (e: any) {
+    if (e?.code === 4902) {
+      await eth.request({
+        method: "wallet_addEthereumChain",
+        params: [
+          {
+            chainId: target.chainId,
+            chainName: target.name,
+            rpcUrls: [target.rpc],
+            nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+          },
+        ],
+      });
+    } else {
+      throw e;
+    }
   }
 
-  function tick(){
-    const now=Date.now();
-    if(now<start){ el.textContent="Starts in "+fmt(start-now); }
-    else if(now<=end){ el.textContent="Ends in "+fmt(end-now); }
-    else{ el.textContent="Finished"; clearInterval(tid); }
-  }
-  tick();
-  const tid=setInterval(tick,1000);
+  const provider = new BrowserProvider(eth);
+  const signer = await provider.getSigner();
+  return signer;
 }
 
-// ---------- lightbox ----------
-function bindLightbox(selector:string){
-  const box=$("#lightbox"), img=box.querySelector("img")!;
-  document.querySelectorAll<HTMLImageElement>(selector).forEach(i=>{
-    i.addEventListener("click",()=>{ img.src=i.src; (box as HTMLElement).style.display="grid"; });
-  });
-  box.addEventListener("click",()=> (box as HTMLElement).style.display="none");
+// 수치 포맷
+const fmt = (v: any) => (typeof v === "bigint" ? `${v}` : String(v));
+
+// BscScan 링크
+const scanTx = (hash: string) => `https://bscscan.com/tx/${hash}`;
+
+// ===== 공개 API: 버튼 바인딩 =====
+export async function setupMintUI() {
+  // 주소 자동 로드
+  const addrJson = await fetchFirst<any>(
+    ["/config/addresses.json", "/public/config/addresses.json"],
+    {}
+  );
+  const ADDR = {
+    bscMainnet: addrJson.nft_mainnet || DEFAULT_ADDR.bscMainnet,
+    bscTestnet: addrJson.nft_testnet || DEFAULT_ADDR.bscTestnet,
+  };
+
+  // thirdweb 컨트랙트 (있을 때만)
+  const twContract =
+    twClient &&
+    getContract({
+      client: twClient,
+      address: ADDR.bscMainnet,
+      chain: BNBChain,
+    });
+
+  const sel = document.getElementById("net") as HTMLSelectElement;
+  const btnC = document.getElementById("connect") as HTMLButtonElement;
+  const btnLegacy = document.getElementById("mint") as HTMLButtonElement;
+  const btnFlex = document.getElementById("mint-flex") as HTMLButtonElement;
+  const log = document.getElementById("mint-log") as HTMLPreElement;
+  const write = (s: string) => (log.textContent = s);
+
+  // 연결
+  btnC.onclick = async () => {
+    try {
+      const signer = await connect(sel.value as any);
+      write("Connected: " + (await signer.getAddress()));
+    } catch (e: any) {
+      write("Connect error: " + (e?.message || e));
+    }
+  };
+
+  // ----- 레거시 민트 (ethers) -----
+  btnLegacy.onclick = async () => {
+    try {
+      const chainKey = sel.value as "bscMainnet" | "bscTestnet";
+      const signer = await connect(chainKey);
+      const contract = new Contract(ADDR[chainKey], ABI, signer);
+
+      // 1) price() 시도 → 실패 시 0.0001 BNB 고정가
+      let value = parseEther("0.0001");
+      try {
+        const p = await contract.price();
+        if (typeof p === "bigint" && p > 0n) value = p;
+      } catch {}
+
+      // 2) mint(1) 시도 → 실패하면 mint()로 폴백
+      let tx;
+      try {
+        tx = await contract.mint(1, { value });
+      } catch (e1) {
+        tx = await contract.mint({ value });
+      }
+
+      write("Minting... TX: " + tx.hash + "\n" + scanTx(tx.hash));
+      const r = await tx.wait();
+      write("✅ Minted!\n" + scanTx(tx.hash) + `\nstatus: ${r?.status ?? "-"}`);
+    } catch (e: any) {
+      // MetaMask -32603(Internal JSON-RPC) 가독화
+      const msg =
+        e?.data?.message ||
+        e?.error?.message ||
+        e?.message ||
+        String(e);
+      write("Mint error: " + msg);
+    }
+  };
+
+  // ----- FlexNFT 민트 (thirdweb claim) -----
+  btnFlex.onclick = async () => {
+    // thirdweb clientId 없으면 ethers 경로로 동일 수행
+    if (!twClient || !twContract) {
+      btnLegacy.click();
+      return;
+    }
+
+    try {
+      // FlexNFT는 메인넷 고정
+      const signer = await connect("bscMainnet");
+      const wallet = await signer.getAddress();
+
+      // 0.0001 BNB
+      const valueWei = "100000000000000";
+
+      const tx = prepareContractCall({
+        contract: twContract,
+        method: "claim",
+        params: [wallet, 1],
+        value: valueWei,
+      });
+
+      const receipt = await sendTransaction({ transaction: tx });
+      const hash =
+        (receipt as any)?.transactionHash ||
+        (receipt as any)?.hash ||
+        "";
+      log.textContent =
+        "✅ FlexNFT Mint Success!\n" +
+        (hash ? scanTx(hash) : "TX sent.");
+    } catch (err: any) {
+      const msg =
+        err?.data?.message ||
+        err?.error?.message ||
+        err?.message ||
+        String(err);
+      log.textContent = "❌ FlexNFT Mint Error: " + msg;
+    }
+  };
 }
 
-// ---------- i18n ----------
-async function setLang(lang:string){
-  const dict = await json<Record<string,string>>(`/i18n/${lang}.json`, {});
-  document.querySelectorAll<HTMLElement>("[data-i18n]").forEach(el=>{
-    const k = el.getAttribute("data-i18n")!;
-    if(dict[k]) el.textContent = dict[k];
-  });
-  localStorage.setItem("lang", lang);
-  document.querySelectorAll<HTMLButtonElement>("#lang-pill [data-lang]").forEach(b=>b.classList.toggle("active",(b.dataset.lang||"en")===lang));
-}
-
-// ---------- boot ----------
-(async () => {
-  // hero
-  const hero=$("#hero-img"); hero.src = resolveHero();
-
-  // runtime config
-  const alloc = await json<AllocCfg>("/config/allocations.json", {lp:54,presale:20,team:15,marketing:10,burn:1});
-  const addr  = await json<AddrCfg>("/config/addresses.json",  {});
-  const ps    = await json<PresaleCfg>("/config/presale.json", {});
-
-  drawDonut(alloc);
-
-  // rates / caps
-  if(alloc.rates?.presale || ps.rates?.presale)  ($('[data-presale-rate]') as HTMLElement).textContent = alloc.rates?.presale || ps.rates?.presale || "";
-  if(alloc.rates?.listing || ps.rates?.listing)  ($('[data-listing-rate]') as HTMLElement).textContent = alloc.rates?.listing || ps.rates?.listing || "";
-  if(alloc.softcap || ps.softcap) (document.querySelector('[data-softcap]') as HTMLElement).textContent = String(alloc.softcap ?? ps.softcap ?? "—");
-  if(alloc.hardcap || ps.hardcap) (document.querySelector('[data-hardcap]') as HTMLElement).textContent = String(alloc.hardcap ?? ps.hardcap ?? "—");
-
-  // buttons / links
-  link($('#btn-swap'), ps.pancakeswap_url);
-  const pink = $('#btn-pinksale') as HTMLAnchorElement;
-  if (ps.pinksale_url && ps.pinksale_url.length>8) { pink.href = ps.pinksale_url; pink.textContent="Pinksale"; }
-  else { pink.textContent="Pinksale (coming soon)"; pink.removeAttribute('href'); pink.setAttribute('disabled',''); }
-
-  const base = (a?:string)=> a ? `https://bscscan.com/address/${a}` : '';
-  (document.querySelector('[data-addr-token]')   as HTMLAnchorElement).href = base(addr.token);
-  (document.querySelector('[data-addr-team]')    as HTMLAnchorElement).href = base(addr.team);
-  (document.querySelector('[data-addr-mkt]')     as HTMLAnchorElement).href = base(addr.marketing);
-  (document.querySelector('[data-addr-presale]') as HTMLAnchorElement).href = base(addr.presale);
-  (document.querySelector('[data-addr-burn]')    as HTMLAnchorElement).href = base(addr.burn);
-  (document.querySelector('[data-addr-user]')    as HTMLAnchorElement).href = base(addr.user);
-
-  // countdown
-  startCountdown(ps.start, ps.end);
-
-  // lightbox
-  bindLightbox("#action-gallery img, #nft-gallery img");
-
-  // i18n init/bind
-  const wanted = new URL(location.href).searchParams.get("lang") || localStorage.getItem("lang") || "en";
-  await setLang(wanted);
-  document.querySelectorAll<HTMLButtonElement>("#lang-pill [data-lang]").forEach(btn=>{
-    btn.addEventListener("click",()=> setLang(btn.dataset.lang || "en"));
-  });
-})();
+export default setupMintUI;
