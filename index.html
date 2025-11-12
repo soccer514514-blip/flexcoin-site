@@ -10,7 +10,7 @@
   <link rel="alternate icon" href="/public/favicon.ico">
   <link rel="alternate icon" href="/favicon.ico">
 
-  <!-- Whitepaper discoverability (선택): 검색·공유용 힌트 -->
+  <!-- Whitepaper discoverability -->
   <link rel="alternate" hreflang="en" href="/public/whitepaper/en.pdf">
   <link rel="alternate" hreflang="ko" href="/public/whitepaper/ko.pdf">
   <link rel="alternate" hreflang="ja" href="/public/whitepaper/ja.pdf">
@@ -30,13 +30,11 @@
       font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial;
       overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none
     }
-    /* 상단바 고정 → 본문 패딩 */
     body{ padding-top:64px; }
     *{box-sizing:border-box}
     a{color:inherit; text-decoration:none}
     body.noscroll{overflow:hidden}
 
-    /* Top bar (fixed) */
     .topbar{
       position:fixed; inset:0 auto auto 0; right:0; top:0;
       display:flex; align-items:center; gap:.5rem; padding:.8rem 1rem;
@@ -293,8 +291,8 @@
         </select>
         <div class="btn-row">
           <button id="connect" class="btn-gold" data-i18n="connect">Connect Wallet</button>
-          <button id="mint" class="btn-gold">Mint NFT (Legacy)</button>
-          <button id="mint-flex" class="btn-gold">Mint FlexNFT (0.0001 BNB)</button>
+          <button id="mint" class="btn-gold" disabled>Mint NFT (Legacy)</button>
+          <button id="mint-flex" class="btn-gold" disabled>Mint FlexNFT (0.0001 BNB)</button>
         </div>
         <pre id="mint-log" class="mint-log">[ Waiting for connection... ]</pre>
       </div>
@@ -318,27 +316,15 @@
   <script>
     const $ = (q)=>document.querySelector(q);
 
-    /* ---------------- Whitepaper Direct Router ----------------
-       주소창에 다음 형태를 넣으면 즉시 PDF로 리다이렉트/다운로드:
-       - /whitepaper               → ko.pdf (기본)
-       - /whitepaper/en            → en.pdf
-       - /whitepaper/ko.pdf        → ko.pdf
-       - /wp/en , /pdf/en          → en.pdf
-       - #whitepaper-en , #pdf-en  → en.pdf (해시)
-    ----------------------------------------------------------- */
+    /* ---------------- Whitepaper Direct Router ---------------- */
     (function directWhitepaperRouter(){
       const langCodes = ['en','ko','ja','zh','es','de','pt','it'];
       const lower = (s)=> (s||'').toLowerCase();
-
       function findBestPdf(code){
-        const tryList = [
-          `/public/whitepaper/${code}.pdf`,
-          `/whitepaper/${code}.pdf`
-        ];
+        const tryList = [`/public/whitepaper/${code}.pdf`,`/whitepaper/${code}.pdf`];
         return Promise.all(tryList.map(p=>fetch(p,{method:'HEAD',cache:'no-cache'}).then(r=>r.ok?p:null).catch(()=>null)))
           .then(arr=>arr.find(Boolean));
       }
-
       async function handlePath(){
         const p = lower(location.pathname);
         const m = p.match(/^\/(whitepaper|wp|pdf)(?:\/)?([a-z]{2})?(?:\.pdf)?$/);
@@ -346,52 +332,32 @@
         const code = (m[2] && langCodes.includes(m[2])) ? m[2] : 'ko';
         const url = await findBestPdf(code);
         if(url){
-          // 자동 다운로드 유도
-          const a = document.createElement('a');
-          a.href = url; a.download = `flexcoin_whitepaper_${code}.pdf`;
+          const a = document.createElement('a'); a.href = url; a.download = `flexcoin_whitepaper_${code}.pdf`;
           document.body.appendChild(a); a.click(); a.remove();
-          // 동시에 새 탭 열기(브라우저에 따라)
-          window.open(url,'_blank','noopener');
-          return true;
+          window.open(url,'_blank','noopener'); return true;
         }
         return false;
       }
-
       async function handleHash(){
         const h = lower(location.hash);
-        // #whitepaper, #pdf → 기본 ko
-        // #whitepaper-en / #pdf-en → 언어 지정
-        let code = null;
         const mh = h.match(/^#(?:whitepaper|pdf)(?:[-_]?([a-z]{2}))?$/);
-        if(mh){ code = mh[1] || 'ko'; }
+        let code = mh ? (mh[1] || 'ko') : null;
         if(!code) return false;
         const url = await findBestPdf(code);
         if(url){
-          const a = document.createElement('a');
-          a.href = url; a.download = `flexcoin_whitepaper_${code}.pdf`;
+          const a = document.createElement('a'); a.href = url; a.download = `flexcoin_whitepaper_${code}.pdf`;
           document.body.appendChild(a); a.click(); a.remove();
-          window.open(url,'_blank','noopener');
-          return true;
+          window.open(url,'_blank','noopener'); return true;
         }
         return false;
       }
-
-      // 즉시 처리
-      handlePath().then(hit=>{
-        if(!hit) handleHash();
-      });
-      // 해시 변경에도 반응
+      handlePath().then(hit=>{ if(!hit) handleHash(); });
       window.addEventListener('hashchange', handleHash);
     })();
 
     /* --------- 유틸 --------- */
     const deep = (obj, path) => path.split('.').reduce((o,k)=> (o && k in o) ? o[k] : undefined, obj);
-
-    async function fetchFirst(paths){
-      for(const p of paths){
-        try{ const r=await fetch(p,{cache:'no-cache'}); if(r.ok) return r.json(); }catch(_){}
-      } return {};
-    }
+    async function fetchFirst(paths){ for(const p of paths){ try{ const r=await fetch(p,{cache:'no-cache'}); if(r.ok) return r.json(); }catch(_){} } return {}; }
     function firstExistingImage(paths){
       return new Promise(resolve=>{
         let i=0; const next=()=>{ if(i>=paths.length) return resolve(null);
@@ -400,9 +366,8 @@
       });
     }
     async function firstExistingFile(paths){
-      for(const p of paths){
-        try{ const r=await fetch(p,{method:'HEAD',cache:'no-cache'}); if(r.ok) return p; }catch(_){}
-      } return null;
+      for(const p of paths){ try{ const r=await fetch(p,{method:'HEAD',cache:'no-cache'}); if(r.ok) return p; }catch(_){} }
+      return null;
     }
 
     /* --------- 링크/주소 --------- */
@@ -432,7 +397,6 @@
       const vals=[t.lp,t.presale,t.team,t.marketing,t.burn];
       const names=['LP','Presale','Team','Marketing','Burn'];
       const cols=['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'];
-
       ctx.clearRect(0,0,300,300);
       let start=-Math.PI/2;
       vals.forEach((v,i)=>{ const a=start+2*Math.PI*(v/100);
@@ -441,19 +405,15 @@
       ctx.globalCompositeOperation='destination-out';
       ctx.beginPath();ctx.arc(150,150,82,0,2*Math.PI);ctx.fill();
       ctx.globalCompositeOperation='source-over';
-
       $('#legend').innerHTML = names.map((n,i)=>`<li>• ${n} ${vals[i]}%</li>`).join(' · ');
-
       const p = j.presale || {};
       const soft = p.softcap_bnb ?? j.softcap ?? '—';
       const hard = p.hardcap_bnb ?? j.hardcap ?? '—';
       $('#caps').textContent=`Softcap: ${soft} BNB / Hardcap: ${hard} BNB`;
-
       const pres = Number(p.rate_flex_per_bnb ?? (j.rates?.presale||0));
       const list = Number(p.listing_rate_flex_per_bnb ?? (j.rates?.listing||0));
       const fmt=(n)=> (Number.isFinite(n)&&n>0)? n.toLocaleString():'—';
       $('#rates').textContent=`Presale Rate: 1 BNB = ${fmt(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmt(list)} FLEX`;
-
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
       const btn = $('#btn-pinksale');
       if(links.pinksale_url){ btn.textContent='Open Pinksale'; btn.href=links.pinksale_url; btn.removeAttribute('aria-disabled'); }
@@ -476,7 +436,7 @@
       tick(); setInterval(tick,1000);
     }
 
-    /* --------- 갤러리 + 라이트박스 --------- */
+    /* --------- 갤러리 --------- */
     async function loadGrid(prefix, targetId){
       const list=Array.from({length:8},(_,i)=>i+1);
       const decided=await Promise.all(list.map(n=> firstExistingImage([`/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`])));
@@ -486,7 +446,7 @@
       el.querySelectorAll('img').forEach(img=>{ img.style.cursor='zoom-in'; img.addEventListener('click',()=>openLightbox(img.src)); });
     }
 
-    /* 라이트박스 */
+    /* --------- 라이트박스 --------- */
     const lb=$('#lightbox'), lbImg=$('#lb-img'), lbStage=$('#lb-stage');
     let scale=0.75, minS=0.5, maxS=6, pos={x:0,y:0}, dragging=false, startPos={x:0,y:0};
     function applyLB(){ lbImg.style.transform=`translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
@@ -519,18 +479,7 @@
       document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
     }
 
-    /* --------- 화이트페이퍼 링크 보정 (#whitepaper/#pdf) --------- */
-    async function initWhitepapers(){
-      const langs=[['en','English'],['ko','Korean'],['ja','Japanese'],['zh','Chinese'],['es','Spanish'],['de','German'],['pt','Portuguese'],['it','Italian']];
-      for(const [code] of langs){
-        const a=document.querySelector(`a[href$="/whitepaper/${code}.pdf"], a[href$="/public/whitepaper/${code}.pdf"]`);
-        if(!a) continue;
-        const good=await firstExistingFile([`/public/whitepaper/${code}.pdf`,`/whitepaper/${code}.pdf`]);
-        if(good){ a.setAttribute('href',good); a.setAttribute('download',''); a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
-      }
-    }
-
-    /* --------- NFT Mint --------- */
+    /* --------- NFT Mint + 메타마스크 연결(강화판) --------- */
     const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'},
                    bscMainnet:{chainId:'0x38',name:'BSC',rpc:'https://bsc-dataseed.binance.org'} };
     const DEFAULT_PRICE_BNB = (window.NFT_PRICE_BNB || '0.0001');
@@ -541,9 +490,18 @@
     ];
     let NFT_ADDR={ bscMainnet:'0xYourMainnetNFTAddress', bscTestnet:'0xYourTestnetNFTAddress' };
 
-    async function connect(chainKey){
+    let signer = null; // 글로벌 보관
+
+    function setMintButtons(enabled){
+      const b1=$('#mint'), b2=$('#mint-flex');
+      [b1,b2].forEach(b=>{ if(!b) return; if(enabled){ b.removeAttribute('disabled'); } else { b.setAttribute('disabled',''); } });
+    }
+
+    function short(a){ return a ? (a.slice(0,6)+'…'+a.slice(-4)) : ''; }
+
+    async function ensureChain(chainKey){
       const { ethereum } = window;
-      if(!ethereum) throw new Error('지갑이 없습니다. MetaMask를 설치하세요.');
+      if(!ethereum) throw new Error('MetaMask not installed.');
       const target=CHAINS[chainKey];
       try{
         await ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:target.chainId}]});
@@ -553,46 +511,91 @@
             params:[{chainId:target.chainId,chainName:target.name,rpcUrls:[target.rpc],nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18}}]});
         }else{ throw e; }
       }
-      const provider=new ethers.BrowserProvider(ethereum);
-      return await provider.getSigner();
+    }
+
+    async function connectWallet(){
+      const netSel = $('#net').value;
+      await ensureChain(netSel);
+      const provider=new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner();
+      const addr = await signer.getAddress();
+      $('#connect').textContent = 'Connected: '+short(addr);
+      $('#mint-log').textContent = 'Connected: '+addr;
+      setMintButtons(true);
+      return signer;
+    }
+
+    function bindWalletEvents(){
+      if(!window.ethereum) return;
+      window.ethereum.on('accountsChanged', async (accs)=>{
+        if(!accs || accs.length===0){ $('#connect').textContent='Connect Wallet'; setMintButtons(false); $('#mint-log').textContent='[ Waiting for connection... ]'; signer=null; return; }
+        const addr = accs[0]; $('#connect').textContent='Connected: '+short(addr); $('#mint-log').textContent='Account: '+addr;
+      });
+      window.ethereum.on('chainChanged', async (_hex)=>{
+        // 네트워크 바뀌면 선택값 동기화
+        const v = _hex==='0x38'?'bscMainnet':(_hex==='0x61'?'bscTestnet':null);
+        if(v){ $('#net').value = v; }
+        // 연결 유지시 재생성
+        if(signer){ try{ await connectWallet(); }catch(_){ /* ignore */ } }
+      });
+      window.ethereum.on('disconnect', ()=>{
+        $('#connect').textContent='Connect Wallet'; setMintButtons(false); $('#mint-log').textContent='[ Waiting for connection... ]'; signer=null;
+      });
     }
 
     async function setupMintUI(){
+      // 런타임 주소 덮어쓰기
       const addr=await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
       if(addr.nft_mainnet) NFT_ADDR.bscMainnet=addr.nft_mainnet;
       if(addr.nft_testnet) NFT_ADDR.bscTestnet=addr.nft_testnet;
 
-      const sel=$('#net'), btnC=$('#connect'), btnLegacy=$('#mint'), btnFlex=$('#mint-flex'), log=$('#mint-log');
-      const write=(s)=>{ log.textContent=s; };
+      // 초기 상태
+      setMintButtons(false);
+      bindWalletEvents();
 
-      btnC.onclick=async()=>{ try{ const s=await connect(sel.value); write('Connected: '+await s.getAddress()); }catch(e){ write('Connect error: '+(e.message||e)); } };
+      $('#connect').onclick = async()=>{
+        try{ await connectWallet(); }
+        catch(e){ $('#mint-log').textContent = 'Connect error: ' + (e.message||e); }
+      };
 
       async function runMint(payFixed){
         try{
-          const chainKey=sel.value; const signer=await connect(chainKey); const to=await signer.getAddress();
+          // 보장 연결
+          if(!signer) await connectWallet();
+          const chainKey=$('#net').value;
+          const to = await signer.getAddress();
           const target=NFT_ADDR[chainKey]; if(!target || target.length<20) throw new Error('NFT 컨트랙트 주소가 설정되지 않았습니다.');
-          let last=null;
+
+          let last;
           for(const abi of ABI_VARIANTS){
             try{
               const c=new ethers.Contract(target, abi, signer);
               let value;
               if(payFixed){ value=ethers.parseEther(DEFAULT_PRICE_BNB); }
-              else{ try{ value=await c.price(); }catch{ value=ethers.parseEther(DEFAULT_PRICE_BNB); } }
+              else { try{ value=await c.price(); }catch{ value=ethers.parseEther(DEFAULT_PRICE_BNB); } }
+
               let tx;
               if(c.claim){
-                try{ tx=await c.claim(to,1,{value}); }
+                try{ tx=await c.claim(to,1,{value,type:0}); }
                 catch{ tx=await c.claim(1,{value}); }
-              }else if(c.mint){ tx=await c.mint(1,{value}); }
-              else{ throw new Error('지원하지 않는 민팅 방식'); }
-              write('Minting... TX: '+tx.hash); await tx.wait(); write('Minted!'); return;
+              }else if(c.mint){
+                tx=await c.mint(1,{value,type:0});
+              }else{ throw new Error('지원하지 않는 민팅 방식'); }
+
+              $('#mint-log').textContent = 'Minting... TX: ' + tx.hash;
+              await tx.wait();
+              $('#mint-log').textContent = '✅ Minted!';
+              return;
             }catch(e){ last=e; }
           }
           throw last || new Error('민팅 실패');
-        }catch(e){ write('Mint error: '+((e&&e.message)||String(e))); }
+        }catch(e){
+          $('#mint-log').textContent = 'Mint error: ' + ((e&&e.message)||String(e));
+        }
       }
 
-      btnLegacy.onclick = ()=>runMint(false);
-      btnFlex.onclick   = ()=>runMint(true);
+      $('#mint').onclick = ()=>runMint(false);
+      $('#mint-flex').onclick = ()=>runMint(true);
     }
 
     /* --------- Boot --------- */
@@ -602,7 +605,6 @@
       await initHero();
       await initTokenomics();
       await initCountdown();
-      await initWhitepapers();
       await loadGrid('/action', '#action-grid');
       await loadGrid('/nft-preview', '#nft-grid');
       await setupMintUI();
