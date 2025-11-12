@@ -22,13 +22,22 @@
     .brand{font-weight:800;color:var(--gold);line-height:1.15}
     .spacer{flex:1}
     .btn{border:none;border-radius:.7rem;padding:.55rem .9rem;cursor:pointer;
-      background:var(--gold);color:#000;font-weight:800;display:inline-block}
+      background:var(--gold);color:#000;font-weight:800;display:inline-block;white-space:nowrap}
     .btn[disabled]{opacity:.45;cursor:not-allowed}
     .lang{display:inline-flex;border-radius:.6rem;overflow:hidden;border:1px solid var(--border)}
     .lang button{background:var(--chip);padding:.5rem .75rem;border:0;color:var(--text);cursor:pointer}
     .lang button.active{background:var(--gold);color:#000;font-weight:800}
-    .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9}
+    .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9; white-space:nowrap}
     .nav a:hover{opacity:1}
+
+    /* Mobile topbar fix (겹침/잘림 방지) */
+    @media(max-width:600px){
+      .topbar{flex-wrap:wrap;gap:.4rem}
+      .brand{flex:1 1 100%; font-size:1rem}
+      .nav{order:3; width:100%; display:flex; gap:.6rem; margin-top:.2rem}
+      .btn{padding:.5rem .7rem}
+      .lang{order:4}
+    }
 
     /* Layout */
     .wrap{max-width:1100px;margin:0 auto;padding:1rem}
@@ -102,13 +111,11 @@
     .select-net{margin:8px 0;padding:.45rem .6rem;border-radius:.6rem;border:1px solid var(--border);background:#0f0e0c;color:var(--text)}
     .mint-log{background:#0f0e0c;border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;color:#ddd;font-size:.85rem;min-height:2.2em}
 
-    /* === Roadmap (NEW) === */
-    .roadmap-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-    .roadmap-card{background:#0e0e0e;border:1px solid rgba(212,175,55,.25);border-radius:16px;padding:16px}
-    .roadmap-card h3{color:#f4cc4f;margin:0 0 8px 0;font-size:18px}
-    .roadmap-card p{color:#e8e8e8;font-size:14px;margin:0}
+    /* === Roadmap (inline 기본 스타일) === */
+    #roadmap .grid{grid-template-columns:repeat(4,1fr)}
     #roadmap .roadmap-card{transition:transform .25s ease, box-shadow .25s ease}
-    #roadmap .roadmap-card:hover{transform:translateY(-4px);box-shadow:0 4px 15px rgba(212,175,55,.15)}
+    #roadmap .roadmap-card:hover{transform:translateY(-4px); box-shadow:0 4px 15px rgba(212,175,55,.15)}
+    @media(max-width:900px){ #roadmap .grid{grid-template-columns:repeat(2,1fr)} }
   </style>
 
   <!-- ethers CDN -->
@@ -122,6 +129,7 @@
     <div class="nav">
       <a href="#about-flexcoin">About</a>
       <a href="#nft">NFT</a>
+      <a href="#roadmap">Roadmap</a>
     </div>
     <a id="btn-x" class="btn" href="#" target="_blank" rel="noopener">X</a>
     <a id="btn-tg" class="btn" href="#" target="_blank" rel="noopener">Telegram</a>
@@ -173,7 +181,7 @@
 
     <!-- Tokenomics -->
     <section class="card">
-      <div class="section-title" data-i18n="t-tokenomics-title">Tokenomics</div>
+      <div class="section-title" data-i18n="section_tokenomics">Tokenomics</div>
       <div class="tok-wrap">
         <canvas id="donut" width="300" height="300" aria-label="Tokenomics donut"></canvas>
         <div>
@@ -191,29 +199,6 @@
       <div class="countbox">
         <div id="countdown">—</div>
         <div id="countdown-range" class="muted">—</div>
-      </div>
-    </section>
-
-    <!-- ===== Roadmap (i18n 연결) ===== -->
-    <section class="card" id="roadmap">
-      <div class="section-title" data-i18n="roadmap.title">Roadmap</div>
-      <div class="roadmap-grid">
-        <div class="roadmap-card">
-          <h3 data-i18n="roadmap.phase1.title">Phase 1</h3>
-          <p data-i18n="roadmap.phase1.desc">성공적 런칭 &amp; memecoin 섹터에서 살아남기</p>
-        </div>
-        <div class="roadmap-card">
-          <h3 data-i18n="roadmap.phase2.title">Phase 2</h3>
-          <p data-i18n="roadmap.phase2.desc">커뮤니티 활성화 및 보유자 1000명 확보</p>
-        </div>
-        <div class="roadmap-card">
-          <h3 data-i18n="roadmap.phase3.title">Phase 3</h3>
-          <p data-i18n="roadmap.phase3.desc">DEX &amp; CEX 거래소 상장</p>
-        </div>
-        <div class="roadmap-card">
-          <h3 data-i18n="roadmap.phase4.title">Phase 4</h3>
-          <p data-i18n="roadmap.phase4.desc">생태계 확장 (AI &amp; NFT)</p>
-        </div>
       </div>
     </section>
 
@@ -251,9 +236,40 @@
       <table id="addr-table"></table>
     </section>
 
+    <!-- Roadmap (다국어 i18n 연결) -->
+    <section id="roadmap" class="card">
+      <div class="section-title" data-i18n="roadmap.title">Roadmap</div>
+      <div class="grid">
+        <div class="roadmap-card card">
+          <div class="muted" data-i18n="roadmap.phase1.title">Phase 1</div>
+          <div style="font-weight:800;margin-top:.2rem" data-i18n="roadmap.phase1.desc">
+            Successful Launch & Survive in the Memecoin Sector
+          </div>
+        </div>
+        <div class="roadmap-card card">
+          <div class="muted" data-i18n="roadmap.phase2.title">Phase 2</div>
+          <div style="font-weight:800;margin-top:.2rem" data-i18n="roadmap.phase2.desc">
+            Community Activation & Achieve 1,000 Holders
+          </div>
+        </div>
+        <div class="roadmap-card card">
+          <div class="muted" data-i18n="roadmap.phase3.title">Phase 3</div>
+          <div style="font-weight:800;margin-top:.2rem" data-i18n="roadmap.phase3.desc">
+            DEX & CEX Exchange Listings
+          </div>
+        </div>
+        <div class="roadmap-card card">
+          <div class="muted" data-i18n="roadmap.phase4.title">Phase 4</div>
+          <div style="font-weight:800;margin-top:.2rem" data-i18n="roadmap.phase4.desc">
+            Ecosystem Expansion (AI & NFT)
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- NFT MINT -->
     <section id="nft" class="card">
-      <div class="section-title">FLEX NFT MINT</div>
+      <div class="section-title" data-i18n="section_nft">FLEX NFT MINT</div>
       <p class="muted" style="margin-top:-6px">Mint your official <b>FlexNFT</b> on BNB Smart Chain</p>
       <div style="text-align:center;">
         <select id="net" class="select-net">
@@ -261,7 +277,7 @@
           <option value="bscTestnet">BNB Testnet</option>
         </select>
         <div class="btn-row">
-          <button id="connect" class="btn-gold">Connect Wallet</button>
+          <button id="connect" class="btn-gold" data-i18n="connect">Connect Wallet</button>
           <button id="mint" class="btn-gold">Mint NFT (Legacy)</button>
           <button id="mint-flex" class="btn-gold">Mint FlexNFT (0.0001 BNB)</button>
         </div>
