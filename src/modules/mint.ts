@@ -9,7 +9,9 @@ import {
 import { BNBChain } from "thirdweb/chains";
 import { createWallet } from "thirdweb/wallets";
 
+// ============================
 // ✅ 체인 정의 (기존 유지)
+// ============================
 const CHAINS: any = {
   bscTestnet: {
     chainId: "0x61",
@@ -23,30 +25,40 @@ const CHAINS: any = {
   },
 };
 
-// ✅ NFT 컨트랙트 주소 (기존 + 실제 주소 반영)
+// ============================
+// ✅ NFT 컨트랙트 주소 (모두 소문자!)
+// ============================
+// bad address checksum 방지를 위해 전부 소문자로 사용
+const FLEX_NFT_MAINNET = "0x834586083e355ae80b88f479178935085dd3bf75";
+const FLEX_NFT_TESTNET = "0x8ce19090faf32b48adb78db0d029aa3ccd0cc0b8";
+
 const ADDR: any = {
-  // ⬅ 필요하면 다른 테스트넷 컨트랙트로 교체 가능
-  bscTestnet: "0x8ce19090fAf32b48Adb78DB0d029aA3CCd0Cc0b8",
-  // ✅ FlexNFT mainnet 주소
-  bscMainnet: "0x834586083e355ae80b88f479178935085dD3Bf75",
+  bscTestnet: FLEX_NFT_TESTNET,
+  bscMainnet: FLEX_NFT_MAINNET,
 };
 
+// ============================
 // ✅ 기본 NFT ABI (기존 유지)
+// ============================
 const ABI = [
   "function mint(uint256 quantity) payable",
   "function price() view returns (uint256)",
 ];
 
-// ✅ Thirdweb client (추가)
-// ⚠️ 대시보드에서 복사한 Client ID 적용 완료
+// ============================
+// ✅ Thirdweb client
+// ============================
 const client = createThirdwebClient({
+  // 네 프로젝트 Settings > Project Settings 에서 본 Client ID
   clientId: "blb54e589683ef64f55e316f2162a4fe",
 });
 
-// ✅ thirdweb에서 FlexNFT 컨트랙트 핸들 (ABI는 thirdweb이 알아서 가져옴)
+// ============================
+// ✅ thirdweb FlexNFT 컨트랙트 핸들
+// ============================
 const nftContract = getContract({
   client,
-  address: "0x834586083e355ae80b88f479178935085dD3Bf75", // FlexNFT mainnet
+  address: FLEX_NFT_MAINNET, // FlexNFT mainnet
   chain: BNBChain,
 });
 
@@ -138,7 +150,7 @@ export function setupMintUI() {
 
   // ----------------------
   // 🟢 FlexNFT 전용 Mint (thirdweb Drop / claim)
-// ----------------------
+  // ----------------------
   btnFlex.onclick = async () => {
     try {
       // 1) thirdweb + MetaMask 로 계정 연결 (BNBChain)
