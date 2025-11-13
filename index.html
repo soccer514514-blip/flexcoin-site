@@ -128,6 +128,16 @@
     #roadmap .roadmap-card{transition:transform .25s ease, box-shadow .25s ease}
     #roadmap .roadmap-card:hover{transform:translateY(-4px); box-shadow:0 4px 15px rgba(212,175,55,.15)}
     @media(max-width:900px){ #roadmap .grid{grid-template-columns:repeat(2,1fr)} }
+
+    /* --- 추가: 차트 & 알림 스타일 --- */
+    #chart-box{margin-top:12px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#0f0f0f}
+    .chart-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border)}
+    .chart-body{height:520px}
+    .chart-body iframe{width:100%;height:100%;border:0;display:block}
+    .alert-wrap{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+    .alert-wrap input{width:100%;padding:.6rem .7rem;border-radius:.6rem;border:1px solid var(--border);background:#0f0e0c;color:var(--text)}
+    .alert-hint{font-size:.85rem;color:var(--muted)}
+    @media(max-width:700px){ .alert-wrap{grid-template-columns:1fr} .chart-body{height:420px} }
   </style>
 
   <!-- ethers CDN -->
@@ -283,7 +293,7 @@
     <!-- NFT MINT -->
     <section id="nft" class="card">
       <div class="section-title" data-i18n="section_nft">FLEX NFT MINT</div>
-      <p class="muted" style="margin-top:-6px">Mint your official <b>FlexNFT</b> on BNB Smart Chain</p>
+      <p class="muted" style="margin-top:-6px">Mint your official <b>FlexNFT</b> on BNB Smart Chain <b>(coming soon)</b></p>
       <div style="text-align:center;">
         <select id="net" class="select-net">
           <option value="bscMainnet">BNB Mainnet</option>
@@ -296,6 +306,30 @@
         </div>
         <pre id="mint-log" class="mint-log">[ Waiting for connection... ]</pre>
       </div>
+
+      <!-- Live Chart box (추가) -->
+      <div id="chart-box">
+        <div class="chart-head">
+          <div><b>Live Price / Chart</b></div>
+          <div class="muted" id="chart-hint">Dexscreener embed will show here if configured.</div>
+        </div>
+        <div class="chart-body" id="chart-body">
+          <!-- runtime에서 links.dexscreener_url 있으면 iframe 주입, 없으면 CMC로 이동 버튼 표시 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Alerts (추가) -->
+    <section id="alerts" class="card">
+      <div class="section-title">Alerts</div>
+      <div class="alert-wrap">
+        <input id="alert-email" type="email" placeholder="Email address" autocomplete="email">
+        <input id="alert-tg" type="text" placeholder="Telegram @handle (optional)" autocomplete="off">
+      </div>
+      <div class="btn-row">
+        <button id="alert-submit" class="btn">Notify me</button>
+      </div>
+      <div id="alert-msg" class="alert-hint">Enter your email to get presale & listing alerts. (coming soon if backend not set)</div>
     </section>
   </div>
 
@@ -370,7 +404,7 @@
       return null;
     }
 
-    /* --------- 링크/주소 --------- */
+    /* --------- 링크/주소 + 차트 + 알림 --------- */
     async function initLinks(){
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
       const set=(id,url)=>{const b=$(id); if(!b) return; if(url){b.href=url; b.removeAttribute('disabled');} else {b.setAttribute('disabled','');}};
@@ -381,6 +415,38 @@
       const rows=[['Token',addr.token],['Team/Lock',addr.team_lock||addr.team],['Marketing',addr.marketing],
                   ['Presale',addr.presale],['Burn',addr.burn],['User',addr.user]];
       $('#addr-table').innerHTML = rows.map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`).join('');
+
+      /* 차트 임베드 */
+      const chartBody = $('#chart-body');
+      const hint = $('#chart-hint');
+      let dexUrl = links.dexscreener_url || '';
+      if(!dexUrl){
+        const cmc = `https://dex.coinmarketcap.com/ko/token/bsc/${addr.token||''}/`;
+        chartBody.innerHTML = `<div style="padding:18px;text-align:center">
+          <div class="muted" style="margin-bottom:10px">Dexscreener URL이 설정되어 있지 않습니다.</div>
+          <a class="btn" href="${cmc}" target="_blank" rel="noopener">Open CMC DEX Chart</a>
+        </div>`;
+        hint.textContent = 'CMC는 보안정책으로 iframe 임베드가 불가하여 새 탭으로 열립니다.';
+      }else{
+        chartBody.innerHTML = `<iframe src="${dexUrl}${dexUrl.includes('?')?'&':'?'}embed=1&theme=dark" loading="lazy"></iframe>`;
+        hint.textContent = 'Powered by Dexscreener';
+      }
+
+      /* Alerts 폼 제출 */
+      const formEndpoint = links.form_endpoint || '';
+      const btn = $('#alert-submit');
+      btn.onclick = async ()=>{
+        const email = $('#alert-email').value.trim();
+        const tg = $('#alert-tg').value.trim();
+        const msg = $('#alert-msg');
+        if(!email){ msg.textContent = 'Please enter your email.'; return; }
+        if(!formEndpoint){ msg.textContent = 'Alerts backend not set (coming soon).'; return; }
+        try{
+          const r = await fetch(formEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,tg,ts:new Date().toISOString(),source:'flexcoin'})});
+          if(r.ok){ msg.textContent='Subscribed! We will notify you.'; $('#alert-email').value=''; $('#alert-tg').value=''; }
+          else{ msg.textContent='Submit failed. Please try again later.'; }
+        }catch(e){ msg.textContent='Network error. Please try again.'; }
+      };
     }
 
     /* --------- 히어로 이미지 --------- */
@@ -532,10 +598,8 @@
         const addr = accs[0]; $('#connect').textContent='Connected: '+short(addr); $('#mint-log').textContent='Account: '+addr;
       });
       window.ethereum.on('chainChanged', async (_hex)=>{
-        // 네트워크 바뀌면 선택값 동기화
         const v = _hex==='0x38'?'bscMainnet':(_hex==='0x61'?'bscTestnet':null);
         if(v){ $('#net').value = v; }
-        // 연결 유지시 재생성
         if(signer){ try{ await connectWallet(); }catch(_){ /* ignore */ } }
       });
       window.ethereum.on('disconnect', ()=>{
@@ -544,12 +608,10 @@
     }
 
     async function setupMintUI(){
-      // 런타임 주소 덮어쓰기
       const addr=await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
       if(addr.nft_mainnet) NFT_ADDR.bscMainnet=addr.nft_mainnet;
       if(addr.nft_testnet) NFT_ADDR.bscTestnet=addr.nft_testnet;
 
-      // 초기 상태
       setMintButtons(false);
       bindWalletEvents();
 
@@ -560,7 +622,6 @@
 
       async function runMint(payFixed){
         try{
-          // 보장 연결
           if(!signer) await connectWallet();
           const chainKey=$('#net').value;
           const to = await signer.getAddress();
