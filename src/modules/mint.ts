@@ -23,10 +23,12 @@ const CHAINS: any = {
   },
 };
 
-// ✅ NFT 컨트랙트 주소 (기존 유지)
+// ✅ NFT 컨트랙트 주소 (기존 + 실제 주소 반영)
 const ADDR: any = {
-  bscTestnet: "0xYourTestnetNFTAddress", // ⬅ 필요하면 테스트넷 주소로 교체
-  bscMainnet: "0x834586083e355ae80b88f479178935085dD3Bf75", // ✅ FlexNFT mainnet 주소
+  // ⬅ 필요하면 다른 테스트넷 컨트랙트로 교체 가능
+  bscTestnet: "0x8ce19090fAf32b48Adb78DB0d029aA3CCd0Cc0b8",
+  // ✅ FlexNFT mainnet 주소
+  bscMainnet: "0x834586083e355ae80b88f479178935085dD3Bf75",
 };
 
 // ✅ 기본 NFT ABI (기존 유지)
@@ -36,9 +38,9 @@ const ABI = [
 ];
 
 // ✅ Thirdweb client (추가)
-// ⬅⬅⬅ 여기 clientId 만 네 thirdweb 프로젝트 client ID 로 바꿔주면 됨
+// ⚠️ 대시보드에서 복사한 Client ID 적용 완료
 const client = createThirdwebClient({
-  clientId: "YOUR_THIRDWEB_CLIENT_ID",
+  clientId: "blb54e589683ef64f55e316f2162a4fe",
 });
 
 // ✅ thirdweb에서 FlexNFT 컨트랙트 핸들 (ABI는 thirdweb이 알아서 가져옴)
@@ -117,7 +119,7 @@ export function setupMintUI() {
       const signer = await connect(sel.value);
       const contract = new Contract(ADDR[sel.value], ABI, signer);
 
-      // 기본값 0.01 BNB (컨트랙트에 price() 있으면 거기 값 사용)
+      // 기본값 0.01 BNB (컨트랙트에 price() 있으면 그 값 사용)
       let value = parseEther("0.01");
       try {
         value = await contract.price();
@@ -136,10 +138,10 @@ export function setupMintUI() {
 
   // ----------------------
   // 🟢 FlexNFT 전용 Mint (thirdweb Drop / claim)
-  // ----------------------
+// ----------------------
   btnFlex.onclick = async () => {
     try {
-      // 1) thirdweb + MetaMask 로 계정 연결 (자동으로 BNBChain 사용)
+      // 1) thirdweb + MetaMask 로 계정 연결 (BNBChain)
       const account = await metamaskWallet.connect({
         client,
         chain: BNBChain,
@@ -149,10 +151,10 @@ export function setupMintUI() {
       const transaction = prepareContractCall({
         contract: nftContract,
         method: "claim",
-        // Drop 계열 OpenEditionERC721 에서 기본 claim(receiver, quantity) 형태 지원
+        // OpenEditionERC721 Drop 계열: claim(receiver, quantity)
         params: [account.address, 1],
-        // ❗ 여기 value 는 네 FlexNFT 실제 민트 가격에 맞춰 조정
-        // 현재는 0.0001 BNB 정도 예시 (100000000000000 wei)
+        // ❗ 여기 value 는 FlexNFT 실제 민트 가격에 맞춰 조정
+        // 지금은 예시로 0.0001 BNB (100000000000000 wei)
         value: 100000000000000n,
       });
 
