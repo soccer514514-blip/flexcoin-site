@@ -37,7 +37,7 @@ const CHAINS: Record<
 // ===== 기본 주소(폴백) =====
 const DEFAULT_ADDR = {
   bscTestnet: "0xYourTestnetNFTAddress",
-  bscMainnet: "0x834586083e355ae80b88f479178935085dD3Bf75", // FlexNFT mainnet
+  bscMainnet: "0x834586083e355ae80b88f479178935085dd3bf75", // FlexNFT mainnet
 };
 
 // ===== 컨트랙트 ABI (오버로드 대응) =====
