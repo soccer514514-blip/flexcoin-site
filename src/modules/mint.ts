@@ -4,9 +4,10 @@ import {
   createThirdwebClient,
   getContract,
   prepareContractCall,
-  sendTransaction,
+  sendAndConfirmTransaction,
 } from "thirdweb";
 import { BNBChain } from "thirdweb/chains";
+import { createWallet } from "thirdweb/wallets";
 
 // ✅ 체인 정의 (기존 유지)
 const CHAINS: any = {
@@ -22,36 +23,44 @@ const CHAINS: any = {
   },
 };
 
-// ✅ NFT 컨트랙트 주소
+// ✅ NFT 컨트랙트 주소 (기존 유지)
 const ADDR: any = {
-  bscTestnet: "0xYourTestnetNFTAddress",
+  bscTestnet: "0xYourTestnetNFTAddress", // ⬅ 필요하면 테스트넷 주소로 교체
   bscMainnet: "0x834586083e355ae80b88f479178935085dD3Bf75", // ✅ FlexNFT mainnet 주소
 };
 
-// ✅ ABI 정의 (기존 유지)
+// ✅ 기본 NFT ABI (기존 유지)
 const ABI = [
   "function mint(uint256 quantity) payable",
   "function price() view returns (uint256)",
 ];
 
 // ✅ Thirdweb client (추가)
+// ⬅⬅⬅ 여기 clientId 만 네 thirdweb 프로젝트 client ID 로 바꿔주면 됨
 const client = createThirdwebClient({
-  clientId: "YOUR_THIRDWEB_CLIENT_ID", // thirdweb 프로젝트 client ID
+  clientId: "YOUR_THIRDWEB_CLIENT_ID",
 });
 
+// ✅ thirdweb에서 FlexNFT 컨트랙트 핸들 (ABI는 thirdweb이 알아서 가져옴)
 const nftContract = getContract({
   client,
   address: "0x834586083e355ae80b88f479178935085dD3Bf75", // FlexNFT mainnet
   chain: BNBChain,
 });
 
+// ✅ MetaMask 지갑 (thirdweb 방식)
+const metamaskWallet = createWallet("io.metamask");
+
 // ----------------------
-// ✅ 공통 지갑 연결 함수
+// ✅ 공통 지갑 연결 함수 (기존 ethers 방식 유지)
 // ----------------------
 async function connect(chainKey: string) {
   if (!(window as any).ethereum)
     throw new Error("지갑이 없습니다. MetaMask를 설치하세요.");
+
   const target = CHAINS[chainKey];
+
+  // 네트워크 스위치
   try {
     await (window as any).ethereum.request({
       method: "wallet_switchEthereumChain",
@@ -59,6 +68,7 @@ async function connect(chainKey: string) {
     });
   } catch (e: any) {
     if (e.code === 4902) {
+      // 체인 추가
       await (window as any).ethereum.request({
         method: "wallet_addEthereumChain",
         params: [
@@ -74,23 +84,24 @@ async function connect(chainKey: string) {
       throw e;
     }
   }
+
   const provider = new BrowserProvider((window as any).ethereum);
   const signer = await provider.getSigner();
   return signer;
 }
 
 // ----------------------
-// ✅ 기존 Mint UI + FlexNFT 확장
+// ✅ Mint UI 세팅
 // ----------------------
 export function setupMintUI() {
   const sel = document.getElementById("net") as HTMLSelectElement;
   const btnC = document.getElementById("connect") as HTMLButtonElement;
   const btnM = document.getElementById("mint") as HTMLButtonElement;
-  const btnFlex = document.getElementById("mint-flex") as HTMLButtonElement; // 새 Flex 버튼
+  const btnFlex = document.getElementById("mint-flex") as HTMLButtonElement; // Flex 버튼
   const log = document.getElementById("mint-log") as HTMLPreElement;
 
   // ----------------------
-  // 🟡 기본 NFT Mint
+  // 🟡 기본 NFT Mint (기존 컨트랙트)
   // ----------------------
   btnC.onclick = async () => {
     try {
@@ -105,10 +116,15 @@ export function setupMintUI() {
     try {
       const signer = await connect(sel.value);
       const contract = new Contract(ADDR[sel.value], ABI, signer);
+
+      // 기본값 0.01 BNB (컨트랙트에 price() 있으면 거기 값 사용)
       let value = parseEther("0.01");
       try {
         value = await contract.price();
-      } catch {}
+      } catch {
+        // price() 없으면 그냥 0.01 BNB 사용
+      }
+
       const tx = await contract.mint(1, { value });
       log.textContent = "Minting... TX: " + tx.hash;
       await tx.wait();
@@ -119,21 +135,33 @@ export function setupMintUI() {
   };
 
   // ----------------------
-  // 🟢 FlexNFT 전용 Mint (thirdweb Claim)
+  // 🟢 FlexNFT 전용 Mint (thirdweb Drop / claim)
   // ----------------------
   btnFlex.onclick = async () => {
     try {
-      const signer = await connect("bscMainnet");
-      const walletAddress = await signer.getAddress();
-
-      const tx = prepareContractCall({
-        contract: nftContract,
-        method: "claim",
-        params: [walletAddress, 1],
-        value: "100000000000000", // 0.0001 BNB in Wei
+      // 1) thirdweb + MetaMask 로 계정 연결 (자동으로 BNBChain 사용)
+      const account = await metamaskWallet.connect({
+        client,
+        chain: BNBChain,
       });
 
-      const receipt = await sendTransaction({ transaction: tx });
+      // 2) claim 트랜잭션 준비
+      const transaction = prepareContractCall({
+        contract: nftContract,
+        method: "claim",
+        // Drop 계열 OpenEditionERC721 에서 기본 claim(receiver, quantity) 형태 지원
+        params: [account.address, 1],
+        // ❗ 여기 value 는 네 FlexNFT 실제 민트 가격에 맞춰 조정
+        // 현재는 0.0001 BNB 정도 예시 (100000000000000 wei)
+        value: 100000000000000n,
+      });
+
+      // 3) 트랜잭션 전송 + 컨펌까지 기다리기
+      const receipt = await sendAndConfirmTransaction({
+        transaction,
+        account,
+      });
+
       log.textContent =
         "✅ FlexNFT Mint Success!\nTX: " +
         receipt.transactionHash +
