@@ -1,24 +1,48 @@
-/* === Global === */
+/* =========================
+   Global
+========================= */
+:root {
+  --bg: #000;
+  --panel: #111;
+  --gold: #f5e6b3;
+  --gold-strong: #ffd700;
+  --border-gold: rgba(255, 215, 0, .35);
+}
+
 * { box-sizing: border-box; }
+
 html, body { overflow-x: hidden; }
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  background: #000;
-  color: #f5e6b3;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--gold);
   line-height: 1.6;
   text-align: center;
 }
-a { color: #ffd700; text-decoration: none; }
+
+a {
+  color: var(--gold-strong);
+  text-decoration: none;
+}
 a:hover { text-decoration: underline; }
 
 h1, h2, h3 {
   font-weight: 700;
-  color: #f5e6b3;
-  text-shadow: 0 0 8px rgba(255,215,0,.4);
+  color: var(--gold);
+  text-shadow: 0 0 8px rgba(255, 215, 0, .4);
   margin: 1.5em 0 .8em;
 }
+
 p { margin: .6em 0; }
+
+ul {
+  margin: .4em 0 0;
+  padding-left: 1.2em;
+  text-align: left;
+}
+li { margin: .1em 0; }
 
 button, .btn {
   cursor: pointer;
@@ -30,56 +54,101 @@ button, .btn {
   color: #000;
   transition: all .25s ease;
 }
-button:hover, .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+button:hover,
+.btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
 
-/* === Layout (grid / cards) === */
-.row { display: grid; gap: 20px; justify-content: center; }
-.row.cols-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
-@media (max-width:1200px){ .row.cols-4{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
-@media (max-width:900px){  .row.cols-4{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
-@media (max-width:520px){  .row.cols-4{ grid-template-columns: 1fr; } }
+/* =========================
+   Layout (grid / cards)
+========================= */
+.row {
+  display: grid;
+  gap: 20px;
+  justify-content: center;
+}
 
-.card{
+.row.cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1200px) {
+  .row.cols-4 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .row.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .row.cols-4 { grid-template-columns: 1fr; }
+}
+
+.card {
   position: relative;
-  background: #111;
-  border: 1px solid rgba(255,215,0,.35);
+  background: var(--panel);
+  border: 1px solid var(--border-gold);
   border-radius: 14px;
   overflow: hidden;
   transition: transform .2s ease, box-shadow .2s ease;
 }
-.card:hover { transform: scale(1.02); box-shadow: 0 0 12px rgba(255,215,0,.2); }
-.card img { display: block; width: 100%; height: 100%; object-fit: contain; background: #0b0b0b; }
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 12px rgba(255, 215, 0, .2);
+}
+.card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #0b0b0b;
+}
 .row.cols-4 .card { aspect-ratio: 1/1; }
 
 /* 카드 내부 도우미/안내문 숨김(겹침 원인 제거) */
 .card .placeholder,
 .card .helper,
 .card *[data-placeholder],
-.card *[data-helper]{ display: none !important; }
+.card *[data-helper] {
+  display: none !important;
+}
 
-/* === Hero === */
-.hero{
+/* =========================
+   Hero
+========================= */
+.hero {
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
   overflow: hidden;
   border-radius: 18px;
-  border: 1px solid rgba(255,215,0,.25);
-  box-shadow: 0 0 18px rgba(255,215,0,.1);
+  border: 1px solid rgba(255, 215, 0, .25);
+  box-shadow: 0 0 18px rgba(255, 215, 0, .1);
   margin-bottom: 36px;
   z-index: 1;
 }
-.hero img{
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover; display: block;
+
+.hero img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
   transition: opacity .6s ease;
 }
+
 /* 하단 마스크: 둥근 모서리 밖 겹침 방지 */
-.hero::after{
-  content:""; position:absolute; left:-3px; right:-3px; bottom:-3px; height:42px;
-  background:#000; pointer-events:none;
+.hero::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  height: 42px;
+  background: #000;
+  pointer-events: none;
 }
+
 /* 히어로 근처 불필요 안내문 숨김 */
 .hero + p,
 .hero + *:is(p, small, em),
@@ -87,28 +156,123 @@ button:hover, .btn:hover { filter: brightness(1.08); transform: translateY(-1px)
 .hero .placeholder,
 .hero .helper,
 .hero [data-placeholder],
-.hero [data-helper]{ display:none !important; }
-
-/* === Tokenomics donut === */
-#donut-wrap{
-  display:flex; align-items:center; justify-content:center;
-  gap:16px; flex-wrap:wrap; margin:20px auto;
-}
-#donut{ width:260px; height:260px; }
-@media (max-width:768px){
-  #donut{ width:220px; height:220px; }
+.hero [data-helper] {
+  display: none !important;
 }
 
-/* === Footer & Scrollbar === */
-footer{ padding:40px 0; border-top:1px solid rgba(255,215,0,.25); font-size:.9rem; color:#cfcfcf; }
-::-webkit-scrollbar{ width:8px; }
-::-webkit-scrollbar-thumb{ background:rgba(255,215,0,.4); border-radius:4px; }
+/* =========================
+   Tokenomics donut & section
+========================= */
 
-/* === Roadmap (요청하신 6줄 포함) === */
-#roadmap .section-title{ font-size:1.4rem; font-weight:900; margin-bottom:.8rem; color:var(--gold, #f4cc4f); }
-#roadmap .roadmap-card{ transition: transform .25s ease, box-shadow .25s ease; }
-#roadmap .roadmap-card:hover{ transform: translateY(-4px); box-shadow: 0 4px 15px rgba(212,175,55,.15); }
+/* 전체 레이아웃: 도넛 + 텍스트 */
+.tokenomics-section,
+#tokenomics-section {
+  padding: 30px 16px 10px;
+}
+
+.tokenomics-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+/* 도넛 래퍼 */
+#donut-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+/* 도넛이 완전한 정원으로 보이도록 정사각형 강제 */
+#donut {
+  width: 260px;
+  height: 260px;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+
+/* 도넛이 canvas/svg일 때 비율 깨지지 않게 */
+#donut canvas,
+#donut svg {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 작은 화면 */
+@media (max-width: 768px) {
+  #donut {
+    width: 220px;
+    height: 220px;
+  }
+}
+
+/* 토크노믹스 텍스트 리스트 */
+.tokenomics-text {
+  max-width: 360px;
+  text-align: left;
+  margin: 0 auto;
+  font-size: .95rem;
+}
+.tokenomics-text ul {
+  margin-top: .4rem;
+}
+
+/* 프리세일 설명 문장(Soft/Hard cap 안내) */
+.tokenomics-meta {
+  margin-top: 10px;
+  font-size: .9rem;
+  color: #d8cda0;
+  text-align: left;
+}
+
+/* =========================
+   Footer & Scrollbar
+========================= */
+footer {
+  padding: 40px 0;
+  border-top: 1px solid rgba(255, 215, 0, .25);
+  font-size: .9rem;
+  color: #cfcfcf;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, .4);
+  border-radius: 4px;
+}
+
+/* =========================
+   Roadmap (요청하신 6줄 포함)
+========================= */
+#roadmap .section-title {
+  font-size: 1.4rem;
+  font-weight: 900;
+  margin-bottom: .8rem;
+  color: var(--gold-strong);
+}
+
+#roadmap .roadmap-card {
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+#roadmap .roadmap-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, .15);
+}
+
 /* 반응형: 로드맵 카드 그리드 */
-#roadmap .grid{ display:grid; gap:10px; grid-template-columns:repeat(4,1fr); }
-@media (max-width:900px){ #roadmap .grid{ grid-template-columns:repeat(2,1fr); } }
-@media (max-width:520px){ #roadmap .grid{ grid-template-columns:1fr; } }
+#roadmap .grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+}
+@media (max-width: 900px) {
+  #roadmap .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+  #roadmap .grid { grid-template-columns: 1fr; }
+}
