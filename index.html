@@ -72,11 +72,32 @@
     .hero img{display:block;width:100%;height:auto}
 
     .tok-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px}
-    canvas{background:#0f0e0c;border-radius:14px}
-    ul.legend{list-style:none;padding:0;margin:0}
-    ul.legend li{margin:.2rem 0}
+    /* 도넛이 찌그러지지 않도록 정사각형 고정 */
+    #donut{
+      width:280px;
+      height:280px;
+      max-width:100%;
+      aspect-ratio:1/1;
+      display:block;
+      margin:auto;
+      background:#0f0e0c;
+      border-radius:14px;
+    }
+    ul.legend{list-style:none;padding:0;margin:0;font-size:.95rem}
+    ul.legend li{margin:.2rem 0;display:flex;align-items:center}
+    .legend-dot{
+      width:11px;height:11px;border-radius:50%;margin-right:6px;flex-shrink:0;
+      border:1px solid rgba(0,0,0,.4);
+    }
     #caps,#rates{margin-top:.35rem}
-    #btn-pinksale{margin-top:12px;display:inline-block}
+    #btn-presale-1,#btn-presale-2{margin-top:10px}
+    .tokenomics-note{
+      margin-top:.55rem;
+      font-size:.9rem;
+      color:var(--muted);
+      line-height:1.45;
+      text-align:left;
+    }
 
     .countbox{border:1px solid var(--border);border-radius:14px;padding:14px;
       background:linear-gradient(180deg,rgba(255,255,255,.02),transparent)}
@@ -211,7 +232,15 @@
           <ul class="legend" id="legend"></ul>
           <div id="caps" class="muted"></div>
           <div id="rates" class="muted"></div>
-          <a id="btn-pinksale" class="btn" aria-disabled="true">Pinksale (coming soon)</a>
+
+          <!-- 두 개의 프리세일 버튼 -->
+          <div class="btn-row" style="justify-content:flex-start;margin-top:12px">
+            <a id="btn-presale-1" class="btn" aria-disabled="true">Presale #1 (coming soon)</a>
+            <a id="btn-presale-2" class="btn" aria-disabled="true">Presale #2 (coming soon)</a>
+          </div>
+
+          <!-- 상세 설명: 비율 + 락업 안내 -->
+          <div id="tokenomics-note" class="tokenomics-note"></div>
         </div>
       </div>
     </section>
@@ -307,19 +336,19 @@
         <pre id="mint-log" class="mint-log">[ Waiting for connection... ]</pre>
       </div>
 
-      <!-- Live Chart box (추가) -->
+      <!-- Live Chart box -->
       <div id="chart-box">
         <div class="chart-head">
           <div><b>Live Price / Chart</b></div>
           <div class="muted" id="chart-hint">Dexscreener embed will show here if configured.</div>
         </div>
         <div class="chart-body" id="chart-body">
-          <!-- runtime에서 links.dexscreener_url 있으면 iframe 주입, 없으면 CMC로 이동 버튼 표시 -->
+          <!-- runtime에서 links.dexscreener_url 있으면 iframe 주입 -->
         </div>
       </div>
     </section>
 
-    <!-- Alerts (추가) -->
+    <!-- Alerts -->
     <section id="alerts" class="card">
       <div class="section-title">Alerts</div>
       <div class="alert-wrap">
@@ -458,31 +487,98 @@
     /* --------- 토크노믹스 --------- */
     async function initTokenomics(){
       const j = await fetchFirst(['/public/config/allocations.json','/config/allocations.json']);
+
+      // 기본값: LP54 / Presale20 / Team15 / Marketing10 / Burn1
       const t = j.tokenomics || {lp:54,presale:20,team:15,marketing:10,burn:1};
-      const ctx=$('#donut').getContext('2d');
+
+      const canvas = $('#donut');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+
       const vals=[t.lp,t.presale,t.team,t.marketing,t.burn];
       const names=['LP','Presale','Team','Marketing','Burn'];
       const cols=['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'];
-      ctx.clearRect(0,0,300,300);
-      let start=-Math.PI/2;
-      vals.forEach((v,i)=>{ const a=start+2*Math.PI*(v/100);
-        ctx.beginPath();ctx.moveTo(150,150);ctx.arc(150,150,140,start,a);ctx.closePath();
-        ctx.fillStyle=cols[i];ctx.fill();start=a; });
-      ctx.globalCompositeOperation='destination-out';
-      ctx.beginPath();ctx.arc(150,150,82,0,2*Math.PI);ctx.fill();
-      ctx.globalCompositeOperation='source-over';
-      $('#legend').innerHTML = names.map((n,i)=>`<li>• ${n} ${vals[i]}%</li>`).join(' · ');
+
+      const w = canvas.width;
+      const h = canvas.height;
+      const size = Math.min(w,h);
+      const cx = w/2;
+      const cy = h/2;
+      const outerR = size*0.46;
+      const innerR = size*0.27;
+
+      ctx.clearRect(0,0,w,h);
+
+      let start = -Math.PI/2;
+      vals.forEach((v,i)=>{
+        const ratio = (v||0)/100;
+        const end = start + 2*Math.PI*ratio;
+        ctx.beginPath();
+        ctx.moveTo(cx,cy);
+        ctx.arc(cx,cy,outerR,start,end);
+        ctx.closePath();
+        ctx.fillStyle = cols[i];
+        ctx.fill();
+        start = end;
+      });
+
+      // 가운데 구멍
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(cx,cy,innerR,0,2*Math.PI);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+
+      // 범례
+      $('#legend').innerHTML = names.map((n,i)=>`
+        <li><span class="legend-dot" style="background:${cols[i]}"></span>${n} ${vals[i]}%</li>
+      `).join('');
+
+      // Soft / Hard cap & Rate
       const p = j.presale || {};
       const soft = p.softcap_bnb ?? j.softcap ?? '—';
       const hard = p.hardcap_bnb ?? j.hardcap ?? '—';
       $('#caps').textContent=`Softcap: ${soft} BNB / Hardcap: ${hard} BNB`;
+
       const pres = Number(p.rate_flex_per_bnb ?? (j.rates?.presale||0));
       const list = Number(p.listing_rate_flex_per_bnb ?? (j.rates?.listing||0));
-      const fmt=(n)=> (Number.isFinite(n)&&n>0)? n.toLocaleString():'—';
-      $('#rates').textContent=`Presale Rate: 1 BNB = ${fmt(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmt(list)} FLEX`;
+      const fmtN=(n)=> (Number.isFinite(n)&&n>0)? n.toLocaleString():'—';
+      $('#rates').textContent=`Presale Rate: 1 BNB = ${fmtN(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmtN(list)} FLEX`;
+
+      // 상세 설명 (락업 등)
+      const note = $('#tokenomics-note');
+      if(note){
+        const lockDays = p.lp_lock_days ?? j.lp_lock_days ?? 365;
+        note.innerHTML = `
+          • LP <b>${t.lp}%</b> — Dex 유동성, 최소 <b>${lockDays}일</b> 이상 락업 예정<br>
+          • Presale <b>${t.presale}%</b> — GemPad / Pinksale 등 런치패드 프리세일 물량<br>
+          • Team <b>${t.team}%</b> — 장기 팀·개발자 물량 (베스팅 스케줄 공지 예정)<br>
+          • Marketing <b>${t.marketing}%</b> — 마케팅, 파트너십, 상장 수수료 등에만 사용
+        `;
+      }
+
+      // 프리세일 버튼 2개 (links.json 기반)
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
-      const btn = $('#btn-pinksale');
-      if(links.pinksale_url){ btn.textContent='Open Pinksale'; btn.href=links.pinksale_url; btn.removeAttribute('aria-disabled'); }
+      const btn1 = $('#btn-presale-1');
+      const btn2 = $('#btn-presale-2');
+
+      function wire(btn,url,label){
+        if(!btn) return;
+        if(url){
+          btn.textContent = label;
+          btn.href = url;
+          btn.removeAttribute('aria-disabled');
+          btn.target = '_blank';
+          btn.rel = 'noopener';
+        }else{
+          btn.textContent = `${label} (coming soon)`;
+          btn.removeAttribute('href');
+          btn.setAttribute('aria-disabled','true');
+        }
+      }
+
+      wire(btn1, links.pinksale_url || '', 'Pinksale Presale');
+      wire(btn2, links.gempad_url || links.alt_presale_url || '', 'GemPad Presale');
     }
 
     /* --------- 카운트다운 --------- */
@@ -545,7 +641,7 @@
       document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
     }
 
-    /* --------- NFT Mint + 메타마스크 연결(강화판) --------- */
+    /* --------- NFT Mint + 메타마스크 연결 --------- */
     const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'},
                    bscMainnet:{chainId:'0x38',name:'BSC',rpc:'https://bsc-dataseed.binance.org'} };
     const DEFAULT_PRICE_BNB = (window.NFT_PRICE_BNB || '0.0001');
@@ -556,7 +652,7 @@
     ];
     let NFT_ADDR={ bscMainnet:'0xYourMainnetNFTAddress', bscTestnet:'0xYourTestnetNFTAddress' };
 
-    let signer = null; // 글로벌 보관
+    let signer = null;
 
     function setMintButtons(enabled){
       const b1=$('#mint'), b2=$('#mint-flex');
@@ -600,7 +696,7 @@
       window.ethereum.on('chainChanged', async (_hex)=>{
         const v = _hex==='0x38'?'bscMainnet':(_hex==='0x61'?'bscTestnet':null);
         if(v){ $('#net').value = v; }
-        if(signer){ try{ await connectWallet(); }catch(_){ /* ignore */ } }
+        if(signer){ try{ await connectWallet(); }catch(_){ } }
       });
       window.ethereum.on('disconnect', ()=>{
         $('#connect').textContent='Connect Wallet'; setMintButtons(false); $('#mint-log').textContent='[ Waiting for connection... ]'; signer=null;
