@@ -1,231 +1,172 @@
-// src/modules/mint.ts
-// -------------------------------------------------------------
-// FLEX NFT 민팅 모듈 (ethers + thirdweb 하이브리드, 오류내성 보강)
-// - 체인 스위치/추가 자동
-// - /config/addresses.json 또는 /public/config/addresses.json 에서 nft 주소 자동 로드
-// - mint(1, {value}) -> 실패 시 mint({value}) 폴백
-// - price() 없으면 고정가 0.0001 BNB 폴백
-// - thirdweb clientId 가 있으면 claim() 경로도 시도 (없어도 정상 동작)
-// -------------------------------------------------------------
+// src/main.ts
+// ===============================================================
+// Flexcoin 메인 엔트리
+// - hero 로테이터
+// - runtime JSON(config) 자동 로드
+// - 토크노믹스 / 주소 / 링크 자동 주입
+// - Presale 버튼 2개(GemPad + PinkSale) 자동 생성
+// - NFT Mint UI setup
+// ===============================================================
 
-import { BrowserProvider, Contract, parseEther } from "ethers";
-import {
-  createThirdwebClient,
-  getContract,
-  prepareContractCall,
-  sendTransaction,
-} from "thirdweb";
-import { BNBChain } from "thirdweb/chains";
+import setupMintUI from "./modules/mint";
 
-// ===== 체인 정의 =====
-const CHAINS: Record<
-  "bscTestnet" | "bscMainnet",
-  { chainId: `0x${string}`; name: string; rpc: string }
-> = {
-  bscTestnet: {
-    chainId: "0x61",
-    name: "BSC Testnet",
-    rpc: "https://data-seed-prebsc-1-s3.binance.org:8545",
-  },
-  bscMainnet: {
-    chainId: "0x38",
-    name: "BSC",
-    rpc: "https://bsc-dataseed.binance.org",
-  },
-};
-
-// ===== 기본 주소(폴백) =====
-const DEFAULT_ADDR = {
-  bscTestnet: "0xYourTestnetNFTAddress",
-  bscMainnet: "0x834586083e355ae80b88f479178935085dd3bf75", // FlexNFT mainnet
-};
-
-// ===== 컨트랙트 ABI (오버로드 대응) =====
-const ABI = [
-  "function mint(uint256 quantity) payable",
-  "function mint() payable",
-  "function price() view returns (uint256)",
-];
-
-// ===== thirdweb (선택적) =====
-const THIRDWEB_CLIENT_ID =
-  (window as any)?.THIRDWEB_CLIENT_ID ||
-  (window as any)?.env?.THIRDWEB_CLIENT_ID ||
-  "YOUR_THIRDWEB_CLIENT_ID"; // 없으면 그냥 ethers 경로만 사용
-
-const twClient =
-  THIRDWEB_CLIENT_ID && THIRDWEB_CLIENT_ID !== "YOUR_THIRDWEB_CLIENT_ID"
-    ? createThirdwebClient({ clientId: THIRDWEB_CLIENT_ID })
-    : undefined;
-
-// 유틸: JSON 폴백 로더
-async function fetchFirst<T = any>(
-  paths: string[],
-  fallback: T
-): Promise<T> {
-  for (const p of paths) {
-    try {
-      const r = await fetch(p, { cache: "no-cache" });
-      if (r.ok) return (await r.json()) as T;
-    } catch (_) {}
-  }
-  return fallback;
-}
-
-// 지갑 연결 & 체인 스위치
-async function connect(chainKey: "bscMainnet" | "bscTestnet") {
-  const eth = (window as any).ethereum;
-  if (!eth) throw new Error("지갑이 없습니다. MetaMask를 설치하세요.");
-  const target = CHAINS[chainKey];
-
+// JSON 로더
+async function fetchJson(path: string) {
   try {
-    await eth.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: target.chainId }],
-    });
-  } catch (e: any) {
-    if (e?.code === 4902) {
-      await eth.request({
-        method: "wallet_addEthereumChain",
-        params: [
-          {
-            chainId: target.chainId,
-            chainName: target.name,
-            rpcUrls: [target.rpc],
-            nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-          },
-        ],
-      });
-    } else {
-      throw e;
-    }
+    const r = await fetch(path + "?v=" + Date.now());
+    if (r.ok) return await r.json();
+  } catch (_) {}
+  return {};
+}
+
+// Hero 자동 로테이터
+function setupHero() {
+  const hero = document.getElementById("hero-img") as HTMLImageElement;
+  if (!hero) return;
+
+  const imgs = [
+    "/hero/main.jpg",
+    "/hero/1.jpg",
+    "/hero/2.jpg",
+    "/hero/3.jpg",
+    "/hero/4.jpg",
+    "/hero/5.jpg",
+    "/hero/6.jpg",
+    "/hero/7.jpg",
+    "/hero/8.jpg"
+  ];
+
+  let idx = 0;
+  hero.src = imgs[0];
+
+  setInterval(() => {
+    idx = (idx + 1) % imgs.length;
+    hero.style.opacity = "0";
+    setTimeout(() => {
+      hero.src = imgs[idx];
+      hero.style.opacity = "1";
+    }, 300);
+  }, 4500);
+}
+
+// 토크노믹스(Donut 차트) 자동 생성
+function setupTokenomics(allocation: any) {
+  if (!allocation?.tokenomics) return;
+
+  const LP = allocation.tokenomics.lp || 0;
+  const PRE = allocation.tokenomics.presale || 0;
+  const TEAM = allocation.tokenomics.team || 0;
+  const MKT = allocation.tokenomics.marketing || 0;
+
+  const data = [LP, PRE, TEAM, MKT];
+  const labels = ["Liquidity", "Presale", "Team", "Marketing"];
+  const colors = ["#ffd700", "#e6c15a", "#c7aa40", "#8d7a2f"];
+
+  const canvas = document.getElementById("donut") as HTMLCanvasElement;
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d")!;
+  const total = data.reduce((a, b) => a + b, 0);
+  let start = -Math.PI / 2;
+
+  data.forEach((v, i) => {
+    const angle = (v / total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(130, 130);
+    ctx.fillStyle = colors[i];
+    ctx.arc(130, 130, 130, start, start + angle);
+    ctx.fill();
+    start += angle;
+  });
+}
+
+// Presale 버튼 2개 (GemPad + PinkSale)
+function setupPresaleButtons(links: any) {
+  const wrap = document.getElementById("presale-buttons");
+  if (!wrap) return;
+
+  // GemPad link
+  const gempad = document.createElement("a");
+  gempad.className = "btn presale-btn gempad";
+  gempad.textContent = "GemPad Presale";
+  gempad.href = links.gempad_url || "#";
+  gempad.target = "_blank";
+  if (!links.gempad_url) gempad.classList.add("is-disabled");
+
+  // PinkSale link
+  const pink = document.createElement("a");
+  pink.className = "btn presale-btn pinksale";
+  pink.textContent = "PinkSale Presale";
+  pink.href = links.pinksale_url || "#";
+  pink.target = "_blank";
+  if (!links.pinksale_url) pink.classList.add("is-disabled");
+
+  wrap.appendChild(gempad);
+  wrap.appendChild(pink);
+}
+
+// 주소 테이블 자동 주입
+function setupAddressTable(addressJson: any) {
+  const keys = [
+    "token",
+    "team",
+    "marketing",
+    "presale",
+    "burn",
+    "user"
+  ];
+
+  keys.forEach((k) => {
+    const el = document.getElementById("addr-" + k);
+    if (el && addressJson[k]) el.textContent = addressJson[k];
+  });
+}
+
+// 상단 메뉴 링크 설정 (X, TG, Swap)
+function setupHeaderLinks(links: any) {
+  const x = document.getElementById("link-x");
+  const tg = document.getElementById("link-tg");
+  const swap = document.getElementById("link-swap");
+
+  if (x && links.x_url) x.setAttribute("href", links.x_url);
+  if (tg && links.tg_url) tg.setAttribute("href", links.tg_url);
+  if (swap && links.pancakeswap_url) swap.setAttribute("href", links.pancakeswap_url);
+}
+
+// Alerts 폼
+function setupForm(links: any) {
+  const form = document.getElementById("alert-form") as HTMLFormElement;
+  if (form && links.form_endpoint) {
+    form.action = links.form_endpoint;
   }
-
-  const provider = new BrowserProvider(eth);
-  const signer = await provider.getSigner();
-  return signer;
 }
 
-// 수치 포맷
-const fmt = (v: any) => (typeof v === "bigint" ? `${v}` : String(v));
+// 메인 실행
+(async function () {
+  // JSON 로드
+  const allocation = await fetchJson("/config/allocations.json");
+  const addresses = await fetchJson("/config/addresses.json");
+  const links = await fetchJson("/config/links.json");
 
-// BscScan 링크
-const scanTx = (hash: string) => `https://bscscan.com/tx/${hash}`;
+  // Hero
+  setupHero();
 
-// ===== 공개 API: 버튼 바인딩 =====
-export async function setupMintUI() {
-  // 주소 자동 로드
-  const addrJson = await fetchFirst<any>(
-    ["/config/addresses.json", "/public/config/addresses.json"],
-    {}
-  );
-  const ADDR = {
-    bscMainnet: addrJson.nft_mainnet || DEFAULT_ADDR.bscMainnet,
-    bscTestnet: addrJson.nft_testnet || DEFAULT_ADDR.bscTestnet,
-  };
+  // Tokenomics
+  setupTokenomics(allocation);
 
-  // thirdweb 컨트랙트 (있을 때만)
-  const twContract =
-    twClient &&
-    getContract({
-      client: twClient,
-      address: ADDR.bscMainnet,
-      chain: BNBChain,
-    });
+  // Header links
+  setupHeaderLinks(links);
 
-  const sel = document.getElementById("net") as HTMLSelectElement;
-  const btnC = document.getElementById("connect") as HTMLButtonElement;
-  const btnLegacy = document.getElementById("mint") as HTMLButtonElement;
-  const btnFlex = document.getElementById("mint-flex") as HTMLButtonElement;
-  const log = document.getElementById("mint-log") as HTMLPreElement;
-  const write = (s: string) => (log.textContent = s);
+  // Presale buttons 2개 생성
+  setupPresaleButtons(links);
 
-  // 연결
-  btnC.onclick = async () => {
-    try {
-      const signer = await connect(sel.value as any);
-      write("Connected: " + (await signer.getAddress()));
-    } catch (e: any) {
-      write("Connect error: " + (e?.message || e));
-    }
-  };
+  // Address table
+  setupAddressTable(addresses);
 
-  // ----- 레거시 민트 (ethers) -----
-  btnLegacy.onclick = async () => {
-    try {
-      const chainKey = sel.value as "bscMainnet" | "bscTestnet";
-      const signer = await connect(chainKey);
-      const contract = new Contract(ADDR[chainKey], ABI, signer);
+  // Formspree
+  setupForm(links);
 
-      // 1) price() 시도 → 실패 시 0.0001 BNB 고정가
-      let value = parseEther("0.0001");
-      try {
-        const p = await contract.price();
-        if (typeof p === "bigint" && p > 0n) value = p;
-      } catch {}
+  // Mint module
+  setupMintUI();
 
-      // 2) mint(1) 시도 → 실패하면 mint()로 폴백
-      let tx;
-      try {
-        tx = await contract.mint(1, { value });
-      } catch (e1) {
-        tx = await contract.mint({ value });
-      }
-
-      write("Minting... TX: " + tx.hash + "\n" + scanTx(tx.hash));
-      const r = await tx.wait();
-      write("✅ Minted!\n" + scanTx(tx.hash) + `\nstatus: ${r?.status ?? "-"}`);
-    } catch (e: any) {
-      // MetaMask -32603(Internal JSON-RPC) 가독화
-      const msg =
-        e?.data?.message ||
-        e?.error?.message ||
-        e?.message ||
-        String(e);
-      write("Mint error: " + msg);
-    }
-  };
-
-  // ----- FlexNFT 민트 (thirdweb claim) -----
-  btnFlex.onclick = async () => {
-    // thirdweb clientId 없으면 ethers 경로로 동일 수행
-    if (!twClient || !twContract) {
-      btnLegacy.click();
-      return;
-    }
-
-    try {
-      // FlexNFT는 메인넷 고정
-      const signer = await connect("bscMainnet");
-      const wallet = await signer.getAddress();
-
-      // 0.0001 BNB
-      const valueWei = "100000000000000";
-
-      const tx = prepareContractCall({
-        contract: twContract,
-        method: "claim",
-        params: [wallet, 1],
-        value: valueWei,
-      });
-
-      const receipt = await sendTransaction({ transaction: tx });
-      const hash =
-        (receipt as any)?.transactionHash ||
-        (receipt as any)?.hash ||
-        "";
-      log.textContent =
-        "✅ FlexNFT Mint Success!\n" +
-        (hash ? scanTx(hash) : "TX sent.");
-    } catch (err: any) {
-      const msg =
-        err?.data?.message ||
-        err?.error?.message ||
-        err?.message ||
-        String(err);
-      log.textContent = "❌ FlexNFT Mint Error: " + msg;
-    }
-  };
-}
-
-export default setupMintUI;
+})();
