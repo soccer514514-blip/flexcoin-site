@@ -233,13 +233,13 @@
           <div id="caps" class="muted"></div>
           <div id="rates" class="muted"></div>
 
-          <!-- 두 개의 프리세일 버튼 -->
+          <!-- 두 개의 프리세일 버튼 (GemPad / DexSale) -->
           <div class="btn-row" style="justify-content:flex-start;margin-top:12px">
-            <a id="btn-presale-1" class="btn" aria-disabled="true">Presale #1 (coming soon)</a>
-            <a id="btn-presale-2" class="btn" aria-disabled="true">Presale #2 (coming soon)</a>
+            <a id="btn-presale-1" class="btn" aria-disabled="true">GemPad Presale (coming soon)</a>
+            <a id="btn-presale-2" class="btn" aria-disabled="true">DexSale Presale (coming soon)</a>
           </div>
 
-          <!-- 상세 설명: 비율 + 락업 안내 -->
+          <!-- 상세 설명: 비율 + 락업 안내 (영문) -->
           <div id="tokenomics-note" class="tokenomics-note"></div>
         </div>
       </div>
@@ -423,8 +423,10 @@
     async function fetchFirst(paths){ for(const p of paths){ try{ const r=await fetch(p,{cache:'no-cache'}); if(r.ok) return r.json(); }catch(_){} } return {}; }
     function firstExistingImage(paths){
       return new Promise(resolve=>{
-        let i=0; const next=()=>{ if(i>=paths.length) return resolve(null);
-          const img=new Image(); img.onload=()=>resolve(paths[i]); img.onerror=()=>{ i++; next(); }; img.src=paths[i]; };
+        let i=0; const next=()=>{
+          if(i>=paths.length) return resolve(null);
+          const img=new Image(); img.onload=()=>resolve(paths[i]); img.onerror=()=>{ i++; next(); }; img.src=paths[i];
+        };
         next();
       });
     }
@@ -441,9 +443,18 @@
 
       const addr = await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
       const toScan=(a)=>a?`https://bscscan.com/address/${a}`:'#';
-      const rows=[['Token',addr.token],['Team/Lock',addr.team_lock||addr.team],['Marketing',addr.marketing],
-                  ['Presale',addr.presale],['Burn',addr.burn],['User',addr.user]];
-      $('#addr-table').innerHTML = rows.map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`).join('');
+
+      /* Burn 행 제거 + User를 Presale 바로 아래로 */
+      const rows=[
+        ['Token',addr.token],
+        ['Team/Lock',addr.team_lock||addr.team],
+        ['Marketing',addr.marketing],
+        ['Presale',addr.presale],
+        ['User',addr.user]
+      ];
+      $('#addr-table').innerHTML = rows
+        .map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`)
+        .join('');
 
       /* 차트 임베드 */
       const chartBody = $('#chart-body');
@@ -452,10 +463,10 @@
       if(!dexUrl){
         const cmc = `https://dex.coinmarketcap.com/ko/token/bsc/${addr.token||''}/`;
         chartBody.innerHTML = `<div style="padding:18px;text-align:center">
-          <div class="muted" style="margin-bottom:10px">Dexscreener URL이 설정되어 있지 않습니다.</div>
+          <div class="muted" style="margin-bottom:10px">Dexscreener URL is not configured yet.</div>
           <a class="btn" href="${cmc}" target="_blank" rel="noopener">Open CMC DEX Chart</a>
         </div>`;
-        hint.textContent = 'CMC는 보안정책으로 iframe 임베드가 불가하여 새 탭으로 열립니다.';
+        hint.textContent = 'CMC cannot be embedded in an iframe, it will open in a new tab.';
       }else{
         chartBody.innerHTML = `<iframe src="${dexUrl}${dexUrl.includes('?')?'&':'?'}embed=1&theme=dark" loading="lazy"></iframe>`;
         hint.textContent = 'Powered by Dexscreener';
@@ -509,16 +520,23 @@
 
       ctx.clearRect(0,0,w,h);
 
+      // 합계 기준으로 2π를 나눠서 항상 완전한 원이 되도록
+      const total = vals.reduce((acc,v)=>acc + (v||0), 0) || 1;
       let start = -Math.PI/2;
+
       vals.forEach((v,i)=>{
-        const ratio = (v||0)/100;
+        const value = v || 0;
+        if(value <= 0) return;                // 0% (예: Burn 0)은 실제 도넛에서는 그리지 않음
+        const ratio = value / total;
         const end = start + 2*Math.PI*ratio;
+
         ctx.beginPath();
         ctx.moveTo(cx,cy);
         ctx.arc(cx,cy,outerR,start,end);
         ctx.closePath();
         ctx.fillStyle = cols[i];
         ctx.fill();
+
         start = end;
       });
 
@@ -545,19 +563,19 @@
       const fmtN=(n)=> (Number.isFinite(n)&&n>0)? n.toLocaleString():'—';
       $('#rates').textContent=`Presale Rate: 1 BNB = ${fmtN(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmtN(list)} FLEX`;
 
-      // 상세 설명 (락업 등)
+      // 상세 설명 (영문)
       const note = $('#tokenomics-note');
       if(note){
         const lockDays = p.lp_lock_days ?? j.lp_lock_days ?? 365;
         note.innerHTML = `
-          • LP <b>${t.lp}%</b> — Dex 유동성, 최소 <b>${lockDays}일</b> 이상 락업 예정<br>
-          • Presale <b>${t.presale}%</b> — GemPad / Pinksale 등 런치패드 프리세일 물량<br>
-          • Team <b>${t.team}%</b> — 장기 팀·개발자 물량 (베스팅 스케줄 공지 예정)<br>
-          • Marketing <b>${t.marketing}%</b> — 마케팅, 파트너십, 상장 수수료 등에만 사용
+          • LP <b>${t.lp}%</b> — DEX liquidity, locked for at least <b>${lockDays} days</b>.<br>
+          • Presale <b>${t.presale}%</b> — Launchpad allocations (GemPad / DexSale).<br>
+          • Team <b>${t.team}%</b> — Long-term team & builder allocation (vesting schedule to be announced).<br>
+          • Marketing <b>${t.marketing}%</b> — Marketing, partnerships, listings and ecosystem growth only.
         `;
       }
 
-      // 프리세일 버튼 2개 (links.json 기반)
+      // 프리세일 버튼 2개 (GemPad / DexSale)
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
       const btn1 = $('#btn-presale-1');
       const btn2 = $('#btn-presale-2');
@@ -577,8 +595,8 @@
         }
       }
 
-      wire(btn1, links.pinksale_url || '', 'Pinksale Presale');
-      wire(btn2, links.gempad_url || links.alt_presale_url || '', 'GemPad Presale');
+      wire(btn1, links.gempad_url || links.alt_presale_1 || '', 'GemPad Presale');
+      wire(btn2, links.dexsale_url || links.alt_presale_2 || '', 'DexSale Presale');
     }
 
     /* --------- 카운트다운 --------- */
@@ -721,7 +739,7 @@
           if(!signer) await connectWallet();
           const chainKey=$('#net').value;
           const to = await signer.getAddress();
-          const target=NFT_ADDR[chainKey]; if(!target || target.length<20) throw new Error('NFT 컨트랙트 주소가 설정되지 않았습니다.');
+          const target=NFT_ADDR[chainKey]; if(!target || target.length<20) throw new Error('NFT contract address is not configured.');
 
           let last;
           for(const abi of ABI_VARIANTS){
@@ -737,7 +755,7 @@
                 catch{ tx=await c.claim(1,{value}); }
               }else if(c.mint){
                 tx=await c.mint(1,{value,type:0});
-              }else{ throw new Error('지원하지 않는 민팅 방식'); }
+              }else{ throw new Error('Unsupported mint method'); }
 
               $('#mint-log').textContent = 'Minting... TX: ' + tx.hash;
               await tx.wait();
@@ -745,7 +763,7 @@
               return;
             }catch(e){ last=e; }
           }
-          throw last || new Error('민팅 실패');
+          throw last || new Error('Mint failed');
         }catch(e){
           $('#mint-log').textContent = 'Mint error: ' + ((e&&e.message)||String(e));
         }
