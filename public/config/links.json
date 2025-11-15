@@ -1,12 +1,11 @@
 {
   "x_url": "https://x.com/Flexcoinmeme",
   "tg_url": "https://t.me/+uZDznJXQAjEzNDk1",
-  "pancakeswap_url": "https://pancakeswap.finance/swap?outputCurrency=0xBa29562241f0489504C493c47aCBA16d7a98998f&chainId=56",
+  "pancakeswap_url": "https://pancakeswap.finance/swap?outputCurrency=TOKEN&chainId=56",
 
-  "presale1_url": "", 
-  "presale2_url": "",
+  "gempad_url": "https://gempad.app/presale/XXXX",
+  "pinksale_url": "https://www.pinksale.finance/launchpad/XXXX",
 
-  "pinksale_url": "",
   "dexscreener_url": "",
   "form_endpoint": "https://formspree.io/f/meovevgb"
 }
