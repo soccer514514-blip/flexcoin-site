@@ -236,7 +236,7 @@
           <!-- 두 개의 프리세일 버튼 (GemPad / DexSale) -->
           <div class="btn-row" style="justify-content:flex-start;margin-top:12px">
             <a id="btn-presale-1" class="btn" aria-disabled="true">GemPad Presale (coming soon)</a>
-            <a id="btn-presale-2" class="btn" aria-disabled="true">DexSale Presale (coming soon)</a>
+            <a id="btn-presale-2" class="btn" aria-disabled="true">DexSale Presale</a>
           </div>
 
           <!-- 상세 설명: 비율 + 락업 안내 (영문) -->
@@ -580,7 +580,8 @@
       const btn1 = $('#btn-presale-1');
       const btn2 = $('#btn-presale-2');
 
-      function wire(btn,url,label){
+      function wire(btn,url,label,opts){
+        opts = opts || {};
         if(!btn) return;
         if(url){
           btn.textContent = label;
@@ -589,14 +590,15 @@
           btn.target = '_blank';
           btn.rel = 'noopener';
         }else{
-          btn.textContent = `${label} (coming soon)`;
+          // DexSale는 (coming soon) 텍스트를 붙이지 않음
+          btn.textContent = opts.noComingSoon ? label : `${label} (coming soon)`;
           btn.removeAttribute('href');
           btn.setAttribute('aria-disabled','true');
         }
       }
 
       wire(btn1, links.gempad_url || links.alt_presale_1 || '', 'GemPad Presale');
-      wire(btn2, links.dexsale_url || links.alt_presale_2 || '', 'DexSale Presale');
+      wire(btn2, links.dexsale_url || links.alt_presale_2 || '', 'DexSale Presale', {noComingSoon:true});
     }
 
     /* --------- 카운트다운 --------- */
