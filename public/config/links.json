@@ -5,9 +5,12 @@
   "pancakeswap_url": "https://pancakeswap.finance/swap?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f&chainId=56",
 
   "dexsale_url": "https://www.dx.app/dxsale/view?address=0x6fcE9aD19Da522B03813Ef69106bb077A6d84d1C&chain=56",
+  "gempad_url": "",
+  "alt_presale_1": "",
+  "alt_presale_2": "",
 
   "audit_url": "",
-  "kyc_url": "https://github.com/ContractWolf/KYC-certificates/blob/main/2025-KYC/KYC_Flexcoin.jpg",
+  "kyc_url": "/security/kyc_flexcoin.jpg",
   "lp_lock_url": "",
   "bscscan_url": "https://bscscan.com/token/0xBa29562241F0489504C493c47aCBA16d7a98998f",
 
