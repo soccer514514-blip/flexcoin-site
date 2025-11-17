@@ -1,10 +1,11 @@
 // src/main.ts
 // ===============================================================
 // Flexcoin 메인 엔트리
-// - hero 로테이터
+// - Hero 로테이터
 // - runtime JSON(config) 자동 로드
 // - 토크노믹스 / 주소 / 링크 자동 주입
-// - Presale 버튼 2개(GemPad + PinkSale) 자동 생성
+// - Presale 버튼 1개 (DXSale)
+// - Security Shield Zone 링크 주입 (Audit / KYC / LP Lock / BscScan)
 // - NFT Mint UI setup
 // ===============================================================
 
@@ -21,7 +22,7 @@ async function fetchJson(path: string) {
 
 // Hero 자동 로테이터
 function setupHero() {
-  const hero = document.getElementById("hero-img") as HTMLImageElement;
+  const hero = document.getElementById("hero-img") as HTMLImageElement | null;
   if (!hero) return;
 
   const imgs = [
@@ -62,10 +63,12 @@ function setupTokenomics(allocation: any) {
   const labels = ["Liquidity", "Presale", "Team", "Marketing"];
   const colors = ["#ffd700", "#e6c15a", "#c7aa40", "#8d7a2f"];
 
-  const canvas = document.getElementById("donut") as HTMLCanvasElement;
+  const canvas = document.getElementById("donut") as HTMLCanvasElement | null;
   if (!canvas) return;
 
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
   const total = data.reduce((a, b) => a + b, 0);
   let start = -Math.PI / 2;
 
@@ -80,45 +83,43 @@ function setupTokenomics(allocation: any) {
   });
 }
 
-// Presale 버튼 2개 (GemPad + PinkSale)
+// Presale 버튼 (DXSale 전용)
 function setupPresaleButtons(links: any) {
   const wrap = document.getElementById("presale-buttons");
   if (!wrap) return;
 
-  // GemPad link
-  const gempad = document.createElement("a");
-  gempad.className = "btn presale-btn gempad";
-  gempad.textContent = "GemPad Presale";
-  gempad.href = links.gempad_url || "#";
-  gempad.target = "_blank";
-  if (!links.gempad_url) gempad.classList.add("is-disabled");
+  // links.json 키가 어떤 이름이든 대응 가능하게 처리
+  const presaleUrl: string =
+    links.presale_url ||
+    links.dxsale_url ||
+    links["DexSale Presale_url"] ||
+    "";
 
-  // PinkSale link
-  const pink = document.createElement("a");
-  pink.className = "btn presale-btn pinksale";
-  pink.textContent = "PinkSale Presale";
-  pink.href = links.pinksale_url || "#";
-  pink.target = "_blank";
-  if (!links.pinksale_url) pink.classList.add("is-disabled");
+  const btn = document.createElement("a");
+  btn.id = "btn-presale-dxsale";
+  btn.className = "btn presale-btn dxsale";
+  btn.textContent = "Join DXSale Presale";
+  btn.href = presaleUrl || "#";
+  btn.target = "_blank";
+  btn.rel = "noopener noreferrer";
 
-  wrap.appendChild(gempad);
-  wrap.appendChild(pink);
+  if (!presaleUrl) {
+    btn.classList.add("is-disabled");
+  }
+
+  // 기존 GemPad / PinkSale 대신 DXSale 하나만 추가
+  wrap.appendChild(btn);
 }
 
 // 주소 테이블 자동 주입
 function setupAddressTable(addressJson: any) {
-  const keys = [
-    "token",
-    "team",
-    "marketing",
-    "presale",
-    "burn",
-    "user"
-  ];
+  const keys = ["token", "team", "marketing", "presale", "burn", "user"];
 
   keys.forEach((k) => {
     const el = document.getElementById("addr-" + k);
-    if (el && addressJson[k]) el.textContent = addressJson[k];
+    if (el && addressJson[k]) {
+      el.textContent = addressJson[k];
+    }
   });
 }
 
@@ -133,9 +134,41 @@ function setupHeaderLinks(links: any) {
   if (swap && links.pancakeswap_url) swap.setAttribute("href", links.pancakeswap_url);
 }
 
+// Security Shield Zone 링크 설정 (Audit / KYC / LP / BscScan)
+function setupSecurityShieldLinks(links: any) {
+  const auditBtn = document.getElementById("btn-security-audit") as HTMLAnchorElement | null;
+  const kycBtn = document.getElementById("btn-security-kyc") as HTMLAnchorElement | null;
+  const lpBtn = document.getElementById("btn-security-lplock") as HTMLAnchorElement | null;
+  const bscscanBtn = document.getElementById("btn-security-bscscan") as HTMLAnchorElement | null;
+
+  if (auditBtn) {
+    const url = links.audit_url || "#";
+    auditBtn.href = url;
+    if (url === "#") auditBtn.classList.add("is-disabled");
+  }
+
+  if (kycBtn) {
+    const url = links.kyc_url || "#";
+    kycBtn.href = url;
+    if (url === "#") kycBtn.classList.add("is-disabled");
+  }
+
+  if (lpBtn) {
+    const url = links.lp_lock_url || "#";
+    lpBtn.href = url;
+    if (url === "#") lpBtn.classList.add("is-disabled");
+  }
+
+  if (bscscanBtn) {
+    const url = links.bscscan_url || links.dexscreener_url || "#";
+    bscscanBtn.href = url;
+    if (url === "#") bscscanBtn.classList.add("is-disabled");
+  }
+}
+
 // Alerts 폼
 function setupForm(links: any) {
-  const form = document.getElementById("alert-form") as HTMLFormElement;
+  const form = document.getElementById("alert-form") as HTMLFormElement | null;
   if (form && links.form_endpoint) {
     form.action = links.form_endpoint;
   }
@@ -154,11 +187,14 @@ function setupForm(links: any) {
   // Tokenomics
   setupTokenomics(allocation);
 
-  // Header links
+  // Header links (X / TG / Swap)
   setupHeaderLinks(links);
 
-  // Presale buttons 2개 생성
+  // Presale 버튼 (DXSale)
   setupPresaleButtons(links);
+
+  // Security Shield Zone 링크
+  setupSecurityShieldLinks(links);
 
   // Address table
   setupAddressTable(addresses);
@@ -168,5 +204,4 @@ function setupForm(links: any) {
 
   // Mint module
   setupMintUI();
-
 })();
