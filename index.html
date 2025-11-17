@@ -467,6 +467,12 @@
     /* --------- 링크/주소 + 차트 + 알림 + Security Zone --------- */
     async function initLinks(){
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
+
+      // 🔹 KYC 기본 이미지 경로: links.json에 값이 없으면 /public/security/kyc_flexcoin.jpg 사용
+      if (!links.kyc_url) {
+        links.kyc_url = '/public/security/kyc_flexcoin.jpg';
+      }
+
       const setBtn=(id,url)=>{const b=$(id); if(!b) return; if(url){b.href=url; b.removeAttribute('disabled');} else {b.removeAttribute('href'); b.setAttribute('disabled','');}};
       setBtn('#btn-x',links.x_url);
       setBtn('#btn-tg',links.tg_url);
