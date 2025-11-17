@@ -287,11 +287,10 @@ footer {
 }
 
 /* =========================
-   Presale buttons (GemPad + PinkSale)
+   Presale buttons (DexSale 중심)
    - HTML 예시:
-   <div class="presale-buttons">
-     <a class="btn presale-btn gempad" href="...">GemPad Presale</a>
-     <a class="btn presale-btn pinksale" href="...">PinkSale (Coming Soon)</a>
+   <div class="btn-row">
+     <a id="btn-presale-dxsale" class="btn">DexSale Presale</a>
    </div>
 ========================= */
 .presale-buttons {
@@ -307,10 +306,10 @@ footer {
   font-size: .95rem;
 }
 
-/* 젬패드 버튼 – 기본 골드 */
+/* (레거시) 젬패드/핑크세일 클래스 – 예전 버전 호환용 */
 .presale-btn.gempad {}
 
-/* 핑크세일 버튼 – 회색 톤 + ‘곧 오픈’ 느낌 */
+/* 과거 PinkSale 스타일 – 혹시 남아 있으면 회색톤으로 표시 */
 .presale-btn.pinksale {
   background: linear-gradient(180deg, #555, #2a2a2a);
   color: var(--gold);
@@ -322,13 +321,29 @@ footer {
   pointer-events: none;
 }
 
-/* 모바일에서 버튼 2개 전체폭 사용 */
+/* === 현재 사용: DexSale 버튼 === */
+.presale-btn.dxsale,
+#btn-presale-dxsale {
+  min-width: 200px;
+  font-size: .95rem;
+}
+
+/* 비활성 DexSale 버튼 (coming soon) */
+.presale-btn.dxsale[aria-disabled="true"],
+#btn-presale-dxsale[aria-disabled="true"] {
+  opacity: .6;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* 모바일에서 버튼 전체폭 사용 */
 @media (max-width: 520px) {
   .presale-buttons {
     flex-direction: column;
     align-items: stretch;
   }
-  .presale-btn {
+  .presale-btn,
+  #btn-presale-dxsale {
     width: 100%;
   }
 }
