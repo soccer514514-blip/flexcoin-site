@@ -2,18 +2,17 @@
   "x_url": "https://x.com/Flexcoinmeme",
   "tg_url": "https://t.me/+uZDznJXQAjEzNDk1",
 
-  "pancakeswap_url": "https://pancakeswap.finance/swap?outputCurrency=0xBa29562241F0489504C493c47aCBA16d7a98998f&chainId=56",
-
-  "dexsale_url": "https://www.dx.app/dxsale/view?address=0x6fcE9aD19Da522B03813Ef69106bb077A6d84d1C&chain=56",
-  "gempad_url": "",
-  "alt_presale_1": "",
-  "alt_presale_2": "",
-
-  "audit_url": "",
-  "kyc_url": "/security/kyc_flexcoin.jpg",
-  "lp_lock_url": "",
-  "bscscan_url": "https://bscscan.com/token/0xBa29562241F0489504C493c47aCBA16d7a98998f",
+  "pancakeswap_url": "",
 
   "dexscreener_url": "",
-  "form_endpoint": "https://formspree.io/f/meovevgb"
+  "form_endpoint": "",
+
+  "dexsale_url": "https://www.dx.app/dxsale/view?address=0x6fcE9aD19Da522B03813Ef69106bb077A6d84d1C&chain=56",
+
+  "audit_url": "https://contractwolf.io/projects/flexcoin",
+
+  "kyc_url": "/security/kyc_flexcoin.jpg",
+
+  "lp_lock_url": "",
+  "bscscan_url": ""
 }
