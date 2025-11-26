@@ -529,8 +529,8 @@ Flexcoin official website
 
         return false;
       }
-      handlePath().then(hit=>{ if(!hit) handleHash(); });
-      window.addEventListener('hashchange', handleHash);
+      handlePath();
+
     })();
 
     /* --------- 유틸 --------- */
