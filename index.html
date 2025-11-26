@@ -107,6 +107,28 @@ Flexcoin official website
     .lang button.active{background:var(--gold);color:#000;font-weight:800}
     .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9; white-space:nowrap}
     .nav a:hover{opacity:1}
+/* -------- 이미지 라이트박스 -------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+}
+
+.lightbox.open {
+  display: flex;
+}
+
+.lightbox img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 16px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+  cursor: zoom-out;
+}
 
     @media(max-width:680px){
       .topbar{flex-wrap:wrap;gap:.4rem}
@@ -359,11 +381,16 @@ Flexcoin official website
       <div class="grid" id="action-grid"></div>
     </section>
 
-    <!-- NFT Preview -->
-    <section class="card">
-      <div class="section-title" data-i18n="nft.title">NFT Preview</div>
-      <div class="grid" id="nft-grid"></div>
-    </section>
+   <!-- NFT Preview -->
+<section class="card">
+  <div class="section-title" data-i18n="nft.title">NFT Preview</div>
+  <div class="grid" id="nft-grid"></div>
+</section>
+
+<!-- 이미지 라이트박스 (액션 + NFT 공용) -->
+<div id="img-lightbox" class="lightbox">
+  <img id="img-lightbox-img" src="" alt="">
+</div>
 
     <!-- Whitepaper -->
     <section id="whitepaper" class="card">
@@ -944,6 +971,50 @@ Flexcoin official website
       await loadGrid('/nft-preview', '#nft-grid');
       await setupMintUI();
     })();
+    // -------- 액션 / NFT 이미지 라이트박스 --------
+  function initImageLightbox() {
+    const overlay = document.getElementById('img-lightbox');
+    const overlayImg = document.getElementById('img-lightbox-img');
+    if (!overlay || !overlayImg) return;
+
+    function openLightbox(src, alt) {
+      overlayImg.src = src;
+      overlayImg.alt = alt || '';
+      overlay.classList.add('open');
+    }
+
+    function closeLightbox() {
+      overlay.classList.remove('open');
+      overlayImg.src = '';
+    }
+
+    overlay.addEventListener('click', () => {
+      closeLightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
+    });
+
+    const selectors = ['#action-grid a', '#action-grid img', '#nft-grid a', '#nft-grid img'];
+    selectors.forEach((sel) => {
+      document.querySelectorAll(sel).forEach((el) => {
+        el.style.cursor = 'zoom-in';
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          const img = el.tagName === 'IMG' ? el : el.querySelector('img');
+          const src = (el.tagName === 'A' && el.href) || (img && img.src);
+          if (!src) return;
+          const alt = img ? img.alt : '';
+          openLightbox(src, alt);
+        });
+      });
+    });
+  }
+
+  window.addEventListener('load', initImageLightbox);
   </script>
 </body>
 </html>
