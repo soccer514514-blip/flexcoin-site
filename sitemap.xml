@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-  <!-- 메인 랜딩 페이지 -->
+  <!-- ===============================
+       MAIN LANDING PAGE
+  ================================ -->
   <url>
     <loc>https://flexcoin.io.kr/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- 섹션 앵커들 -->
+  <!-- ===============================
+       SECTION ANCHORS (INDEX PAGE)
+  ================================ -->
   <url>
     <loc>https://flexcoin.io.kr/#tokenomics</loc>
     <changefreq>weekly</changefreq>
@@ -33,7 +37,11 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Whitepaper PDF 8개 (공식 경로: /public/whitepaper/...) -->
+  <!-- ===============================
+       8 LANGUAGE WHITEPAPER PDFs
+       (OFFICIAL PATH: /public/whitepaper/)
+  ================================ -->
+
   <url>
     <loc>https://flexcoin.io.kr/public/whitepaper/en.pdf</loc>
     <changefreq>monthly</changefreq>
