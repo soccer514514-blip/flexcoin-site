@@ -504,19 +504,29 @@ Flexcoin official website
           document.body.appendChild(a); a.click(); a.remove();
           window.open(url,'_blank','noopener'); return true;
         }
-        return false;
-      }
       async function handleHash(){
-        const h = lower(location.hash);
-        const mh = h.match(/^#(?:whitepaper|pdf)(?:[-_]?([a-z]{2}))?$/);
-        let code = mh ? (mh[1] || 'ko') : null;
-        if(!code) return false;
-        const url = await findBestPdf(code);
-        if(url){
-          const a = document.createElement('a'); a.href = url; a.download = `flexcoin_whitepaper_${code}.pdf`;
-          document.body.appendChild(a); a.click(); a.remove();
-          window.open(url,'_blank','noopener'); return true;
-        }
+    // 해시값이 없으면 바로 종료
+    const h = lower(location.hash || '');
+
+    // 이제는 #whitepaper-ko, #whitepaper-en 처럼 언어 코드가 있을 때만 동작
+    const m = h.match(/^#whitepaper[-_/]([a-z]{2})$/);
+    if (!m) return false;
+
+    const code = m[1]; // ko, en, ja, zh, es, de, pt, it 중 하나
+    const url = await findBestPdf(code);
+    if (!url) return false;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `flexcoin_whitepaper_${code}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    window.open(url, '_blank', 'noopener');
+    return true;
+  }
+
         return false;
       }
       handlePath().then(hit=>{ if(!hit) handleHash(); });
