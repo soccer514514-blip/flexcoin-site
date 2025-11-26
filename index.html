@@ -480,13 +480,19 @@ Flexcoin official website
 
     /* ---------------- Whitepaper Direct Router ---------------- */
     (function directWhitepaperRouter(){
-      const langCodes = ['en','ko','ja','zh','es','de','pt','it'];
-      const lower = (s)=> (s||'').toLowerCase();
-      function findBestPdf(code){
-        const tryList = [`/public/whitepaper/${code}.pdf`,`/whitepaper/${code}.pdf`];
-        return Promise.all(tryList.map(p=>fetch(p,{method:'HEAD',cache:'no-cache'}).then(r=>r.ok?p:null).catch(()=>null)))
-          .then(arr=>arr.find(Boolean));
-      }
+  const langCodes = ['en','ko','ja','zh','es','de','pt','it'];
+  const lower = (s)=> (s || '').toLowerCase();
+  function findBestPdf(code){
+    const tryList = [`/public/whitepaper/${code}.pdf`];
+    return Promise.all(
+      tryList.map(p =>
+        fetch(p, { method: 'HEAD', cache: 'no-cache' })
+          .then(r => r.ok ? p : null)
+          .catch(() => null)
+      )
+    ).then(arr => arr.find(Boolean));
+  }
+
       async function handlePath(){
         const p = lower(location.pathname);
         const m = p.match(/^\/(whitepaper|wp|pdf)(?:\/)?([a-z]{2})?(?:\.pdf)?$/);
