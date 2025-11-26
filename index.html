@@ -4,8 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>$FLEX is your life — Flexcoin</title>
-<meta name="msvalidate.01" content="F392338F667D8A882F047C0953403BC5" />
-  
+  <meta name="msvalidate.01" content="F392338F667D8A882F047C0953403BC5" />
+  <meta name="description" content="FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, locked liquidity and a fair DxSale presale for global crypto communities in the US, Turkey, Vietnam and the Philippines.">
+
   <!-- SEO keywords (US / Turkey / Vietnam / Philippines 중심 30개) -->
   <meta name="keywords" content="
 FlexCoin,
@@ -39,6 +40,24 @@ Flexcoin roadmap,
 Flexcoin Telegram community,
 Flexcoin official website
 ">
+
+  <!-- Meta description (검색 결과에 노출되는 메인 설명) -->
+  <meta name="description" content="FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, locked liquidity and a fair DxSale presale for global crypto communities in the US, Turkey, Vietnam and the Philippines.">
+
+  <!-- Open Graph (for Twitter/X, Telegram, Discord, etc.) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FlexCoin">
+  <meta property="og:title" content="$FLEX is your life — Flexcoin">
+  <meta property="og:description" content="FlexCoin (FLEX) is a luxury meme coin on BNB Chain with transparent tokenomics, KYC & audit completed, locked liquidity and a fair DexSale presale for global crypto communities.">
+  <meta property="og:url" content="https://flexcoin.io.kr/">
+  <meta property="og:image" content="https://flexcoin.io.kr/public/hero/main.jpg">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="$FLEX is your life — Flexcoin">
+  <meta name="twitter:description" content="FlexCoin (FLEX) is a luxury meme coin on BNB Chain with transparent tokenomics, KYC & audit completed, locked liquidity and a fair DexSale presale for global crypto communities.">
+  <meta name="twitter:image" content="https://flexcoin.io.kr/public/hero/main.jpg">
 
   <!-- Favicon (404 방지: /public 경로 우선, 둘 다 시도) -->
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
@@ -214,6 +233,25 @@ Flexcoin official website
 
   <!-- ethers CDN -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js"></script>
+
+  <!-- JSON-LD 구조화 데이터 (Organization 스키마) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "FlexCoin",
+    "alternateName": "FLEX",
+    "url": "https://flexcoin.io.kr/",
+    "logo": "https://flexcoin.io.kr/favicon.ico",
+    "description": "FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, locked liquidity and a fair DexSale presale.",
+    "sameAs": [
+      "https://x.com/Flexcoinmeme",
+      "https://t.me/flexcoinmeme",
+      "https://www.dx.app/dxsale/view?address=0x6fcE9aD19Da522B03813Ef69106bb077A6d84d1C&chain=56",
+      "https://bscscan.com/token/0xBa29562241F0489504C493c47aCBA16d7a98998f"
+    ]
+  }
+  </script>
 </head>
 <body>
   <!-- Top bar -->
@@ -237,7 +275,7 @@ Flexcoin official website
   <div class="wrap">
     <!-- HERO -->
     <section class="card hero">
-      <img id="hero-img" src="/public/hero/main.jpg" alt="Flexcoin hero" onerror="this.onerror=null;this.src='/public/hero/1.jpg'">
+      <img id="hero-img" src="/public/hero/main.jpg" alt="FlexCoin luxury meme coin hero illustration with FLEX gold coin and two flexing characters" onerror="this.onerror=null;this.src='/public/hero/1.jpg'">
     </section>
 
     <!-- Security Shield Zone (Hero 바로 아래) -->
@@ -729,7 +767,9 @@ Flexcoin official website
       const decided=await Promise.all(list.map(n=> firstExistingImage([`/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`])));
       const ok=decided.filter(Boolean);
       const el=$(targetId);
-      el.innerHTML = ok.length ? ok.map(src=>`<img src="${src}" alt="">`).join('') : '<div class="muted">Images coming soon.</div>';
+      el.innerHTML = ok.length
+        ? ok.map(src=>`<img src="${src}" alt="FlexCoin gallery image">`).join('')
+        : '<div class="muted">Images coming soon.</div>';
       el.querySelectorAll('img').forEach(img=>{ img.style.cursor='zoom-in'; img.addEventListener('click',()=>openLightbox(img.src)); });
     }
 
