@@ -275,6 +275,7 @@ Flexcoin official website
   ]
 }
 </script>
+</head>
 
 <body>
   <!-- Top bar -->
@@ -687,6 +688,7 @@ Flexcoin official website
     async function initTokenomics(){
       const j = await fetchFirst(['/public/config/allocations.json','/config/allocations.json']);
 
+
       // 기본값(백업): LP54 / Presale20 / Team15 / Marketing10 / Burn1
       const t = j.tokenomics || {lp:54,presale:20,team:15,marketing:10,burn:1};
 
@@ -870,6 +872,8 @@ Flexcoin official website
     // FlexNFT Drop 전용 ABI (thirdweb Drop 스타일)
     const DROP_ABI = [
       "function claim(address receiver,uint256 quantity,address currency,uint256 pricePerToken,(bytes32[] proof,uint256 quantityLimitPerWallet,uint256 pricePerToken,address currency) allowlistProof,bytes data) payable",
+      "function getActiveClaimConditionId() view returns (uint256)",
+      "function getClaimConditionById(uint256 conditionId) view returns (uint256 startTimestamp,uint256 maxClaimableSupply,uint256 supplyClaimed,uint256 quantityLimitPerWallet,bytes32 merkleRoot,uint256 pricePerToken,address currency,string metadata)"
     ];
 
     let NFT_ADDR = {
@@ -1012,18 +1016,37 @@ Flexcoin official website
             throw new Error("NFT contract address is not configured.");
           }
 
-          const pricePerToken = ethers.parseEther(DEFAULT_PRICE_BNB);
-
           const contract = new ethers.Contract(
             target,
             DROP_ABI,
             signer
           );
 
+          // 현재 활성 ClaimCondition에서 가격/통화 읽기
+          let pricePerToken;
+          let currencyAddress = ZERO_ADDRESS;
+          try {
+            const id = await contract.getActiveClaimConditionId();
+            const cond = await contract.getClaimConditionById(id);
+            // 이름 또는 인덱스로 접근 (ethers v6 구조 대비)
+            pricePerToken =
+              cond.pricePerToken ??
+              cond[6] ??
+              ethers.parseEther(DEFAULT_PRICE_BNB);
+            currencyAddress = cond.currency ?? cond[7] ?? ZERO_ADDRESS;
+          } catch {
+            // 실패 시 기본값 사용 (네이티브 BNB)
+            pricePerToken = ethers.parseEther(DEFAULT_PRICE_BNB);
+            currencyAddress = ZERO_ADDRESS;
+          }
+
+          const quantity = 1n;
+
+          // 퍼블릭 세일: proof 비우고 나머지는 0으로 전달
           const allowlistProof = {
             proof: [],
-            quantityLimitPerWallet: 1n,
-            pricePerToken,
+            quantityLimitPerWallet: 0n,
+            pricePerToken: 0n,
             currency: ZERO_ADDRESS,
           };
 
@@ -1031,12 +1054,12 @@ Flexcoin official website
 
           const tx = await contract.claim(
             to,
-            1n,
-            ZERO_ADDRESS,
+            quantity,
+            currencyAddress,
             pricePerToken,
             allowlistProof,
             "0x",
-            { value: pricePerToken }
+            { value: pricePerToken * quantity }
           );
 
           logEl.textContent = "Minting... TX: " + tx.hash;
@@ -1072,24 +1095,24 @@ Flexcoin official website
       const overlayImg = document.getElementById("img-lightbox-img");
       if (!overlay || !overlayImg) return;
 
-      function openLightbox(src, alt) {
+      function openLightbox2(src, alt) {
         overlayImg.src = src;
         overlayImg.alt = alt || "";
         overlay.classList.add("open");
       }
 
-      function closeLightbox() {
+      function closeLightbox2() {
         overlay.classList.remove("open");
         overlayImg.src = "";
       }
 
       overlay.addEventListener("click", () => {
-        closeLightbox();
+        closeLightbox2();
       });
 
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
-          closeLightbox();
+          closeLightbox2();
         }
       });
 
@@ -1108,7 +1131,7 @@ Flexcoin official website
             const src = (el.tagName === "A" && el.href) || (img && img.src);
             if (!src) return;
             const alt = img ? img.alt : "";
-            openLightbox(src, alt);
+            openLightbox2(src, alt);
           });
         });
       });
