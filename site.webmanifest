@@ -1,1 +1,49 @@
+{
+  "name": "FlexCoin — Luxury Meme Coin on BNB Chain",
+  "short_name": "FlexCoin",
+  "description": "FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, locked liquidity and a fair DxSale presale for global crypto communities.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#050509",
+  "theme_color": "#f5c542",
 
+  "icons": [
+    {
+      "src": "/icons/flexcoin-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/flexcoin-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/flexcoin-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Open FlexCoin",
+      "short_name": "Home",
+      "description": "Open the official FlexCoin website.",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/icons/flexcoin-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+
+  "dir": "ltr",
+  "lang": "en-US"
+}
