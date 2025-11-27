@@ -1,8 +1,8 @@
 {
   "tokenomics": { "lp": 60, "presale": 24, "team": 8, "marketing": 8, "burn": 0 },
   "presale": {
-    "softcap_bnb": 30,
-    "hardcap_bnb": 100,
+    "softcap_bnb": 20,
+    "hardcap_bnb": 78.3,
     "rate_flex_per_bnb": 1600000,
     "listing_rate_flex_per_bnb": 1600000
   },
