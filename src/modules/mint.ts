@@ -1,158 +1,107 @@
 // src/modules/mint.ts
-// FlexNFT 민트 모듈 (BSC 메인넷 OpenEditionERC721 Drop)
+// FlexNFT 민트 모듈 (BSC 메인넷 OpenEditionERC721 + Drop)
 
 import { BrowserProvider, Contract, parseUnits } from "ethers";
 
-// ---- 상수 설정 ----------------------------------------------------
+// ---- 상수 ---------------------------------------------------------
 
 const BNB_MAINNET = 56;
 
-// FlexNFT 메인넷 컨트랙트 주소 (checksum 그대로 사용)
-const NFT_MAINNET = "0x834586083e355ae80B88f479178935085dD3Bf75";
+// 모두 소문자 (체크섬 이슈 방지)
+const NFT_MAINNET = "0x834586083e355ae80b88f479178935085dd3bf75";
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-// ---- 상태 변수 ----------------------------------------------------
-
-let provider: BrowserProvider | null = null;
-let signer: any = null;
-let currentAccount: string | null = null;
-let currentChainId: number | null = null;
-
-// ---- DOM 엘리먼트 -------------------------------------------------
-
-const networkSelect = document.getElementById("mint-network") as HTMLSelectElement | null;
-const btnConnect = document.getElementById("mint-connect") as HTMLButtonElement | null;
-const btnMintLegacy = document.getElementById("mint-legacy") as HTMLButtonElement | null;
-const btnMintFlex = document.getElementById("mint-flex") as HTMLButtonElement | null;
-const mintLog = document.getElementById("mint-log") as HTMLDivElement | null;
-
-function log(msg: string) {
-  if (mintLog) mintLog.textContent = msg;
-  console.log(msg);
-}
-
-// ---- ABI ----------------------------------------------------------
-// ※ 현재 FlexNFT Drop 컨트랙트는 claim(address,uint256) 형태라고 가정
+// Drop 확장의 claim 함수 최소 ABI
 const DROP_ABI = [
-  "function claim(address receiver, uint256 quantity) payable",
+  "function claim(address receiver,uint256 quantity,address currency,uint256 pricePerToken,(bytes32[] proof,uint256 quantityLimitPerWallet,uint256 pricePerToken,address currency) allowlistProof,bytes data) payable",
 ];
 
-// ---- 지갑 연결 ----------------------------------------------------
+// 한 개 가격: 0.0001 BNB
+const NFT_PRICE_BNB = "0.0001";
 
-async function connectWallet() {
-  try {
-    if (!window.ethereum) {
-      log("MetaMask가 브라우저에서 감지되지 않았습니다.");
-      return;
-    }
+// ---- 상태 ---------------------------------------------------------
 
-    provider = new BrowserProvider(window.ethereum);
-    const accounts = await provider.send("eth_requestAccounts", []);
-    currentAccount = accounts[0];
+let provider: BrowserProvider | null = null;
 
-    const net = await provider.getNetwork();
-    currentChainId = Number(net.chainId);
+// ---- 내부 유틸 ----------------------------------------------------
 
-    if (btnConnect && currentAccount) {
-      const short = `${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`;
-      btnConnect.textContent = `Connected: ${short}`;
-    }
-
-    if (networkSelect) {
-      networkSelect.value = "bnb-mainnet";
-    }
-
-    log(`Connected: ${currentAccount}`);
-  } catch (err: any) {
-    console.error(err);
-    log(`Connect error: ${err?.message ?? String(err)}`);
+async function getProvider(): Promise<BrowserProvider> {
+  if (provider) return provider;
+  if (!(window as any).ethereum) {
+    throw new Error("MetaMask(또는 Web3 지갑)를 먼저 설치해 주세요.");
   }
+  provider = new BrowserProvider((window as any).ethereum);
+  return provider;
 }
 
-// ---- 체인 체크 & 스위치 -------------------------------------------
+async function ensureBscMainnet(p: BrowserProvider) {
+  const net = await p.getNetwork();
+  if (Number(net.chainId) === BNB_MAINNET) return;
 
-async function ensureBnbMainnet() {
-  if (!provider) return;
-
-  if (currentChainId === BNB_MAINNET) return;
-
-  try {
-    await provider.send("wallet_switchEthereumChain", [
-      { chainId: "0x38" }, // 56 in hex
-    ]);
-    const net = await provider.getNetwork();
-    currentChainId = Number(net.chainId);
-    log("Switched to BNB Smart Chain mainnet.");
-  } catch (err: any) {
-    console.error(err);
-    log(`네트워크 전환 실패: ${err?.message ?? String(err)}`);
-    throw err;
-  }
+  await (window as any).ethereum.request({
+    method: "wallet_switchEthereumChain",
+    params: [{ chainId: "0x38" }], // 56
+  });
 }
 
-// ---- FlexNFT 민트 (0.0001 BNB) ------------------------------------
+// 실제 민팅 로직
+async function mint(quantity: number) {
+  const p = await getProvider();
+  await ensureBscMainnet(p);
 
-async function mintFlexNft() {
-  try {
-    if (!provider || !currentAccount) {
-      log("먼저 'Connect Wallet' 버튼으로 지갑을 연결해주세요.");
-      return;
+  const signer = await p.getSigner();
+  const account = await signer.getAddress();
+
+  const contract = new Contract(NFT_MAINNET, DROP_ABI, signer);
+
+  const pricePerToken = parseUnits(NFT_PRICE_BNB, 18);
+  const totalValue = pricePerToken * BigInt(quantity);
+
+  // allowlistProof 비우더라도 구조체는 꼭 채워야 함
+  const allowlistProof = {
+    proof: [] as string[],
+    quantityLimitPerWallet: 0,
+    pricePerToken: 0,
+    currency: ZERO_ADDRESS,
+  };
+
+  const tx = await contract.claim(
+    account,
+    quantity,
+    ZERO_ADDRESS,
+    pricePerToken,
+    allowlistProof,
+    "0x",
+    {
+      value: totalValue,
     }
+  );
 
-    await ensureBnbMainnet();
-
-    signer = await provider.getSigner();
-    const contract = new Contract(NFT_MAINNET, DROP_ABI, signer);
-
-    // 1개 민트
-    const quantity = 1n;
-
-    // thirdweb claim 조건에 설정한 가격: 0.0001 BNB
-    const pricePerToken = parseUnits("0.0001", 18);
-
-    // 컨트랙트는 claim(receiver, quantity)만 받고,
-    // 가격은 claim 조건에서 읽어가므로 msg.value만 맞춰서 보냄
-    const tx = await contract.claim(currentAccount, quantity, {
-      value: pricePerToken,
-    });
-
-    log("트랜잭션 전송됨. MetaMask에서 승인 후 잠시 기다려주세요...");
-    const receipt = await tx.wait();
-    log(`✅ FlexNFT Mint Success! Tx: ${receipt.hash}`);
-  } catch (err: any) {
-    console.error(err);
-    const message = err?.reason || err?.shortMessage || err?.message || String(err);
-    log(`Mint error: ${message}`);
-  }
+  await tx.wait();
 }
 
-// ---- Legacy 버튼은 비활성화(혼동 방지) -----------------------------
+// ---- UI 바인딩 ----------------------------------------------------
 
-function disableLegacy() {
-  if (btnMintLegacy) {
-    btnMintLegacy.onclick = () => {
-      log("Legacy mint는 더 이상 사용하지 않습니다. 오른쪽 'Mint FlexNFT (0.0001 BNB)' 버튼을 사용해주세요.");
-    };
-  }
-}
-
-// ---- 이벤트 바인딩 -------------------------------------------------
-
-function init() {
-  if (btnConnect) {
-    btnConnect.addEventListener("click", () => {
-      void connectWallet();
+export default function setupMintUI() {
+  // 예: 민팅 버튼 하나 (#btn-nft-mint)만 사용하는 경우
+  const oneBtn = document.getElementById("btn-nft-mint");
+  if (oneBtn) {
+    oneBtn.addEventListener("click", async () => {
+      try {
+        oneBtn.setAttribute("disabled", "true");
+        oneBtn.textContent = "Minting...";
+        await mint(1);
+        alert("NFT 민팅 성공!");
+      } catch (err: any) {
+        console.error(err);
+        alert("NFT 민팅 실패: " + (err?.message || String(err)));
+      } finally {
+        oneBtn.removeAttribute("disabled");
+        oneBtn.textContent = "Mint 1 FLEX NFT";
+      }
     });
   }
 
-  if (btnMintFlex) {
-    btnMintFlex.addEventListener("click", () => {
-      void mintFlexNft();
-    });
-  }
-
-  disableLegacy();
-  log("FLEX NFT MINT 모듈 로드 완료.");
+  // 만약 3개 / 5개 버튼 등이 따로 있으면
+  // 여기서 비슷한 방식으로 btn-mint-3, btn-mint-5에 mint(3), mint(5) 붙이면 됨.
 }
-
-// Vite 번들에서 실행되도록
-init();
