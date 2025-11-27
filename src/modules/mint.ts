@@ -1,5 +1,5 @@
-// src/mint.ts
-// FlexNFT 민트 모듈 (BSC 메인넷 OpenEditionERC721 + Drop)
+// src/modules/mint.ts
+// FlexNFT 민트 모듈 (BSC 메인넷 OpenEditionERC721 Drop)
 
 import { BrowserProvider, Contract, parseUnits } from "ethers";
 
@@ -7,20 +7,8 @@ import { BrowserProvider, Contract, parseUnits } from "ethers";
 
 const BNB_MAINNET = 56;
 
-// thirdweb에서 네이티브 토큰(BNB)을 표시할 때 사용하는 주소
-const NATIVE_TOKEN = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" as const;
-
-// FlexNFT 컨트랙트 (BSC 메인넷)
-// ※ 체크섬 주소 사용
+// FlexNFT 메인넷 컨트랙트 주소 (checksum 그대로 사용)
 const NFT_MAINNET = "0x834586083e355ae80B88f479178935085dD3Bf75";
-
-// 일반 0주소 (필요 시 사용)
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-
-// Drop 확장의 claim 함수 ABI (필요한 것만 최소로)
-const DROP_ABI = [
-  "function claim(address receiver,uint256 quantity,address currency,uint256 pricePerToken,(bytes32[] proof,uint256 quantityLimitPerWallet,uint256 pricePerToken,address currency) allowlistProof,bytes data) payable",
-];
 
 // ---- 상태 변수 ----------------------------------------------------
 
@@ -41,6 +29,12 @@ function log(msg: string) {
   if (mintLog) mintLog.textContent = msg;
   console.log(msg);
 }
+
+// ---- ABI ----------------------------------------------------------
+// ※ 현재 FlexNFT Drop 컨트랙트는 claim(address,uint256) 형태라고 가정
+const DROP_ABI = [
+  "function claim(address receiver, uint256 quantity) payable",
+];
 
 // ---- 지갑 연결 ----------------------------------------------------
 
@@ -63,7 +57,6 @@ async function connectWallet() {
       btnConnect.textContent = `Connected: ${short}`;
     }
 
-    // 네트워크 셀렉트가 있다면 BNB Mainnet으로 고정
     if (networkSelect) {
       networkSelect.value = "bnb-mainnet";
     }
@@ -101,7 +94,7 @@ async function ensureBnbMainnet() {
 async function mintFlexNft() {
   try {
     if (!provider || !currentAccount) {
-      log("먼저 'Connect' 버튼으로 지갑을 연결해주세요.");
+      log("먼저 'Connect Wallet' 버튼으로 지갑을 연결해주세요.");
       return;
     }
 
@@ -113,33 +106,14 @@ async function mintFlexNft() {
     // 1개 민트
     const quantity = 1n;
 
-    // thirdweb 대시보드에서 설정한 0.0001 BNB
-    const pricePerToken = parseUnits("0.0001", 18); // 0.0001 BNB
+    // thirdweb claim 조건에 설정한 가격: 0.0001 BNB
+    const pricePerToken = parseUnits("0.0001", 18);
 
-    // 퍼블릭 세일용 AllowlistProof
-    // - proof: 빈 배열 (화이트리스트 없음)
-    // - quantityLimitPerWallet: 이번에 민트 가능한 수량(여기서는 1)
-    // - pricePerToken / currency: 실제 클레임 조건과 동일하게 맞춤
-    const allowlistProof = {
-      proof: [] as string[],
-      quantityLimitPerWallet: quantity,
-      pricePerToken,
-      currency: NATIVE_TOKEN,
-    };
-
-    // claim(receiver, quantity, currency, pricePerToken, allowlistProof, data)
-    const tx = await contract.claim(
-      currentAccount,
-      quantity,
-      NATIVE_TOKEN,     // 네이티브 토큰(BNB)
-      pricePerToken,
-      allowlistProof,
-      "0x",
-      {
-        // 실제로 0.0001 BNB 지불
-        value: pricePerToken,
-      },
-    );
+    // 컨트랙트는 claim(receiver, quantity)만 받고,
+    // 가격은 claim 조건에서 읽어가므로 msg.value만 맞춰서 보냄
+    const tx = await contract.claim(currentAccount, quantity, {
+      value: pricePerToken,
+    });
 
     log("트랜잭션 전송됨. MetaMask에서 승인 후 잠시 기다려주세요...");
     const receipt = await tx.wait();
