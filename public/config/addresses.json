@@ -5,11 +5,11 @@
     "explorer": "https://bscscan.com/address/"
   },
   "token": "0xBa29562241F0489504C493c47aCBA16d7a98998f",
-  "team_lock": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
-  "marketing": "0xF3A2159474dCE4eF86F6eE56cE1b55C602C467e",
-  "presale": "0x66F4cEb1C3dEb2084cdc02Aa3c318CF680E0A672",
-  "user": "0xCDcA475e1C6D89A14158fB8D05fA8275Bf5A06Ea",
+  "team_lock": "0x8865331fD7AA6e63fC1C01882f0E7484bC58bB30",
+  "marketing": "0xF3A2159474dCE4F86Fe65eC1B55C6024C67e",
+  "presale": "0x66F4cED1Cb31ED2084dc02A3a31C8F68002A672",
+  "user": "0xCDcA475e1C6D89a14158fB8D05fA8275BF5A06eA",
 
-  "nft_mainnet": "0x834586083e355ae80b88f479178935085dd3bf75",
-  "nft_testnet": "0x8ce19090faf32b48adb78db0d029aa3ccd0cc0b"
+  "nft_mainnet": "0x834586083e355ae80B88f479178935085dD3Bf75",
+  "nft_testnet": "0x8ce10909faf32a84bad78bd80209aa3cc0d8c0b"
 }
