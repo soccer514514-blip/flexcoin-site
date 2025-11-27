@@ -8,7 +8,7 @@ import { BrowserProvider, Contract, parseUnits } from "ethers";
 const BNB_MAINNET = 56;
 
 // 모두 소문자로 작성해서 체크섬 오류 방지
-const NFT_MAINNET = "0x8345868083e355ae80d88f479178935085dd3bf75";
+const NFT_MAINNET = "0x834586083e355ae80B88f479178935085dD3Bf75";
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 // Drop 확장의 claim 함수 ABI (필요한 것만 최소로)
