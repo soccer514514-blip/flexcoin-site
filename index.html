@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>$FLEX is your life — Flexcoin</title>
   <link rel="manifest" href="/site.webmanifest">
-<link rel="apple-touch-icon" href="/icons/flexcoin-192.png">
-<meta name="theme-color" content="#f5c542">
+  <link rel="apple-touch-icon" href="/icons/flexcoin-192.png">
+  <meta name="theme-color" content="#f5c542">
 
   <meta name="msvalidate.01" content="F392338F667D8A882F047C0953403BC5" />
   <meta name="description" content="FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, locked liquidity and a fair DexSale presale for global crypto communities in the US, Turkey, Vietnam and the Philippines.">
@@ -111,28 +111,28 @@ Flexcoin official website
     .lang button.active{background:var(--gold);color:#000;font-weight:800}
     .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9; white-space:nowrap}
     .nav a:hover{opacity:1}
-/* -------- 이미지 라이트박스 -------- */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.85);
-  z-index: 9999;
-}
+    /* -------- 이미지 라이트박스 -------- */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+    }
 
-.lightbox.open {
-  display: flex;
-}
+    .lightbox.open {
+      display: flex;
+    }
 
-.lightbox img {
-  max-width: 90vw;
-  max-height: 90vh;
-  border-radius: 16px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.8);
-  cursor: zoom-out;
-}
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+      cursor: zoom-out;
+    }
 
     @media(max-width:680px){
       .topbar{flex-wrap:wrap;gap:.4rem}
@@ -385,16 +385,16 @@ Flexcoin official website
       <div class="grid" id="action-grid"></div>
     </section>
 
-   <!-- NFT Preview -->
-<section class="card">
-  <div class="section-title" data-i18n="nft.title">NFT Preview</div>
-  <div class="grid" id="nft-grid"></div>
-</section>
+    <!-- NFT Preview -->
+    <section class="card">
+      <div class="section-title" data-i18n="nft.title">NFT Preview</div>
+      <div class="grid" id="nft-grid"></div>
+    </section>
 
-<!-- 이미지 라이트박스 (액션 + NFT 공용) -->
-<div id="img-lightbox" class="lightbox">
-  <img id="img-lightbox-img" src="" alt="">
-</div>
+    <!-- 이미지 라이트박스 (액션 + NFT 공용) -->
+    <div id="img-lightbox" class="lightbox">
+      <img id="img-lightbox-img" src="" alt="">
+    </div>
 
     <!-- Whitepaper -->
     <section id="whitepaper" class="card">
@@ -459,11 +459,11 @@ Flexcoin official website
           <option value="bscTestnet">BNB Testnet</option>
         </select>
         <div class="btn-row">
-  <button id="connect" class="btn-gold" data-i18n="connect">Connect Wallet</button>
-  <button id="mint" class="btn-gold" disabled>Mint NFT (Legacy)</button>
-  <!-- 실제로 동작하는 새 민트 버튼 -->
-  <button id="btn-nft-mint" class="btn-gold">Mint FlexNFT (0.0001 BNB)</button>
-</div>
+          <button id="connect" class="btn-gold" data-i18n="connect">Connect Wallet</button>
+          <button id="mint" class="btn-gold" disabled>Mint NFT (Legacy)</button>
+          <!-- 실제로 동작하는 새 민트 버튼 -->
+          <button id="btn-nft-mint" class="btn-gold">Mint FlexNFT (0.0001 BNB)</button>
+        </div>
 
         <pre id="mint-log" class="mint-log">[ Waiting for connection... ]</pre>
       </div>
@@ -513,18 +513,18 @@ Flexcoin official website
 
     /* ---------------- Whitepaper Direct Router ---------------- */
     (function directWhitepaperRouter(){
-  const langCodes = ['en','ko','ja','zh','es','de','pt','it'];
-  const lower = (s)=> (s || '').toLowerCase();
-  function findBestPdf(code){
-    const tryList = [`/public/whitepaper/${code}.pdf`];
-    return Promise.all(
-      tryList.map(p =>
-        fetch(p, { method: 'HEAD', cache: 'no-cache' })
-          .then(r => r.ok ? p : null)
-          .catch(() => null)
-      )
-    ).then(arr => arr.find(Boolean));
-  }
+      const langCodes = ['en','ko','ja','zh','es','de','pt','it'];
+      const lower = (s)=> (s || '').toLowerCase();
+      function findBestPdf(code){
+        const tryList = [`/public/whitepaper/${code}.pdf`];
+        return Promise.all(
+          tryList.map(p =>
+            fetch(p, { method: 'HEAD', cache: 'no-cache' })
+              .then(r => r.ok ? p : null)
+              .catch(() => null)
+          )
+        ).then(arr => arr.find(Boolean));
+      }
 
       async function handlePath(){
         const p = lower(location.pathname);
@@ -537,33 +537,31 @@ Flexcoin official website
           document.body.appendChild(a); a.click(); a.remove();
           window.open(url,'_blank','noopener'); return true;
         }
-      async function handleHash(){
-    // 해시값이 없으면 바로 종료
-    const h = lower(location.hash || '');
-
-    // 이제는 #whitepaper-ko, #whitepaper-en 처럼 언어 코드가 있을 때만 동작
-    const m = h.match(/^#whitepaper[-_/]([a-z]{2})$/);
-    if (!m) return false;
-
-    const code = m[1]; // ko, en, ja, zh, es, de, pt, it 중 하나
-    const url = await findBestPdf(code);
-    if (!url) return false;
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `flexcoin_whitepaper_${code}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-    window.open(url, '_blank', 'noopener');
-    return true;
-  }
-
         return false;
       }
-      handlePath();
 
+      async function handleHash(){
+        const h = lower(location.hash || '');
+        const m = h.match(/^#whitepaper[-_/]([a-z]{2})$/);
+        if (!m) return false;
+
+        const code = m[1];
+        const url = await findBestPdf(code);
+        if (!url) return false;
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `flexcoin_whitepaper_${code}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        window.open(url, '_blank', 'noopener');
+        return true;
+      }
+
+      handlePath();
+      handleHash();
     })();
 
     /* --------- 유틸 --------- */
@@ -866,7 +864,7 @@ Flexcoin official website
     let signer = null;
 
     function setMintButtons(enabled){
-      const b1=$('#mint'), b2=$('#mint-flex');
+      const b1=$('#mint'), b2=$('#btn-nft-mint');
       [b1,b2].forEach(b=>{ if(!b) return; if(enabled){ b.removeAttribute('disabled'); } else { b.setAttribute('disabled',''); } });
     }
 
@@ -963,7 +961,7 @@ Flexcoin official website
       }
 
       $('#mint').onclick = ()=>runMint(false);
-      $('#mint-flex').onclick = ()=>runMint(true);
+      $('#btn-nft-mint').onclick = ()=>runMint(true);
     }
 
     /* --------- Boot --------- */
@@ -977,51 +975,51 @@ Flexcoin official website
       await loadGrid('/nft-preview', '#nft-grid');
       await setupMintUI();
     })();
+
     // -------- 액션 / NFT 이미지 라이트박스 --------
-  function initImageLightbox() {
-    const overlay = document.getElementById('img-lightbox');
-    const overlayImg = document.getElementById('img-lightbox-img');
-    if (!overlay || !overlayImg) return;
+    function initImageLightbox() {
+      const overlay = document.getElementById('img-lightbox');
+      const overlayImg = document.getElementById('img-lightbox-img');
+      if (!overlay || !overlayImg) return;
 
-    function openLightbox(src, alt) {
-      overlayImg.src = src;
-      overlayImg.alt = alt || '';
-      overlay.classList.add('open');
-    }
-
-    function closeLightbox() {
-      overlay.classList.remove('open');
-      overlayImg.src = '';
-    }
-
-    overlay.addEventListener('click', () => {
-      closeLightbox();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeLightbox();
+      function openLightbox2(src, alt) {
+        overlayImg.src = src;
+        overlayImg.alt = alt || '';
+        overlay.classList.add('open');
       }
-    });
 
-    const selectors = ['#action-grid a', '#action-grid img', '#nft-grid a', '#nft-grid img'];
-    selectors.forEach((sel) => {
-      document.querySelectorAll(sel).forEach((el) => {
-        el.style.cursor = 'zoom-in';
-        el.addEventListener('click', (e) => {
-          e.preventDefault();
-          const img = el.tagName === 'IMG' ? el : el.querySelector('img');
-          const src = (el.tagName === 'A' && el.href) || (img && img.src);
-          if (!src) return;
-          const alt = img ? img.alt : '';
-          openLightbox(src, alt);
+      function closeLightbox2() {
+        overlay.classList.remove('open');
+        overlayImg.src = '';
+      }
+
+      overlay.addEventListener('click', () => {
+        closeLightbox2();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeLightbox2();
+        }
+      });
+
+      const selectors = ['#action-grid a', '#action-grid img', '#nft-grid a', '#nft-grid img'];
+      selectors.forEach((sel) => {
+        document.querySelectorAll(sel).forEach((el) => {
+          el.style.cursor = 'zoom-in';
+          el.addEventListener('click', (e) => {
+            e.preventDefault();
+            const img = el.tagName === 'IMG' ? el : el.querySelector('img');
+            const src = (el.tagName === 'A' && el.href) || (img && img.src);
+            if (!src) return;
+            const alt = img ? img.alt : '';
+            openLightbox2(src, alt);
+          });
         });
       });
-    });
-  }
+    }
 
-  window.addEventListener('load', initImageLightbox);
+    window.addEventListener('load', initImageLightbox);
   </script>
 </body>
 </html>
-
