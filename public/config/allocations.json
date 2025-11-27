@@ -3,7 +3,7 @@
   "presale": {
     "softcap_bnb": 20,
     "hardcap_bnb": 78.3,
-    "rate_flex_per_bnb": 1600000,
+    "rate_flex_per_bnb": 2000000,
     "listing_rate_flex_per_bnb": 1600000
   },
   "ui": { "hide_team": false },
