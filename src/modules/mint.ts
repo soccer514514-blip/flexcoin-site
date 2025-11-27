@@ -7,8 +7,14 @@ import { BrowserProvider, Contract, parseUnits } from "ethers";
 
 const BNB_MAINNET = 56;
 
-// 모두 소문자로 작성해서 체크섬 오류 방지
+// thirdweb에서 네이티브 토큰(BNB)을 표시할 때 사용하는 주소
+const NATIVE_TOKEN = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" as const;
+
+// FlexNFT 컨트랙트 (BSC 메인넷)
+// ※ 체크섬 주소 사용
 const NFT_MAINNET = "0x834586083e355ae80B88f479178935085dD3Bf75";
+
+// 일반 0주소 (필요 시 사용)
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 // Drop 확장의 claim 함수 ABI (필요한 것만 최소로)
@@ -110,24 +116,28 @@ async function mintFlexNft() {
     // thirdweb 대시보드에서 설정한 0.0001 BNB
     const pricePerToken = parseUnits("0.0001", 18); // 0.0001 BNB
 
-    // 퍼블릭 세일(화이트리스트 없음)이므로 AllowlistProof 비우기
+    // 퍼블릭 세일용 AllowlistProof
+    // - proof: 빈 배열 (화이트리스트 없음)
+    // - quantityLimitPerWallet: 이번에 민트 가능한 수량(여기서는 1)
+    // - pricePerToken / currency: 실제 클레임 조건과 동일하게 맞춤
     const allowlistProof = {
       proof: [] as string[],
-      quantityLimitPerWallet: 0n,
-      pricePerToken: 0n,
-      currency: ZERO_ADDRESS,
+      quantityLimitPerWallet: quantity,
+      pricePerToken,
+      currency: NATIVE_TOKEN,
     };
 
     // claim(receiver, quantity, currency, pricePerToken, allowlistProof, data)
     const tx = await contract.claim(
       currentAccount,
       quantity,
-      ZERO_ADDRESS,      // native token (BNB)
+      NATIVE_TOKEN,     // 네이티브 토큰(BNB)
       pricePerToken,
       allowlistProof,
       "0x",
       {
-        value: pricePerToken, // 실제로 0.0001 BNB 지불
+        // 실제로 0.0001 BNB 지불
+        value: pricePerToken,
       },
     );
 
@@ -136,7 +146,6 @@ async function mintFlexNft() {
     log(`✅ FlexNFT Mint Success! Tx: ${receipt.hash}`);
   } catch (err: any) {
     console.error(err);
-    // 긴 에러메시지는 잘리는 경우가 있어서 앞부분만
     const message = err?.reason || err?.shortMessage || err?.message || String(err);
     log(`Mint error: ${message}`);
   }
