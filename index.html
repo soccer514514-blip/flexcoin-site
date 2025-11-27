@@ -459,10 +459,12 @@ Flexcoin official website
           <option value="bscTestnet">BNB Testnet</option>
         </select>
         <div class="btn-row">
-          <button id="connect" class="btn-gold" data-i18n="connect">Connect Wallet</button>
-          <button id="mint" class="btn-gold" disabled>Mint NFT (Legacy)</button>
-          <button id="mint-flex" class="btn-gold" disabled>Mint FlexNFT (0.0001 BNB)</button>
-        </div>
+  <button id="connect" class="btn-gold" data-i18n="connect">Connect Wallet</button>
+  <button id="mint" class="btn-gold" disabled>Mint NFT (Legacy)</button>
+  <!-- 실제로 동작하는 새 민트 버튼 -->
+  <button id="btn-nft-mint" class="btn-gold">Mint FlexNFT (0.0001 BNB)</button>
+</div>
+
         <pre id="mint-log" class="mint-log">[ Waiting for connection... ]</pre>
       </div>
 
