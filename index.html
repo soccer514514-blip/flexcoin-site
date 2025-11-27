@@ -850,176 +850,272 @@ Flexcoin official website
       document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
     }
 
-    /* --------- NFT Mint + 메타마스크 연결 --------- */
-    const CHAINS={ bscTestnet:{chainId:'0x61',name:'BSC Testnet',rpc:'https://data-seed-prebsc-1-s3.binance.org:8545'},
-                   bscMainnet:{chainId:'0x38',name:'BSC',rpc:'https://bsc-dataseed.binance.org'} };
-    const DEFAULT_PRICE_BNB = (window.NFT_PRICE_BNB || '0.0001');
-    const ABI_VARIANTS = [
-      ["function claim(address receiver, uint256 quantity) payable","function price() view returns (uint256)"],
-      ["function claim(uint256 quantity) payable","function price() view returns (uint256)"],
-      ["function mint(uint256 quantity) payable","function price() view returns (uint256)"]
+     /* --------- NFT Mint + 메타마스크 연결 --------- */
+    const CHAINS = {
+      bscTestnet: {
+        chainId: "0x61",
+        name: "BSC Testnet",
+        rpc: "https://data-seed-prebsc-1-s3.binance.org:8545",
+      },
+      bscMainnet: {
+        chainId: "0x38",
+        name: "BSC",
+        rpc: "https://bsc-dataseed.binance.org",
+      },
+    };
+
+    const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+    const DEFAULT_PRICE_BNB = window.NFT_PRICE_BNB || "0.0001";
+
+    // FlexNFT Drop 전용 ABI (thirdweb Drop 스타일)
+    const DROP_ABI = [
+      "function claim(address receiver,uint256 quantity,address currency,uint256 pricePerToken,(bytes32[] proof,uint256 quantityLimitPerWallet,uint256 pricePerToken,address currency) allowlistProof,bytes data) payable",
     ];
-    let NFT_ADDR={ bscMainnet:'0xYourMainnetNFTAddress', bscTestnet:'0xYourTestnetNFTAddress' };
+
+    let NFT_ADDR = {
+      bscMainnet: "0xYourMainnetNFTAddress",
+      bscTestnet: "0xYourTestnetNFTAddress",
+    };
 
     let signer = null;
 
-    function setMintButtons(enabled){
-      const b1=$('#mint'), b2=$('#btn-nft-mint');
-      [b1,b2].forEach(b=>{ if(!b) return; if(enabled){ b.removeAttribute('disabled'); } else { b.setAttribute('disabled',''); } });
+    function setMintButtons(enabled) {
+      const legacy = document.querySelector("#mint");
+      const flex = document.querySelector("#btn-nft-mint");
+      [legacy, flex].forEach((b) => {
+        if (!b) return;
+        if (enabled) {
+          b.removeAttribute("disabled");
+        } else {
+          b.setAttribute("disabled", "");
+        }
+      });
     }
 
-    function short(a){ return a ? (a.slice(0,6)+'…'+a.slice(-4)) : ''; }
+    function short(addr) {
+      return addr ? addr.slice(0, 6) + "…" + addr.slice(-4) : "";
+    }
 
-    async function ensureChain(chainKey){
+    async function ensureChain(chainKey) {
       const { ethereum } = window;
-      if(!ethereum) throw new Error('MetaMask not installed.');
-      const target=CHAINS[chainKey];
-      try{
-        await ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:target.chainId}]});
-      }catch(e){
-        if(e && e.code===4902){
-          await ethereum.request({method:'wallet_addEthereumChain',
-            params:[{chainId:target.chainId,chainName:target.name,rpcUrls:[target.rpc],nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18}}]});
-        }else{ throw e; }
+      if (!ethereum) throw new Error("MetaMask not installed.");
+      const target = CHAINS[chainKey];
+      try {
+        await ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: target.chainId }],
+        });
+      } catch (e) {
+        if (e && e.code === 4902) {
+          await ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: target.chainId,
+                chainName: target.name,
+                rpcUrls: [target.rpc],
+                nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+              },
+            ],
+          });
+        } else {
+          throw e;
+        }
       }
     }
 
-    async function connectWallet(){
-      const netSel = $('#net').value;
+    async function connectWallet() {
+      const netSel = document.querySelector("#net").value;
       await ensureChain(netSel);
-      const provider=new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.BrowserProvider(window.ethereum);
       signer = await provider.getSigner();
       const addr = await signer.getAddress();
-      $('#connect').textContent = 'Connected: '+short(addr);
-      $('#mint-log').textContent = 'Connected: '+addr;
+      document.querySelector("#connect").textContent =
+        "Connected: " + short(addr);
+      document.querySelector("#mint-log").textContent =
+        "Connected: " + addr;
       setMintButtons(true);
       return signer;
     }
 
-    function bindWalletEvents(){
-      if(!window.ethereum) return;
-      window.ethereum.on('accountsChanged', async (accs)=>{
-        if(!accs || accs.length===0){ $('#connect').textContent='Connect Wallet'; setMintButtons(false); $('#mint-log').textContent='[ Waiting for connection... ]'; signer=null; return; }
-        const addr = accs[0]; $('#connect').textContent='Connected: '+short(addr); $('#mint-log').textContent='Account: '+addr;
+    function bindWalletEvents() {
+      if (!window.ethereum) return;
+
+      window.ethereum.on("accountsChanged", async (accs) => {
+        if (!accs || accs.length === 0) {
+          document.querySelector("#connect").textContent = "Connect Wallet";
+          setMintButtons(false);
+          document.querySelector("#mint-log").textContent =
+            "[ Waiting for connection... ]";
+          signer = null;
+          return;
+        }
+        const addr = accs[0];
+        document.querySelector("#connect").textContent =
+          "Connected: " + short(addr);
+        document.querySelector("#mint-log").textContent =
+          "Account: " + addr;
       });
-      window.ethereum.on('chainChanged', async (_hex)=>{
-        const v = _hex==='0x38'?'bscMainnet':(_hex==='0x61'?'bscTestnet':null);
-        if(v){ $('#net').value = v; }
-        if(signer){ try{ await connectWallet(); }catch(_){ } }
+
+      window.ethereum.on("chainChanged", async (hex) => {
+        const v =
+          hex === "0x38" ? "bscMainnet" : hex === "0x61" ? "bscTestnet" : null;
+        if (v) {
+          document.querySelector("#net").value = v;
+        }
       });
-      window.ethereum.on('disconnect', ()=>{
-        $('#connect').textContent='Connect Wallet'; setMintButtons(false); $('#mint-log').textContent='[ Waiting for connection... ]'; signer=null;
+
+      window.ethereum.on("disconnect", () => {
+        document.querySelector("#connect").textContent = "Connect Wallet";
+        setMintButtons(false);
+        document.querySelector("#mint-log").textContent =
+          "[ Waiting for connection... ]";
+        signer = null;
       });
     }
 
-    async function setupMintUI(){
-      const addr=await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
-      if(addr.nft_mainnet) NFT_ADDR.bscMainnet=addr.nft_mainnet;
-      if(addr.nft_testnet) NFT_ADDR.bscTestnet=addr.nft_testnet;
+    async function setupMintUI() {
+      // addresses.json 에서 NFT 주소 가져오기
+      const addr = await fetchFirst([
+        "/public/config/addresses.json",
+        "/config/addresses.json",
+      ]);
+      if (addr.nft_mainnet) NFT_ADDR.bscMainnet = addr.nft_mainnet;
+      if (addr.nft_testnet) NFT_ADDR.bscTestnet = addr.nft_testnet;
 
       setMintButtons(false);
       bindWalletEvents();
 
-      $('#connect').onclick = async()=>{
-        try{ await connectWallet(); }
-        catch(e){ $('#mint-log').textContent = 'Connect error: ' + (e.message||e); }
+      const btnConnect = document.querySelector("#connect");
+      const btnLegacy = document.querySelector("#mint");
+      const btnFlex = document.querySelector("#btn-nft-mint");
+      const logEl = document.querySelector("#mint-log");
+
+      btnConnect.onclick = async () => {
+        try {
+          await connectWallet();
+        } catch (e) {
+          logEl.textContent =
+            "Connect error: " + (e && e.message ? e.message : String(e));
+        }
       };
 
-      async function runMint(payFixed){
-        try{
-          if(!signer) await connectWallet();
-          const chainKey=$('#net').value;
+      async function runMint() {
+        try {
+          if (!signer) await connectWallet();
+
+          const chainKey = document.querySelector("#net").value;
           const to = await signer.getAddress();
-          const target=NFT_ADDR[chainKey]; if(!target || target.length<20) throw new Error('NFT contract address is not configured.');
+          const target = NFT_ADDR[chainKey];
 
-          let last;
-          for(const abi of ABI_VARIANTS){
-            try{
-              const c=new ethers.Contract(target, abi, signer);
-              let value;
-              if(payFixed){ value=ethers.parseEther(DEFAULT_PRICE_BNB); }
-              else { try{ value=await c.price(); }catch{ value=ethers.parseEther(DEFAULT_PRICE_BNB); } }
-
-              let tx;
-              if(c.claim){
-                try{ tx=await c.claim(to,1,{value,type:0}); }
-                catch{ tx=await c.claim(1,{value}); }
-              }else if(c.mint){
-                tx=await c.mint(1,{value,type:0});
-              }else{ throw new Error('Unsupported mint method'); }
-
-              $('#mint-log').textContent = 'Minting... TX: ' + tx.hash;
-              await tx.wait();
-              $('#mint-log').textContent = '✅ Minted!';
-              return;
-            }catch(e){ last=e; }
+          if (!target || target.length < 20) {
+            throw new Error("NFT contract address is not configured.");
           }
-          throw last || new Error('Mint failed');
-        }catch(e){
-          $('#mint-log').textContent = 'Mint error: ' + ((e&&e.message)||String(e));
+
+          const pricePerToken = ethers.parseEther(DEFAULT_PRICE_BNB);
+
+          const contract = new ethers.Contract(
+            target,
+            DROP_ABI,
+            signer
+          );
+
+          const allowlistProof = {
+            proof: [],
+            quantityLimitPerWallet: 1n,
+            pricePerToken,
+            currency: ZERO_ADDRESS,
+          };
+
+          logEl.textContent = "Minting... please confirm in MetaMask.";
+
+          const tx = await contract.claim(
+            to,
+            1n,
+            ZERO_ADDRESS,
+            pricePerToken,
+            allowlistProof,
+            "0x",
+            { value: pricePerToken }
+          );
+
+          logEl.textContent = "Minting... TX: " + tx.hash;
+          await tx.wait();
+          logEl.textContent = "✅ Minted successfully!";
+        } catch (e) {
+          const msg =
+            (e && e.message) || (e && e.reason) || String(e);
+          logEl.textContent = "Mint error: " + msg;
         }
       }
 
-      $('#mint').onclick = ()=>runMint(false);
-      $('#btn-nft-mint').onclick = ()=>runMint(true);
+      // 두 버튼 모두 같은 민트 로직 사용 (하나는 레거시 이름일 뿐)
+      btnLegacy.onclick = runMint;
+      btnFlex.onclick = runMint;
     }
 
     /* --------- Boot --------- */
-    (async()=>{
+    (async () => {
       bindLang();
       await initLinks();
       await initHero();
       await initTokenomics();
       await initCountdown();
-      await loadGrid('/action', '#action-grid');
-      await loadGrid('/nft-preview', '#nft-grid');
+      await loadGrid("/action", "#action-grid");
+      await loadGrid("/nft-preview", "#nft-grid");
       await setupMintUI();
     })();
 
     // -------- 액션 / NFT 이미지 라이트박스 --------
     function initImageLightbox() {
-      const overlay = document.getElementById('img-lightbox');
-      const overlayImg = document.getElementById('img-lightbox-img');
+      const overlay = document.getElementById("img-lightbox");
+      const overlayImg = document.getElementById("img-lightbox-img");
       if (!overlay || !overlayImg) return;
 
-      function openLightbox2(src, alt) {
+      function openLightbox(src, alt) {
         overlayImg.src = src;
-        overlayImg.alt = alt || '';
-        overlay.classList.add('open');
+        overlayImg.alt = alt || "";
+        overlay.classList.add("open");
       }
 
-      function closeLightbox2() {
-        overlay.classList.remove('open');
-        overlayImg.src = '';
+      function closeLightbox() {
+        overlay.classList.remove("open");
+        overlayImg.src = "";
       }
 
-      overlay.addEventListener('click', () => {
-        closeLightbox2();
+      overlay.addEventListener("click", () => {
+        closeLightbox();
       });
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          closeLightbox2();
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeLightbox();
         }
       });
 
-      const selectors = ['#action-grid a', '#action-grid img', '#nft-grid a', '#nft-grid img'];
+      const selectors = [
+        "#action-grid a",
+        "#action-grid img",
+        "#nft-grid a",
+        "#nft-grid img",
+      ];
       selectors.forEach((sel) => {
         document.querySelectorAll(sel).forEach((el) => {
-          el.style.cursor = 'zoom-in';
-          el.addEventListener('click', (e) => {
+          el.style.cursor = "zoom-in";
+          el.addEventListener("click", (e) => {
             e.preventDefault();
-            const img = el.tagName === 'IMG' ? el : el.querySelector('img');
-            const src = (el.tagName === 'A' && el.href) || (img && img.src);
+            const img = el.tagName === "IMG" ? el : el.querySelector("img");
+            const src = (el.tagName === "A" && el.href) || (img && img.src);
             if (!src) return;
-            const alt = img ? img.alt : '';
-            openLightbox2(src, alt);
+            const alt = img ? img.alt : "";
+            openLightbox(src, alt);
           });
         });
       });
     }
 
-    window.addEventListener('load', initImageLightbox);
+    window.addEventListener("load", initImageLightbox);
+
   </script>
 </body>
 </html>
