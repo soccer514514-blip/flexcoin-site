@@ -866,16 +866,19 @@ Flexcoin official website
       },
     };
 
-    const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
     const DEFAULT_PRICE_BNB = window.NFT_PRICE_BNB || "0.0001";
 
-    // FlexNFT Drop 전용 ABI (thirdweb Drop 스타일)
+    // thirdweb Drop 컨트랙트에서 "네이티브 토큰(BNB)"을 의미하는 특수 주소
+    // (대시보드 코드 스니펫에서도 이 값을 사용함)
+    const NATIVE_TOKEN =
+      "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+
+    // FlexNFT Drop 전용 ABI (claim 함수만 최소 구성이면 됨)
     const DROP_ABI = [
       "function claim(address receiver,uint256 quantity,address currency,uint256 pricePerToken,(bytes32[] proof,uint256 quantityLimitPerWallet,uint256 pricePerToken,address currency) allowlistProof,bytes data) payable",
-      "function getActiveClaimConditionId() view returns (uint256)",
-      "function getClaimConditionById(uint256 conditionId) view returns (uint256 startTimestamp,uint256 maxClaimableSupply,uint256 supplyClaimed,uint256 quantityLimitPerWallet,bytes32 merkleRoot,uint256 pricePerToken,address currency,string metadata)"
     ];
 
+    // 네트워크별 NFT 컨트랙트 주소 (addresses.json에서 덮어씀)
     let NFT_ADDR = {
       bscMainnet: "0xYourMainnetNFTAddress",
       bscTestnet: "0xYourTestnetNFTAddress",
@@ -946,46 +949,53 @@ Flexcoin official website
       if (!window.ethereum) return;
 
       window.ethereum.on("accountsChanged", async (accs) => {
+        const logEl = document.querySelector("#mint-log");
         if (!accs || accs.length === 0) {
-          document.querySelector("#connect").textContent = "Connect Wallet";
+          document.querySelector("#connect").textContent =
+            "Connect Wallet";
           setMintButtons(false);
-          document.querySelector("#mint-log").textContent =
-            "[ Waiting for connection... ]";
+          if (logEl)
+            logEl.textContent = "[ Waiting for connection... ]";
           signer = null;
           return;
         }
         const addr = accs[0];
         document.querySelector("#connect").textContent =
           "Connected: " + short(addr);
-        document.querySelector("#mint-log").textContent =
-          "Account: " + addr;
+        if (logEl) logEl.textContent = "Account: " + addr;
       });
 
       window.ethereum.on("chainChanged", async (hex) => {
         const v =
-          hex === "0x38" ? "bscMainnet" : hex === "0x61" ? "bscTestnet" : null;
+          hex === "0x38" ? "bscMainnet" :
+          hex === "0x61" ? "bscTestnet" :
+          null;
         if (v) {
           document.querySelector("#net").value = v;
         }
       });
 
       window.ethereum.on("disconnect", () => {
-        document.querySelector("#connect").textContent = "Connect Wallet";
+        const logEl = document.querySelector("#mint-log");
+        document.querySelector("#connect").textContent =
+          "Connect Wallet";
         setMintButtons(false);
-        document.querySelector("#mint-log").textContent =
-          "[ Waiting for connection... ]";
+        if (logEl)
+          logEl.textContent = "[ Waiting for connection... ]";
         signer = null;
       });
     }
 
     async function setupMintUI() {
       // addresses.json 에서 NFT 주소 가져오기
-      const addr = await fetchFirst([
+      const addrConfig = await fetchFirst([
         "/public/config/addresses.json",
         "/config/addresses.json",
       ]);
-      if (addr.nft_mainnet) NFT_ADDR.bscMainnet = addr.nft_mainnet;
-      if (addr.nft_testnet) NFT_ADDR.bscTestnet = addr.nft_testnet;
+      if (addrConfig.nft_mainnet)
+        NFT_ADDR.bscMainnet = addrConfig.nft_mainnet;
+      if (addrConfig.nft_testnet)
+        NFT_ADDR.bscTestnet = addrConfig.nft_testnet;
 
       setMintButtons(false);
       bindWalletEvents();
@@ -1000,7 +1010,8 @@ Flexcoin official website
           await connectWallet();
         } catch (e) {
           logEl.textContent =
-            "Connect error: " + (e && e.message ? e.message : String(e));
+            "Connect error: " +
+            (e && e.message ? e.message : String(e));
         }
       };
 
@@ -1016,63 +1027,51 @@ Flexcoin official website
             throw new Error("NFT contract address is not configured.");
           }
 
+          // thirdweb 대시보드에서 설정한 가격과 동일하게 사용
+          const pricePerToken = ethers.parseEther(DEFAULT_PRICE_BNB);
+
           const contract = new ethers.Contract(
             target,
             DROP_ABI,
             signer
           );
 
-          // 현재 활성 ClaimCondition에서 가격/통화 읽기
-          let pricePerToken;
-          let currencyAddress = ZERO_ADDRESS;
-          try {
-            const id = await contract.getActiveClaimConditionId();
-            const cond = await contract.getClaimConditionById(id);
-            // 이름 또는 인덱스로 접근 (ethers v6 구조 대비)
-            pricePerToken =
-              cond.pricePerToken ??
-              cond[6] ??
-              ethers.parseEther(DEFAULT_PRICE_BNB);
-            currencyAddress = cond.currency ?? cond[7] ?? ZERO_ADDRESS;
-          } catch {
-            // 실패 시 기본값 사용 (네이티브 BNB)
-            pricePerToken = ethers.parseEther(DEFAULT_PRICE_BNB);
-            currencyAddress = ZERO_ADDRESS;
-          }
-
-          const quantity = 1n;
-
-          // 퍼블릭 세일: proof 비우고 나머지는 0으로 전달
+          // Allowlist 기능을 쓰지 않으므로 빈 proof + 1개 제한
           const allowlistProof = {
             proof: [],
-            quantityLimitPerWallet: 0n,
-            pricePerToken: 0n,
-            currency: ZERO_ADDRESS,
+            quantityLimitPerWallet: 1n,
+            pricePerToken,
+            currency: NATIVE_TOKEN,
           };
 
-          logEl.textContent = "Minting... please confirm in MetaMask.";
+          logEl.textContent =
+            "Minting... please confirm in MetaMask.";
 
           const tx = await contract.claim(
-            to,
-            quantity,
-            currencyAddress,
-            pricePerToken,
-            allowlistProof,
-            "0x",
-            { value: pricePerToken * quantity }
+            to,               // receiver
+            1n,               // quantity
+            NATIVE_TOKEN,     // currency (BNB)
+            pricePerToken,    // price per token
+            allowlistProof,   // allowlist proof struct
+            "0x",             // data
+            { value: pricePerToken }  // msg.value
           );
 
           logEl.textContent = "Minting... TX: " + tx.hash;
           await tx.wait();
           logEl.textContent = "✅ Minted successfully!";
         } catch (e) {
+          // thirdweb 커스텀 에러 때문에 message / reason 둘 다 확인
           const msg =
-            (e && e.message) || (e && e.reason) || String(e);
+            (e && e.reason) ||
+            (e && e.message) ||
+            String(e);
+          console.error("Mint error:", e);
           logEl.textContent = "Mint error: " + msg;
         }
       }
 
-      // 두 버튼 모두 같은 민트 로직 사용 (하나는 레거시 이름일 뿐)
+      // 두 버튼 모두 같은 민트 로직 사용 (하나는 레거시 이름)
       btnLegacy.onclick = runMint;
       btnFlex.onclick = runMint;
     }
