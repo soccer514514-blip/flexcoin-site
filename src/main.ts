@@ -1,207 +1,210 @@
-// src/main.ts
-// ===============================================================
-// Flexcoin 메인 엔트리
-// - Hero 로테이터
-// - runtime JSON(config) 자동 로드
-// - 토크노믹스 / 주소 / 링크 자동 주입
-// - Presale 버튼 1개 (DXSale)
-// - Security Shield Zone 링크 주입 (Audit / KYC / LP Lock / BscScan)
-// - NFT Mint UI setup
-// ===============================================================
+// src/modules/mint.ts
+// -------------------------------------------------------
+// FlexNFT 민트 모듈 (BSC 메인넷 DropERC721)
+// -------------------------------------------------------
 
-import setupMintUI from "./modules/mint";
+import { BrowserProvider, Contract, parseUnits } from "ethers";
 
-// JSON 로더
-async function fetchJson(path: string) {
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
+const BNB_MAINNET = 56;
+
+// FlexNFT 메인넷 컨트랙트 주소 (소문자)
+const NFT_MAINNET = "0x834586083e355ae80b88f479178935085dd3bf75";
+
+// Drop 확장 claim 함수 ABI
+const DROP_ABI = [
+  "function claim(address receiver,uint256 quantity,address currency,uint256 pricePerToken,(bytes32[] proof,uint256 quantityLimitPerWallet,uint256 pricePerToken,address currency) allowlistProof,bytes data) payable",
+];
+
+// 상태
+let provider: BrowserProvider | null = null;
+let signer: any = null;
+let currentAccount: string | null = null;
+
+// -------------------------------------------------------
+// 로그 유틸
+// -------------------------------------------------------
+function log(msg: string) {
+  const pre = document.getElementById("mint-log") as HTMLPreElement | null;
+  if (pre) pre.textContent = msg;
+  console.log("[FlexNFT]", msg);
+}
+
+// -------------------------------------------------------
+// 지갑 / 네트워크
+// -------------------------------------------------------
+async function ensureWallet() {
+  if (!window.ethereum) {
+    throw new Error("MetaMask 필요");
+  }
+
+  if (!provider) {
+    provider = new BrowserProvider(window.ethereum);
+  }
+
+  if (!signer) {
+    signer = await provider.getSigner();
+    currentAccount = await signer.getAddress();
+  }
+
+  return { provider, signer, currentAccount };
+}
+
+async function ensureNetwork() {
+  const { provider } = await ensureWallet();
+  const net = await provider!.getNetwork();
+  const chainId = Number(net.chainId);
+
+  if (chainId !== BNB_MAINNET) {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: "0x38" }], // 56
+    });
+  }
+}
+
+// -------------------------------------------------------
+// 버튼 핸들러
+// -------------------------------------------------------
+async function handleConnect() {
   try {
-    const r = await fetch(path + "?v=" + Date.now());
-    if (r.ok) return await r.json();
-  } catch (_) {}
-  return {};
-}
-
-// Hero 자동 로테이터
-function setupHero() {
-  const hero = document.getElementById("hero-img") as HTMLImageElement | null;
-  if (!hero) return;
-
-  const imgs = [
-    "/hero/main.jpg",
-    "/hero/1.jpg",
-    "/hero/2.jpg",
-    "/hero/3.jpg",
-    "/hero/4.jpg",
-    "/hero/5.jpg",
-    "/hero/6.jpg",
-    "/hero/7.jpg",
-    "/hero/8.jpg"
-  ];
-
-  let idx = 0;
-  hero.src = imgs[0];
-
-  setInterval(() => {
-    idx = (idx + 1) % imgs.length;
-    hero.style.opacity = "0";
-    setTimeout(() => {
-      hero.src = imgs[idx];
-      hero.style.opacity = "1";
-    }, 300);
-  }, 4500);
-}
-
-// 토크노믹스(Donut 차트) 자동 생성
-function setupTokenomics(allocation: any) {
-  if (!allocation?.tokenomics) return;
-
-  const LP = allocation.tokenomics.lp || 0;
-  const PRE = allocation.tokenomics.presale || 0;
-  const TEAM = allocation.tokenomics.team || 0;
-  const MKT = allocation.tokenomics.marketing || 0;
-
-  const data = [LP, PRE, TEAM, MKT];
-  const labels = ["Liquidity", "Presale", "Team", "Marketing"];
-  const colors = ["#ffd700", "#e6c15a", "#c7aa40", "#8d7a2f"];
-
-  const canvas = document.getElementById("donut") as HTMLCanvasElement | null;
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-
-  const total = data.reduce((a, b) => a + b, 0);
-  let start = -Math.PI / 2;
-
-  data.forEach((v, i) => {
-    const angle = (v / total) * Math.PI * 2;
-    ctx.beginPath();
-    ctx.moveTo(130, 130);
-    ctx.fillStyle = colors[i];
-    ctx.arc(130, 130, 130, start, start + angle);
-    ctx.fill();
-    start += angle;
-  });
-}
-
-// Presale 버튼 (DXSale 전용)
-function setupPresaleButtons(links: any) {
-  const wrap = document.getElementById("presale-buttons");
-  if (!wrap) return;
-
-  // links.json 키가 어떤 이름이든 대응 가능하게 처리
-  const presaleUrl: string =
-    links.presale_url ||
-    links.dxsale_url ||
-    links["DexSale Presale_url"] ||
-    "";
-
-  const btn = document.createElement("a");
-  btn.id = "btn-presale-dxsale";
-  btn.className = "btn presale-btn dxsale";
-  btn.textContent = "Join DXSale Presale";
-  btn.href = presaleUrl || "#";
-  btn.target = "_blank";
-  btn.rel = "noopener noreferrer";
-
-  if (!presaleUrl) {
-    btn.classList.add("is-disabled");
-  }
-
-  // 기존 GemPad / PinkSale 대신 DXSale 하나만 추가
-  wrap.appendChild(btn);
-}
-
-// 주소 테이블 자동 주입
-function setupAddressTable(addressJson: any) {
-  const keys = ["token", "team", "marketing", "presale", "burn", "user"];
-
-  keys.forEach((k) => {
-    const el = document.getElementById("addr-" + k);
-    if (el && addressJson[k]) {
-      el.textContent = addressJson[k];
+    if (!window.ethereum) {
+      alert("Please install MetaMask (or a compatible wallet).");
+      return;
     }
-  });
-}
 
-// 상단 메뉴 링크 설정 (X, TG, Swap)
-function setupHeaderLinks(links: any) {
-  const x = document.getElementById("link-x");
-  const tg = document.getElementById("link-tg");
-  const swap = document.getElementById("link-swap");
+    await window.ethereum.request({ method: "eth_requestAccounts" });
 
-  if (x && links.x_url) x.setAttribute("href", links.x_url);
-  if (tg && links.tg_url) tg.setAttribute("href", links.tg_url);
-  if (swap && links.pancakeswap_url) swap.setAttribute("href", links.pancakeswap_url);
-}
+    const { currentAccount } = await ensureWallet();
+    await ensureNetwork();
 
-// Security Shield Zone 링크 설정 (Audit / KYC / LP / BscScan)
-function setupSecurityShieldLinks(links: any) {
-  const auditBtn = document.getElementById("btn-security-audit") as HTMLAnchorElement | null;
-  const kycBtn = document.getElementById("btn-security-kyc") as HTMLAnchorElement | null;
-  const lpBtn = document.getElementById("btn-security-lplock") as HTMLAnchorElement | null;
-  const bscscanBtn = document.getElementById("btn-security-bscscan") as HTMLAnchorElement | null;
+    const btn = document.getElementById("connect") as HTMLButtonElement | null;
+    if (btn && currentAccount) {
+      const short =
+        currentAccount.slice(0, 6) + "..." + currentAccount.slice(-4);
+      btn.textContent = `Connected: ${short}`;
+    }
 
-  if (auditBtn) {
-    const url = links.audit_url || "#";
-    auditBtn.href = url;
-    if (url === "#") auditBtn.classList.add("is-disabled");
-  }
-
-  if (kycBtn) {
-    const url = links.kyc_url || "#";
-    kycBtn.href = url;
-    if (url === "#") kycBtn.classList.add("is-disabled");
-  }
-
-  if (lpBtn) {
-    const url = links.lp_lock_url || "#";
-    lpBtn.href = url;
-    if (url === "#") lpBtn.classList.add("is-disabled");
-  }
-
-  if (bscscanBtn) {
-    const url = links.bscscan_url || links.dexscreener_url || "#";
-    bscscanBtn.href = url;
-    if (url === "#") bscscanBtn.classList.add("is-disabled");
+    log("Wallet connected. Ready to mint.");
+  } catch (err) {
+    console.error(err);
+    log("Wallet connect failed.");
   }
 }
 
-// Alerts 폼
-function setupForm(links: any) {
-  const form = document.getElementById("alert-form") as HTMLFormElement | null;
-  if (form && links.form_endpoint) {
-    form.action = links.form_endpoint;
+async function handleMint() {
+  try {
+    await ensureNetwork();
+    const { signer, currentAccount } = await ensureWallet();
+    if (!currentAccount) throw new Error("Wallet not connected.");
+
+    // 0.0001 BNB
+    const price = parseUnits("0.0001", 18);
+
+    const contract = new Contract(NFT_MAINNET, DROP_ABI, signer);
+
+    log("Sending mint transaction...");
+
+    const tx = await contract.claim(
+      currentAccount,
+      1, // quantity
+      "0x0000000000000000000000000000000000000000", // native BNB
+      price,
+      {
+        proof: [],
+        quantityLimitPerWallet: 0,
+        pricePerToken: price,
+        currency: "0x0000000000000000000000000000000000000000",
+      },
+      "0x",
+      {
+        value: price,
+      }
+    );
+
+    log("Mint submitted. Waiting for confirmation...");
+    await tx.wait();
+    log("✅ Mint completed! Check your wallet NFT tab.");
+  } catch (err: any) {
+    console.error(err);
+    const m =
+      err?.reason ||
+      err?.shortMessage ||
+      err?.message ||
+      "Mint failed (execution reverted).";
+    log(`Mint error: ${m}`);
   }
 }
 
-// 메인 실행
-(async function () {
-  // JSON 로드
-  const allocation = await fetchJson("/config/allocations.json");
-  const addresses = await fetchJson("/config/addresses.json");
-  const links = await fetchJson("/config/links.json");
+// -------------------------------------------------------
+// 메인 UI 세팅
+//  - DOM 완전히 준비된 다음에만 버튼에 onclick 연결
+//  - 버튼이 없어도 에러 안 나게 방어 코드 추가
+// -------------------------------------------------------
+export default function setupMintUI() {
+  // 아직 DOM 파싱 중이면 DOMContentLoaded 때 다시 실행
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+        setupMintUI();
+      },
+      { once: true } as any
+    );
+    return;
+  }
 
-  // Hero
-  setupHero();
+  // 버튼 / 엘리먼트 찾기 (둘 중 아무 id든 잡도록)
+  const netSelect = document.getElementById("net") as HTMLSelectElement | null;
+  const connectBtn = document.getElementById(
+    "connect"
+  ) as HTMLButtonElement | null;
 
-  // Tokenomics
-  setupTokenomics(allocation);
+  const legacyBtn = document.getElementById(
+    "mint"
+  ) as HTMLButtonElement | null; // 옛날 버튼
+  const flexBtn = (document.getElementById("btn-nft-mint") ||
+    document.getElementById("mint-flex")) as HTMLButtonElement | null;
 
-  // Header links (X / TG / Swap)
-  setupHeaderLinks(links);
+  const logBox = document.getElementById("mint-log") as HTMLPreElement | null;
 
-  // Presale 버튼 (DXSale)
-  setupPresaleButtons(links);
+  // 필수 요소 하나라도 없으면 그냥 조용히 빠져나감 (에러 X)
+  if (!connectBtn || !flexBtn || !netSelect || !logBox) {
+    console.warn("[FlexNFT] Mint UI elements missing", {
+      netSelect,
+      connectBtn,
+      flexBtn,
+      logBox,
+    });
+    return;
+  }
 
-  // Security Shield Zone 링크
-  setupSecurityShieldLinks(links);
+  // 네트워크 선택은 BSC 메인넷 고정
+  netSelect.value = "bscMainnet";
 
-  // Address table
-  setupAddressTable(addresses);
+  // legacy 버튼은 비활성화
+  if (legacyBtn) {
+    legacyBtn.disabled = true;
+  }
 
-  // Formspree
-  setupForm(links);
+  // 클릭 핸들러 연결
+  connectBtn.onclick = (e) => {
+    e.preventDefault();
+    handleConnect();
+  };
 
-  // Mint module
-  setupMintUI();
-})();
+  flexBtn.onclick = (e) => {
+    e.preventDefault();
+    handleMint();
+  };
+
+  // 새 민트 버튼 활성화
+  flexBtn.disabled = false;
+
+  log("NFT mint UI initialized.");
+}
