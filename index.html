@@ -268,7 +268,7 @@ Flexcoin official website
   "name": "FlexCoin",
   "alternateName": "FLEX",
   "url": "https://flexcoin.io.kr",
-  "logo": "https://flexcoin.io.kr/favicon.svg",
+  "logo": "https://flexcoin.io.kr/public/favicon.svg",
   "description": "FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, and locked liquidity.",
   "sameAs": [
     "https://x.com/Flexcoinmeme",
@@ -484,6 +484,8 @@ Flexcoin official website
         </div>
 
         <pre id="mint-log" class="mint-log">[ Waiting for connection... ]</pre>
+        <!-- 📱 모바일 / 지갑 안내문 (기본은 숨김, JS에서 모바일일 때 켬) -->
+        <div id="wallet-hint" class="muted" style="margin-top:6px; text-align:center; display:none;"></div>
       </div>
 
       <!-- Live Chart box -->
@@ -878,7 +880,7 @@ Flexcoin official website
       },
       bscMainnet: {
         chainId: "0x38",
-        name: "BSC",
+        name": "BSC",
         rpc: "https://bsc-dataseed.binance.org",
       },
     };
@@ -886,7 +888,6 @@ Flexcoin official website
     const DEFAULT_PRICE_BNB = window.NFT_PRICE_BNB || "0.0001";
 
     // thirdweb Drop 컨트랙트에서 "네이티브 토큰(BNB)"을 의미하는 특수 주소
-    // (대시보드 코드 스니펫에서도 이 값을 사용함)
     const NATIVE_TOKEN =
       "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
@@ -1021,9 +1022,42 @@ Flexcoin official website
       const btnLegacy = document.querySelector("#mint");
       const btnFlex = document.querySelector("#btn-nft-mint");
       const logEl = document.querySelector("#mint-log");
+      const hintEl = document.querySelector("#wallet-hint");
+
+      // 📱 모바일 접속 시 기본 안내문 표시
+      if (hintEl) {
+        const ua = (navigator.userAgent || "").toLowerCase();
+        const isMobile = /android|iphone|ipad|ipod|samsungbrowser|mobile/.test(ua);
+        if (isMobile) {
+          hintEl.style.display = "block";
+          hintEl.innerHTML =
+            "📱 <b>모바일 안내</b><br>" +
+            "모바일에서 지갑 연결이 안 되면 <b>MetaMask 앱</b>을 열고 하단 <b>[브라우저]</b> 탭에서 " +
+            "<b>flexcoin.io.kr</b> 로 접속한 뒤 이 화면에서 다시 <b>Connect Wallet</b>을 눌러 주세요.";
+        }
+      }
 
       btnConnect.onclick = async () => {
         try {
+          if (!window.ethereum) {
+            const msg =
+              "No injected wallet detected. On mobile, open this site inside the MetaMask app browser. On desktop, install the MetaMask extension.";
+            if (logEl) logEl.textContent = msg;
+            if (hintEl) {
+              hintEl.style.display = "block";
+              hintEl.innerHTML =
+                "⚠️ <b>지갑이 감지되지 않았습니다.</b><br>" +
+                "모바일: MetaMask 앱 → [브라우저] 탭에서 <b>flexcoin.io.kr</b> 접속 후 다시 시도해 주세요.<br>" +
+                "PC: 크롬/브라우저에 MetaMask 확장 프로그램을 설치해 주세요.";
+            }
+            alert(
+              "지갑이 감지되지 않았습니다.\n\n" +
+              "모바일: MetaMask 앱을 열고 하단 [브라우저] 탭에서 flexcoin.io.kr 에 접속한 뒤,\n" +
+              "이 화면에서 Connect Wallet 을 눌러 주세요.\n\n" +
+              "PC: 크롬 등 브라우저에 MetaMask 확장 프로그램을 설치해 주세요."
+            );
+            return;
+          }
           await connectWallet();
         } catch (e) {
           logEl.textContent =
@@ -1078,7 +1112,6 @@ Flexcoin official website
           await tx.wait();
           logEl.textContent = "✅ Minted successfully!";
         } catch (e) {
-          // thirdweb 커스텀 에러 때문에 message / reason 둘 다 확인
           const msg =
             (e && e.reason) ||
             (e && e.message) ||
@@ -1088,7 +1121,7 @@ Flexcoin official website
         }
       }
 
-      // 두 버튼 모두 같은 민트 로직 사용 (하나는 레거시 이름)
+      // 두 버튼 모두 같은 민트 로직 사용
       btnLegacy.onclick = runMint;
       btnFlex.onclick = runMint;
     }
