@@ -481,9 +481,10 @@ Flexcoin official website
           <button id="btn-nft-mint" class="btn-gold">Mint FlexNFT (0.0001 BNB)</button>
         </div>
 
-        <pre id="mint-log" class="mint-log">[ Waiting for connection... ]</pre>
-        <!-- 📱 모바일 / 지갑 안내문 (기본은 숨김, JS에서 모바일일 때 켬) -->
-        <div id="wallet-hint" class="muted" style="margin-top:6px; text-align:center; display:none;"></div>
+       <pre id="mint-log" class="mint-log">[ Waiting for connection... ]</pre>
+<!-- Mobile / wallet hint (hidden by default, shown by JS on mobile) -->
+<div id="wallet-hint" class="muted" style="margin-top:6px; text-align:center; display:none;"></div>
+
       </div>
 
       <!-- Live Chart box -->
@@ -1021,20 +1022,21 @@ Flexcoin official website
       const logEl = document.querySelector("#mint-log");
       const hintEl = document.querySelector("#wallet-hint");
 
-      // 📱 모바일 접속 시 기본 안내문 표시
+          // 📱 Mobile hint (shown only on mobile)
       if (hintEl) {
         const ua = (navigator.userAgent || "").toLowerCase();
         const isMobile = /android|iphone|ipad|ipod|samsungbrowser|mobile/.test(ua);
         if (isMobile) {
           hintEl.style.display = "block";
           hintEl.innerHTML =
-            "📱 <b>모바일 안내</b><br>" +
-            "모바일에서 지갑 연결이 안 되면 <b>MetaMask 앱</b>을 열고 하단 <b>[브라우저]</b> 탭에서 " +
-            "<b>flexcoin.io.kr</b> 로 접속한 뒤 이 화면에서 다시 <b>Connect Wallet</b>을 눌러 주세요.";
+            "📱 <b>Mobile wallet tip</b><br>" +
+            "If the wallet does not connect, open the <b>MetaMask app</b>, go to the <b>Browser</b> tab, " +
+            "visit <b>flexcoin.io.kr</b>, then press <b>Connect Wallet</b> again on this page.";
         }
       }
 
-      btnConnect.onclick = async () => {
+
+          btnConnect.onclick = async () => {
         try {
           if (!window.ethereum) {
             const msg =
@@ -1043,15 +1045,14 @@ Flexcoin official website
             if (hintEl) {
               hintEl.style.display = "block";
               hintEl.innerHTML =
-                "⚠️ <b>지갑이 감지되지 않았습니다.</b><br>" +
-                "모바일: MetaMask 앱 → [브라우저] 탭에서 <b>flexcoin.io.kr</b> 접속 후 다시 시도해 주세요.<br>" +
-                "PC: 크롬/브라우저에 MetaMask 확장 프로그램을 설치해 주세요.";
+                "⚠️ <b>No wallet detected</b><br>" +
+                "Mobile: Open the <b>MetaMask app</b>, go to the <b>Browser</b> tab, visit <b>flexcoin.io.kr</b> and try again.<br>" +
+                "Desktop: Install the <b>MetaMask</b> browser extension and then click <b>Connect Wallet</b>.";
             }
             alert(
-              "지갑이 감지되지 않았습니다.\n\n" +
-              "모바일: MetaMask 앱을 열고 하단 [브라우저] 탭에서 flexcoin.io.kr 에 접속한 뒤,\n" +
-              "이 화면에서 Connect Wallet 을 눌러 주세요.\n\n" +
-              "PC: 크롬 등 브라우저에 MetaMask 확장 프로그램을 설치해 주세요."
+              "No wallet detected.\n\n" +
+              "Mobile: Open the MetaMask app, go to the Browser tab, visit flexcoin.io.kr and press Connect Wallet again.\n\n" +
+              "Desktop: Install the MetaMask browser extension and then click Connect Wallet."
             );
             return;
           }
@@ -1062,6 +1063,7 @@ Flexcoin official website
             (e && e.message ? e.message : String(e));
         }
       };
+
 
       async function runMint() {
         try {
