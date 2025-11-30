@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
- <title>$FLEX is your life — Flexcoin</title>
-<link rel="manifest" href="/site.webmanifest">
-<link rel="apple-touch-icon" href="/icons/flexcoin-192.png">
-<link rel="preload" as="image" href="/public/hero/main.jpg">
-<meta name="theme-color" content="#f5c542">
-
+  <title>$FLEX is your life — Flexcoin</title>
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/flexcoin-192.png">
+  <link rel="preload" as="image" href="/public/hero/main.jpg">
+  <meta name="theme-color" content="#f5c542">
 
   <meta name="msvalidate.01" content="F392338F667D8A882F047C0953403BC5" />
   <meta name="description" content="FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, locked liquidity and a fair DexSale presale for global crypto communities in the US, Turkey, Vietnam and the Philippines.">
@@ -261,7 +260,7 @@ Flexcoin official website
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js"></script>
 
   <!-- JSON-LD 구조화 데이터 (Organization 스키마) -->
- <script type="application/ld+json">
+  <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -277,7 +276,7 @@ Flexcoin official website
     "https://bscscan.com/token/0xBa29562241F0489504C493c47aCBA16d7a98998f"
   ]
 }
-</script>
+  </script>
 </head>
 
 <body>
@@ -302,14 +301,14 @@ Flexcoin official website
   <div class="wrap">
     <!-- HERO -->
     <section class="card hero">
-    <img
-  id="hero-img"
-  src="/public/hero/main.jpg"
-  alt="FlexCoin luxury meme coin hero illustration with FLEX gold coin and two flexing characters"
-  loading="eager"
-  fetchpriority="high"
-  onerror="this.onerror=null;this.src='/public/hero/1.jpg'">
-  </section>
+      <img
+        id="hero-img"
+        src="/public/hero/main.jpg"
+        alt="FlexCoin luxury meme coin hero illustration with FLEX gold coin and two flexing characters"
+        loading="eager"
+        fetchpriority="high"
+        onerror="this.onerror=null;this.src='/public/hero/1.jpg'">
+    </section>
 
     <!-- Security Shield Zone (Hero 바로 아래) -->
     <section id="security-zone" class="card security-zone">
@@ -462,14 +461,13 @@ Flexcoin official website
     <!-- NFT MINT -->
     <section id="nft" class="card">
       <div class="section-title" data-i18n="section_nft">FLEX NFT MINT</div>
-       <div class="muted" style="margin-top:6px; font-weight:700; text-align:center; line-height:1.6;">
-    1) CONNECT WALLET<br>
-    ↓<br>
-    2) CHOOSE MINT TYPE (LEGACY / FLEXNFT)<br>
-    ↓<br>
-    3) MINT
-  </div>
-
+      <div class="muted" style="margin-top:6px; font-weight:700; text-align:center; line-height:1.6;">
+        1) CONNECT WALLET<br>
+        ↓<br>
+        2) CHOOSE MINT TYPE (LEGACY / FLEXNFT)<br>
+        ↓<br>
+        3) MINT
+      </div>
 
       <div style="text-align:center;">
         <select id="net" class="select-net">
@@ -707,7 +705,6 @@ Flexcoin official website
     async function initTokenomics(){
       const j = await fetchFirst(['/public/config/allocations.json','/config/allocations.json']);
 
-
       // 기본값(백업): LP54 / Presale20 / Team15 / Marketing10 / Burn1
       const t = j.tokenomics || {lp:54,presale:20,team:15,marketing:10,burn:1};
 
@@ -871,7 +868,7 @@ Flexcoin official website
       document.querySelectorAll('#lang-pill [data-lang]').forEach(btn=> btn.addEventListener('click',()=> setLang(btn.getAttribute('data-lang')||'en')));
     }
 
-     /* --------- NFT Mint + 메타마스크 연결 --------- */
+    /* --------- NFT Mint + 메타마스크 연결 --------- */
     const CHAINS = {
       bscTestnet: {
         chainId: "0x61",
@@ -880,7 +877,7 @@ Flexcoin official website
       },
       bscMainnet: {
         chainId: "0x38",
-        name": "BSC",
+        name: "BSC",
         rpc: "https://bsc-dataseed.binance.org",
       },
     };
