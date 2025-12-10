@@ -1,12 +1,12 @@
 {
   "t-hero-title": "Flexcoin",
-  "t-hero-sub": "Survive the memecoin sector",
+  "t-hero-sub": "Survive in the memecoin sector",
   "t-tokenomics-title": "Tokenomics",
-  "t-tokenomics-desc": "• Liquidity Pool (LP): 60% – PancakeSwap LP, locked for at least 12 months\n• Presale: 22% – Allocated for official presales on launchpads such as GemPad / PinkSale\n• Team: 8% – Locked for 12 months, then linearly vested for long-term development\n• Marketing & Partnerships: 8% – Used for CEX listings, influencer campaigns, and community rewards\n• Burn: 0% – No fixed burn; focus on liquidity and sustainable project growth",
+  "t-tokenomics-desc": "• Liquidity Pool (LP): 60% – PancakeSwap LP, locked for at least 12 months (1 year)\n• Presale: 24% – Allocation offered through official presale platforms such as GemPad / PinkSale\n• Team: 8% – Locked for 12 months, then gradually released for long-term operations\n• Marketing & Partnerships: 8% – Used for CEX listings, influencer marketing, community rewards, and promotional activities\n• Burn: 0% – No fixed burn; focused on liquidity strength and long-term project growth",
   "t-roadmap-title": "Roadmap",
   "t-nft-title": "NFT Mint",
-  "community.title": "Join Community",
-  "community.desc": "Follow and chat with us.",
+  "community.title": "Join the Community",
+  "community.desc": "Follow and engage with us.",
   "nft.title": "NFT Preview",
   "nft.note": "Upload 1..8.jpg (1600×900) to /public/nft-preview/",
   "section_tokenomics": "Tokenomics"
