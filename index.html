@@ -321,6 +321,7 @@ Flexcoin official website
         <a id="btn-security-kyc" class="btn security-btn" aria-disabled="true">KYC</a>
         <a id="btn-security-lplock" class="btn security-btn" aria-disabled="true">LP Lock</a>
         <a id="btn-security-bscscan" class="btn security-btn" aria-disabled="true">BscScan</a>
+        <a id="btn-security-teamlock" class="btn security-btn" aria-disabled="true">Team Wallet Lock</a>
       </div>
     </section>
 
@@ -631,6 +632,10 @@ Flexcoin official website
       setSec('#btn-security-audit', links.audit_url || '');
       setSec('#btn-security-kyc', links.kyc_url || '');
       setSec('#btn-security-lplock', links.lp_lock_url || '');
+
+      // 🔹 Team Wallet Lock 버튼 (links.team_lock_url 없으면 DxLock 공식 URL로 기본 연결)
+      const teamLockDefault = 'https://www.dx.app/dxlock/view/token-locker?address=0xACA5524959729fBa95b9610ae560b20EAC2F1f3C&chain=56';
+      setSec('#btn-security-teamlock', links.team_lock_url || teamLockDefault);
 
       const addr = await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
       const toScan=(a)=>a?`https://bscscan.com/address/${a}`:'#';
