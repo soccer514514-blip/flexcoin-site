@@ -2,13 +2,12 @@
   "t-hero-title": "Flexcoin",
   "t-hero-sub": "Memecoin 섹터에서 살아남기",
   "t-tokenomics-title": "토크노믹스",
-  "t-tokenomics-desc": "• 유동성 풀(LP): 60% – PancakeSwap LP, 최소 12개월(1년) 락업\n• 프리세일: 24% – GemPad / dexSale 등 공식 프리세일 플랫폼에서 판매되는 물량\n• 팀(Team): 8% – 12개월 락업 후, 장기 운영을 위해 선형 분배\n• 마케팅 & 파트너십: 8% – CEX 상장, 인플루언서 마케팅, 커뮤니티 리워드 및 프로모션에 사용\n• 소각(Burn): 0% – 별도 고정 소각 없이, 유동성과 프로젝트 성장에 집중",
+  "t-tokenomics-desc": "• 유동성 풀(LP): 60% – PancakeSwap LP, 최소 12개월(1년) 락업\n• 프리세일: 24% – DexSale 단독으로 진행되는 공식 프리세일 물량\n• 팀(Team): 8% – 12개월 락업 후 장기 운영을 위해 선형 분배\n• 마케팅 & 파트너십: 8% – CEX 상장, 인플루언서 마케팅, 커뮤니티 리워드 및 프로모션에 사용\n• 소각(Burn): 0% – 별도 고정 소각 없이 유동성과 장기 성장에 집중",
   "t-roadmap-title": "로드맵",
   "t-nft-title": "NFT 민팅",
   "community.title": "커뮤니티 합류",
   "community.desc": "팔로우하고 소통하세요.",
   "nft.title": "NFT 프리뷰",
   "nft.note": "/public/nft-preview/ 폴더에 1..8.jpg(1600×900) 업로드",
-  "security.team-lock": "팀 지갑 락업",
   "section_tokenomics": "토크노믹스"
 }
