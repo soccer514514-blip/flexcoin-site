@@ -1,0 +1,51 @@
+{
+  "locale": "en",
+
+  "kyc": {
+    "enabled": true,
+    "label": "KYC Verified",
+    "url": "https://github.com/ContractWolf/KYC-certificates/raw/main/2025-KYC/KYC_Flexcoin.jpg"
+  },
+
+  "audit": {
+    "enabled": true,
+    "label": "Audit",
+    "url": "https://contractwolf.io/projects/flexcoin"
+  },
+
+  "safu": {
+    "enabled": true,
+    "label": "SAFU Verified",
+    "url": "https://contractwolf.io/projects/flexcoin"
+  },
+
+  "lp_lock": {
+    "enabled": true,
+    "label": "LP Lock",
+    "url": ""
+  },
+
+  "team_lock": {
+    "enabled": true,
+    "label": "Team Wallet Lock",
+    "url": "https://www.dx.app/dxlock/view/token-locker?address=0xACA5524959729fBa95b9610ae560b20EAC2F1f3C&chain=56"
+  },
+
+  "renounce": {
+    "enabled": false,
+    "label": "Ownership Renounced",
+    "url": ""
+  },
+
+  "vesting": {
+    "enabled": false,
+    "label": "Team Vesting",
+    "url": ""
+  },
+
+  "wallets": {
+    "team": "0x8865331fD7AA6e63fC1C01882F0fE40AbC58bB30",
+    "marketing": "0xF3A2159474dCE4eF86F6eE56cE1b55C60E2C467e",
+    "presale": "0x66F4eC2C31A3Abd678C54b50c0c2C2F15e900672"
+  }
+}
