@@ -236,10 +236,66 @@ Flexcoin official website
     .chart-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border)}
     .chart-body{height:520px}
     .chart-body iframe{width:100%;height:100%;border:0;display:block}
+
     .alert-wrap{display:grid;gap:10px;grid-template-columns:1fr 1fr}
     .alert-wrap input{width:100%;padding:.6rem .7rem;border-radius:.6rem;border:1px solid var(--border);background:#0f0e0c;color:var(--text)}
     .alert-hint{font-size:.85rem;color:var(--muted)}
     @media(max-width:700px){ .alert-wrap{grid-template-columns:1fr} .chart-body{height:420px} }
+
+    /* ✅ Alerts header (Title + email) — fixed alignment + spacing + clickable */
+    .alerts-header{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px; /* ✅ 입력칸이 딱 붙는 문제 해결 */
+    }
+
+    .alerts-email{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      text-align:right;
+    }
+
+    .alerts-email-label{
+      font-size:.85rem;
+      color:var(--muted);
+      opacity:.95;
+    }
+
+    .alerts-email-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:.95rem;
+      font-weight:900;
+      color:var(--gold);
+      text-decoration:none;
+      padding:6px 10px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(255,255,255,.04);
+      position:relative;
+      z-index:1;
+      pointer-events:auto;
+      white-space:nowrap;
+    }
+
+    .alerts-email-link:hover{
+      background:rgba(244,204,79,.12);
+      border-color:rgba(244,204,79,.35);
+      text-decoration:underline;
+    }
+
+    @media(max-width:700px){
+      .alerts-header{justify-content:center;text-align:center}
+      .alerts-email{justify-content:center;text-align:center}
+      .alerts-email-link{white-space:normal}
+    }
 
     /* Security Shield Zone */
     .security-zone{
@@ -500,15 +556,22 @@ Flexcoin official website
       </div>
     </section>
 
-    <!-- Alerts -->
+    <!-- ✅ Alerts (FIXED) -->
     <section id="alerts" class="card">
-     <div class="alerts-header">
-    <div class="section-title">Alerts</div>
+      <div class="alerts-header">
+        <div class="section-title">Alerts</div>
 
-  <a class="alerts-email-link" href="mailto:contact@flexcoin.io.kr">
-  Team official email: contact@flexcoin.io.kr
- </a>
-</div>
+        <div class="alerts-email">
+          <span class="alerts-email-label">Team official email:</span>
+          <a
+            class="alerts-email-link"
+            href="mailto:contact@flexcoin.io.kr"
+            aria-label="Send email to Flexcoin team"
+          >
+            contact@flexcoin.io.kr
+          </a>
+        </div>
+      </div>
 
       <div class="alert-wrap">
         <input id="alert-email" type="email" placeholder="Email address" autocomplete="email">
