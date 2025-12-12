@@ -26,3 +26,45 @@ main{max-width:980px;margin:24px auto;padding:0 12px}
 .wallets code{font-size:12px;color:#b7ac9b}
 .foot{padding:20px;text-align:center;color:#6f6658}
 @media (max-width:640px){ .nft-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+/* ===== Alerts header email polish ===== */
+.alerts-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.alerts-email{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.alerts-email-label{
+  opacity:.8;
+}
+
+.alerts-email-link{
+  color:var(--gold);
+  font-weight:600;
+  text-decoration:none;
+}
+.alerts-email-link:hover{
+  text-decoration:underline;
+}
+
+.alerts-email-gmail{
+  font-size:12px;
+  color:var(--muted);
+  text-decoration:none;
+  border:1px solid #2a231b;
+  padding:2px 6px;
+  border-radius:6px;
+}
+.alerts-email-gmail:hover{
+  color:var(--gold);
+  border-color:var(--gold);
+}
