@@ -29,11 +29,16 @@ main{max-width:980px;margin:24px auto;padding:0 12px}
 /* ===== Alerts header email polish ===== */
 .alerts-header{
   display:flex;
-  align-items:center;
+  align-items:baseline;         /* 제목과 텍스트 라인 맞춤 */
   justify-content:space-between;
   gap:12px;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;              /* ✅ 기본은 한 줄 고정 */
 }
+
+@media (max-width:640px){
+  .alerts-header{ flex-wrap:wrap; } /* ✅ 모바일만 줄바꿈 허용 */
+}
+
 
 .alerts-email{
   display:flex;
@@ -51,7 +56,9 @@ main{max-width:980px;margin:24px auto;padding:0 12px}
   color:var(--gold);
   font-weight:600;
   text-decoration:none;
+  white-space: nowrap;
 }
+
 .alerts-email-link:hover{
   text-decoration:underline;
 }
