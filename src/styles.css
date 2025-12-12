@@ -348,43 +348,68 @@ footer {
   }
 }
 
-/* =========================
-   Alerts header (title + email) — single mailto link (no "Open in Gmail")
-========================= */
+/* =============================================================
+   Alerts header (title + email) — single mailto link (final)
+   교체 범위: 351 ~ 390
+============================================================= */
+
 .alerts-header{
   display:flex;
-  align-items:center;
+  align-items:baseline;          /* 제목과 이메일 기준선 정렬 */
   justify-content:space-between;
   gap:12px;
-  flex-wrap:wrap;            /* 모바일에서는 자연스럽게 줄바꿈 허용 */
-  margin-bottom:10px;
+  flex-wrap:nowrap;              /* ✅ PC에서는 한 줄 고정 */
+  margin-bottom:14px;            /* ✅ 입력칸과 간격 */
 }
 
 .alerts-header .section-title{
   margin:0;
 }
 
-/* 이메일은 "한 덩어리"로 보이게 */
+/* 이메일 영역 (라벨 + 주소) */
+.alerts-email{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  text-align:right;
+}
+
+.alerts-email-label{
+  font-size:12px;
+  color:var(--muted);
+  opacity:.95;
+}
+
+/* 실제 클릭되는 메일 링크 */
 .alerts-email-link{
   display:inline-flex;
   align-items:center;
-  gap:8px;
   font-size:14px;
-  color:#d8cda0;
+  font-weight:700;
+  color:var(--gold);
   text-decoration:none;
-  white-space:nowrap;        /* 데스크탑에서는 Alerts 옆에 딱 붙게 */
+  white-space:nowrap;            /* ✅ 데스크탑에서 끊김 방지 */
 }
 
 .alerts-email-link:hover{
-  color:#ffffff;
   text-decoration:underline;
+  color:#ffffff;
 }
 
-/* 모바일에서는 너무 길면 아래로 내려가도 보기 좋게 */
-@media (max-width: 520px){
+/* 모바일에서는 자연스럽게 아래로 */
+@media (max-width:520px){
+  .alerts-header{
+    flex-wrap:wrap;
+    justify-content:center;
+    text-align:center;
+  }
+  .alerts-email{
+    justify-content:center;
+    text-align:center;
+  }
   .alerts-email-link{
     white-space:normal;
-    width:100%;
-    justify-content:flex-start;
   }
 }
