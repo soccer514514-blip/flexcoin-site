@@ -349,54 +349,58 @@ footer {
 }
 
 /* =========================
-   Alerts header (title + email) ✅ 교체 완성본
+   Alerts header (title + official email) ✅ FINAL
 ========================= */
-.alerts-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
+
+/* PC: 한 줄 고정 */
+.alerts-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:nowrap;          /* 🔥 줄바꿈 금지 */
 }
 
-.alerts-header .section-title {
-  margin: 0;
+/* Alerts 제목 */
+.alerts-header .section-title{
+  margin:0;
 }
 
-/* 오른쪽 이메일 묶음 (라벨 + 메일 + Gmail 버튼) */
-.alerts-email {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  text-align: right;
+/* 오른쪽 이메일 영역 */
+.alerts-email{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-left:auto;
+  white-space:nowrap;        /* 🔥 이메일 줄바꿈 방지 */
 }
 
-.alerts-email-label {
-  font-size: 12px;
-  color: #d8cda0;
-  opacity: 0.95;
+/* 라벨 */
+.alerts-email-label{
+  font-size:12px;
+  color:#d8cda0;
+  opacity:.95;
 }
 
-.alerts-email-link {
-  font-size: 14px;
-  color: var(--gold-strong);
-  font-weight: 700;
-  text-decoration: none;
+/* 이메일 링크 (mailto) */
+.alerts-email-link{
+  font-size:14px;
+  color:var(--gold-strong);
+  font-weight:700;
+  text-decoration:none;
 }
-.alerts-email-link:hover {
-  text-decoration: underline;
+.alerts-email-link:hover{
+  text-decoration:underline;
 }
 
-.alerts-email-gmail {
-  font-size: 12px;
-  color: #cfcfcf;
-  text-decoration: none;
-  opacity: 0.9;
-}
-.alerts-email-gmail:hover {
-  opacity: 1;
-  text-decoration: underline;
+/* 모바일만 줄바꿈 허용 */
+@media (max-width:640px){
+  .alerts-header{
+    flex-wrap:wrap;
+    justify-content:flex-start;
+  }
+  .alerts-email{
+    width:100%;
+    white-space:normal;
+  }
 }
