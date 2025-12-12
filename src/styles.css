@@ -349,27 +349,54 @@ footer {
 }
 
 /* =========================
-   Alerts header (title + email)  ✅ 추가된 부분
+   Alerts header (title + email) ✅ 교체 완성본
 ========================= */
 .alerts-header {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
 .alerts-header .section-title {
   margin: 0;
 }
 
+/* 오른쪽 이메일 묶음 (라벨 + 메일 + Gmail 버튼) */
 .alerts-email {
-  font-size: 14px;
-  color: #c9c9c9;
-  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  text-align: right;
 }
 
-.alerts-email:hover {
-  color: #ffffff;
+.alerts-email-label {
+  font-size: 12px;
+  color: #d8cda0;
+  opacity: 0.95;
+}
+
+.alerts-email-link {
+  font-size: 14px;
+  color: var(--gold-strong);
+  font-weight: 700;
+  text-decoration: none;
+}
+.alerts-email-link:hover {
+  text-decoration: underline;
+}
+
+.alerts-email-gmail {
+  font-size: 12px;
+  color: #cfcfcf;
+  text-decoration: none;
+  opacity: 0.9;
+}
+.alerts-email-gmail:hover {
+  opacity: 1;
   text-decoration: underline;
 }
