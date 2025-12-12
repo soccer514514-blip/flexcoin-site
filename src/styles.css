@@ -347,3 +347,29 @@ footer {
     width: 100%;
   }
 }
+
+/* =========================
+   Alerts header (title + email)  ✅ 추가된 부분
+========================= */
+.alerts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alerts-header .section-title {
+  margin: 0;
+}
+
+.alerts-email {
+  font-size: 14px;
+  color: #c9c9c9;
+  text-decoration: none;
+}
+
+.alerts-email:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
