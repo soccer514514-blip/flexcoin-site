@@ -214,14 +214,19 @@ h2 {
     height: 42px;
   }
 }
+
 /* ---------- Alerts header (Title + official email inline) ---------- */
 .alerts-header{
   display:flex;
   align-items:baseline;
   justify-content:space-between;
   gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:10px;
+
+  /* ✅ PC: 한 줄 고정 */
+  flex-wrap:nowrap;
+
+  /* ✅ 입력칸과 너무 붙는 거 방지 */
+  margin-bottom:12px;
 }
 
 .section-title{
@@ -235,7 +240,10 @@ h2 {
   display:flex;
   align-items:center;
   gap:10px;
-  flex-wrap:wrap;
+
+  /* ✅ PC에서 이메일 묶음이 줄내림 안 되게 */
+  flex-wrap:nowrap;
+
   justify-content:flex-end;
   text-align:right;
 }
@@ -255,6 +263,10 @@ h2 {
   border:1px solid rgba(255,255,255,.08);
   border-radius:10px;
   background:rgba(255,255,255,.04);
+
+  /* ✅ 주소 끊김/줄바꿈 방지 + 오른쪽 밀림 방지 */
+  white-space:nowrap;
+  flex:0 0 auto;
 }
 
 .alerts-email-link:hover{
@@ -274,7 +286,15 @@ h2 {
   color:var(--gold-soft);
 }
 
+/* ✅ Mobile: 줄바꿈 허용 + 가운데 정렬 */
 @media (max-width:640px){
-  .alerts-header{justify-content:center;}
-  .alerts-email{justify-content:center;text-align:center;}
+  .alerts-header{
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .alerts-email{
+    flex-wrap:wrap;
+    justify-content:center;
+    text-align:center;
+  }
 }
