@@ -370,7 +370,7 @@ footer {
 .alerts-email{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
   flex-wrap:wrap;
   justify-content:flex-end;
   text-align:right;
@@ -382,23 +382,34 @@ footer {
   opacity:.95;
 }
 
-/* 실제 클릭되는 메일 링크 */
+/* 실제 클릭되는 메일 링크 (Gmail compose로 이동) */
 .alerts-email-link{
   display:inline-flex;
   align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(244,204,79,.35);
+  background:rgba(244,204,79,.08);
+
   font-size:14px;
-  font-weight:700;
+  font-weight:800;
   color:var(--gold);
   text-decoration:none;
-  white-space:nowrap;            /* ✅ 데스크탑에서 끊김 방지 */
+  white-space:nowrap;
+
+  cursor:pointer;
+  pointer-events:auto;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .alerts-email-link:hover{
   text-decoration:underline;
   color:#ffffff;
+  border-color: rgba(244,204,79,.55);
 }
 
-/* 모바일에서는 자연스럽게 아래로 */
+/* 모바일에서는 자연스럽게 가운데 정렬 */
 @media (max-width:520px){
   .alerts-header{
     flex-wrap:wrap;
@@ -411,5 +422,6 @@ footer {
   }
   .alerts-email-link{
     white-space:normal;
+    justify-content:center;
   }
 }
