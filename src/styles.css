@@ -349,58 +349,42 @@ footer {
 }
 
 /* =========================
-   Alerts header (title + official email) ✅ FINAL
+   Alerts header (title + email) — single mailto link (no "Open in Gmail")
 ========================= */
-
-/* PC: 한 줄 고정 */
 .alerts-header{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  flex-wrap:nowrap;          /* 🔥 줄바꿈 금지 */
+  flex-wrap:wrap;            /* 모바일에서는 자연스럽게 줄바꿈 허용 */
+  margin-bottom:10px;
 }
 
-/* Alerts 제목 */
 .alerts-header .section-title{
   margin:0;
 }
 
-/* 오른쪽 이메일 영역 */
-.alerts-email{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-left:auto;
-  white-space:nowrap;        /* 🔥 이메일 줄바꿈 방지 */
-}
-
-/* 라벨 */
-.alerts-email-label{
-  font-size:12px;
-  color:#d8cda0;
-  opacity:.95;
-}
-
-/* 이메일 링크 (mailto) */
+/* 이메일은 "한 덩어리"로 보이게 */
 .alerts-email-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
   font-size:14px;
-  color:var(--gold-strong);
-  font-weight:700;
+  color:#d8cda0;
   text-decoration:none;
+  white-space:nowrap;        /* 데스크탑에서는 Alerts 옆에 딱 붙게 */
 }
+
 .alerts-email-link:hover{
+  color:#ffffff;
   text-decoration:underline;
 }
 
-/* 모바일만 줄바꿈 허용 */
-@media (max-width:640px){
-  .alerts-header{
-    flex-wrap:wrap;
-    justify-content:flex-start;
-  }
-  .alerts-email{
-    width:100%;
+/* 모바일에서는 너무 길면 아래로 내려가도 보기 좋게 */
+@media (max-width: 520px){
+  .alerts-email-link{
     white-space:normal;
+    width:100%;
+    justify-content:flex-start;
   }
 }
