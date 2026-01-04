@@ -485,7 +485,6 @@ Flexcoin official website
   <script>
     const $ = (q)=>document.querySelector(q);
 
-    const deep = (obj, path) => path.split('.').reduce((o,k)=> (o && k in o) ? o[k] : undefined, obj);
     async function fetchFirst(paths){
       for(const p of paths){
         try{
@@ -563,11 +562,15 @@ Flexcoin official website
         return `<tr><td>${label}</td><td><a href="${toScanAddr(v)}" target="_blank" rel="noopener">${v}</a></td></tr>`;
       };
 
+      // ✅ Presale address: blank by default (enable later via links.json: { "show_presale_address": true })
+      const showPresale = !!links.show_presale_address;
+      const presaleAddr = showPresale ? (addr.presale || '') : '';
+
       const rowsHtml = [
         makeRow('Token', addr.token),
         makeRow('Team/Lock', addr.team_lock || addr.team),
         makeRow('Marketing', addr.marketing),
-        makeRow('Presale', addr.presale),
+        makeRow('Presale', presaleAddr),
         makeRow('User', addr.user)
       ].join('');
 
@@ -637,7 +640,21 @@ Flexcoin official website
     async function initTokenomics(){
       const j = await fetchFirst(['/public/config/allocations.json','/config/allocations.json']);
 
-      const t = j.tokenomics || { lp:25, presale:15, team:45, marketing:10, burn:5 };
+      // ✅ Force tokenomics defaults you requested (even if allocations.json is old)
+      const FALLBACK = { lp:25, presale:15, team:45, marketing:10, burn:5 };
+      const t0 = (j.tokenomics && typeof j.tokenomics === 'object') ? j.tokenomics : {};
+      const t = {
+        lp: Number.isFinite(+t0.lp) ? +t0.lp : FALLBACK.lp,
+        presale: Number.isFinite(+t0.presale) ? +t0.presale : FALLBACK.presale,
+        team: Number.isFinite(+t0.team) ? +t0.team : FALLBACK.team,
+        marketing: Number.isFinite(+t0.marketing) ? +t0.marketing : FALLBACK.marketing,
+        burn: Number.isFinite(+t0.burn) ? +t0.burn : FALLBACK.burn,
+      };
+
+      // If old JSON says LP60/Presale24 etc, override to your new structure.
+      // (Keep this strict so the UI is always correct.)
+      const MUST = { lp:25, presale:15, team:45, marketing:10, burn:5 };
+      Object.assign(t, MUST);
 
       const canvas = $('#donut');
       if(!canvas) return;
@@ -685,12 +702,22 @@ Flexcoin official website
       `).join('');
 
       const p = j.presale || {};
-      const soft = p.softcap_bnb ?? j.softcap ?? '—';
-      const hard = p.hardcap_bnb ?? j.hardcap ?? '—';
-      $('#caps').textContent=`Softcap: ${soft} BNB / Hardcap: ${hard} BNB`;
+      const pres = Number(p.rate_flex_per_bnb ?? (j.rates?.presale ?? 2000000));
+      const list = Number(p.listing_rate_flex_per_bnb ?? (j.rates?.listing ?? 1600000));
 
-      const pres = Number(p.rate_flex_per_bnb ?? (j.rates?.presale||0));
-      const list = Number(p.listing_rate_flex_per_bnb ?? (j.rates?.listing||0));
+      // ✅ Caps: Softcap fixed 10 BNB, Hardcap computed from totalSupply & presale% & presaleRate
+      const TOTAL_SUPPLY = Number(j.total_supply ?? 1000000000);
+      const soft = 10;
+
+      let hard = 75;
+      if(Number.isFinite(pres) && pres > 0 && Number.isFinite(TOTAL_SUPPLY) && TOTAL_SUPPLY > 0){
+        const presaleTokens = TOTAL_SUPPLY * (t.presale/100);
+        hard = presaleTokens / pres;
+      }
+      const round1 = (x)=> Math.round(x*10)/10;
+
+      $('#caps').textContent=`Softcap: ${soft} BNB / Hardcap: ${round1(hard)} BNB`;
+
       const fmtN=(n)=> (Number.isFinite(n)&&n>0)? n.toLocaleString():'—';
       $('#rates').textContent=`Presale Rate: 1 BNB = ${fmtN(pres)} FLEX  •  Listing Rate: 1 BNB = ${fmtN(list)} FLEX`;
 
@@ -698,11 +725,11 @@ Flexcoin official website
       if(note){
         const lockDays = p.lp_lock_days ?? j.lp_lock_days ?? 365;
         note.innerHTML = `
-          • Team <b>${t.team}%</b> — includes <b>8% locked</b> allocation (vesting/lock details will be published).<br>
+          • Team <b>${t.team}%</b> — includes <b>8% locked</b>: <b>6 months lock</b> + <b>6 months linear vesting</b>.<br>
+          • PinkSale Presale <b>${t.presale}%</b> — presale is conducted on <b>PinkSale</b>.<br>
           • Marketing <b>${t.marketing}%</b> — listings, partnerships, and growth.<br>
           • Burn <b>${t.burn}%</b> — supply reduction.<br>
-          • LP <b>${t.lp}%</b> — liquidity on DEX, locked for at least <b>${lockDays} days</b>.<br>
-          • PinkSale Presale <b>${t.presale}%</b> — launchpad allocation.
+          • LP <b>${t.lp}%</b> — liquidity on DEX, locked for at least <b>${lockDays} days</b>.
         `;
       }
 
