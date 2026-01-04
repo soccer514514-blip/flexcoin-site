@@ -4,15 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>$FLEX is your life — Flexcoin</title>
+
   <link rel="manifest" href="/site.webmanifest">
   <link rel="apple-touch-icon" href="/icons/flexcoin-192.png">
   <link rel="preload" as="image" href="/public/hero/main.jpg">
   <meta name="theme-color" content="#f5c542">
 
   <meta name="msvalidate.01" content="F392338F667D8A882F047C0953403BC5" />
-  <meta name="description" content="FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, locked liquidity and a fair DexSale presale for global crypto communities in the US, Turkey, Vietnam and the Philippines.">
+  <meta name="description" content="FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, and verifiable on-chain links for global communities.">
 
-  <!-- SEO keywords (US / Turkey / Vietnam / Philippines 중심 30개) -->
   <meta name="keywords" content="
 FlexCoin,
 Flexcoin meme coin,
@@ -26,48 +26,42 @@ locked liquidity token,
 KYC verified crypto,
 community driven crypto,
 fair launch token,
-US crypto investors,
 Turkey crypto community,
 Vietnam crypto community,
-Philippines crypto traders,
+Philippines crypto community,
 meme coin presale BNB,
-low cap gem crypto,
+low cap crypto,
 luxury meme coin,
 DeFi meme token,
-DexSale presale,
+PinkSale presale,
 BSC token presale,
 transparent team crypto,
 long term crypto project,
 global meme coin project,
-safe BNB chain token,
 Flexcoin whitepaper,
 Flexcoin roadmap,
 Flexcoin Telegram community,
 Flexcoin official website
 ">
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="FlexCoin">
   <meta property="og:title" content="$FLEX is your life — Flexcoin">
-  <meta property="og:description" content="FlexCoin (FLEX) is a luxury meme coin on BNB Chain with transparent tokenomics, KYC & audit completed, locked liquidity and a fair DexSale presale for global crypto communities.">
+  <meta property="og:description" content="FlexCoin (FLEX) is a luxury meme coin on BNB Chain with transparent tokenomics, KYC & audit completed, and verifiable on-chain links.">
   <link rel="canonical" href="https://flexcoin.io.kr/" />
   <meta property="og:url" content="https://flexcoin.io.kr/">
   <meta property="og:image" content="https://flexcoin.io.kr/public/hero/main.jpg">
   <meta property="og:locale" content="en_US">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="$FLEX is your life — Flexcoin">
-  <meta name="twitter:description" content="FlexCoin (FLEX) is a luxury meme coin on BNB Chain with transparent tokenomics, KYC & audit completed, locked liquidity and a fair DexSale presale for global crypto communities.">
+  <meta name="twitter:description" content="FlexCoin (FLEX) is a luxury meme coin on BNB Chain with transparent tokenomics, KYC & audit completed, and verifiable on-chain links.">
   <meta name="twitter:image" content="https://flexcoin.io.kr/public/hero/main.jpg">
 
-  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
   <link rel="alternate icon" href="/public/favicon.ico">
   <link rel="alternate icon" href="/favicon.ico">
 
-  <!-- Whitepaper discoverability (EN only) -->
   <link rel="alternate" hreflang="en" href="/public/whitepaper/en.pdf">
 
   <style>
@@ -77,7 +71,7 @@ Flexcoin official website
     }
     html,body{
       margin:0; background:var(--bg); color:var(--text);
-      font-family:ui-sans-serif,system-ui,Apple SD Gothic Neo,Segoe UI,Roboto,Helvetica,Arial;
+      font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial;
       overflow-x:hidden; max-width:100vw; overscroll-behavior-x:none
     }
     body{ padding-top:64px; }
@@ -103,25 +97,6 @@ Flexcoin official website
     }
     .nav a{margin-left:.6rem; font-weight:700; color:var(--gold); opacity:.9; white-space:nowrap}
     .nav a:hover{opacity:1}
-
-    /* -------- 이미지 라이트박스 -------- */
-    .lightbox {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.85);
-      z-index: 9999;
-    }
-    .lightbox.open { display: flex; }
-    .lightbox img {
-      max-width: 90vw;
-      max-height: 90vh;
-      border-radius: 16px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.8);
-      cursor: zoom-out;
-    }
 
     @media(max-width:680px){
       .topbar{flex-wrap:wrap;gap:.4rem}
@@ -213,7 +188,6 @@ Flexcoin official website
     #roadmap .roadmap-card:hover{transform:translateY(-4px); box-shadow:0 4px 15px rgba(212,175,55,.15)}
     @media(max-width:900px){ #roadmap .grid{grid-template-columns:repeat(2,1fr)} }
 
-    /* --- Chart & Alerts --- */
     #chart-box{margin-top:12px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#0f0f0f}
     .chart-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border)}
     .chart-body{height:520px}
@@ -273,7 +247,6 @@ Flexcoin official website
       .alerts-email-link{white-space:normal}
     }
 
-    /* Security Shield Zone */
     .security-zone{
       margin-top:1rem;
       border-radius:18px;
@@ -287,10 +260,8 @@ Flexcoin official website
     .security-btn{min-width:140px;text-align:center}
   </style>
 
-  <!-- ethers CDN -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js"></script>
 
-  <!-- JSON-LD -->
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -299,11 +270,10 @@ Flexcoin official website
   "alternateName": "FLEX",
   "url": "https://flexcoin.io.kr",
   "logo": "https://flexcoin.io.kr/public/favicon.svg",
-  "description": "FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, and locked liquidity.",
+  "description": "FlexCoin (FLEX) is a luxury-themed meme coin on BNB Chain with transparent tokenomics, completed KYC & audit, and verifiable on-chain links.",
   "sameAs": [
     "https://x.com/Flexcoinmeme",
     "https://t.me/flexcoinmeme",
-    "https://www.dx.app/dxsale/view?address=0x6fcE9aD19Da522B03813Ef69106bb077A6d84d1C&chain=56",
     "https://bscscan.com/token/0xBa29562241F0489504C493c47aCBA16d7a98998f"
   ]
 }
@@ -311,7 +281,6 @@ Flexcoin official website
 </head>
 
 <body>
-  <!-- Top bar -->
   <div class="topbar">
     <div class="brand" id="brand">$FLEX is your life. Your life is FLEX.</div>
     <div class="spacer"></div>
@@ -326,18 +295,16 @@ Flexcoin official website
   </div>
 
   <div class="wrap">
-    <!-- HERO -->
     <section class="card hero">
       <img
         id="hero-img"
         src="/public/hero/main.jpg"
-        alt="FlexCoin luxury meme coin hero illustration with FLEX gold coin and two flexing characters"
+        alt="FlexCoin luxury meme coin hero illustration"
         loading="eager"
         fetchpriority="high"
         onerror="this.onerror=null;this.src='/public/hero/1.jpg'">
     </section>
 
-    <!-- Security Shield Zone -->
     <section id="security-zone" class="card security-zone">
       <div class="section-title">Security Shield Zone</div>
       <p class="muted" id="security-desc">
@@ -349,14 +316,14 @@ Flexcoin official website
         <a id="btn-security-lplock" class="btn security-btn" aria-disabled="true">LP Lock</a>
         <a id="btn-security-bscscan" class="btn security-btn" aria-disabled="true">BscScan</a>
         <a id="btn-security-teamlock" class="btn security-btn" aria-disabled="true">Team Wallet Lock</a>
-        <a id="btn-security-whitepaper" class="btn security-btn" href="/public/whitepaper/en.pdf" target="_blank" rel="noopener">Whitepaper (EN)</a>
+        <a id="btn-security-whitepaper" class="btn security-btn" aria-disabled="true">Whitepaper (EN)</a>
       </div>
     </section>
 
-    <!-- About -->
     <section id="about-flexcoin" class="about-section">
       <div class="about-title">About FlexCoin</div>
       <div class="about-sub">Luxury meme culture meets transparency.</div>
+
       <div class="about-grid">
         <div class="about-card">
           <h3 style="margin:0 0 8px 0">English</h3>
@@ -374,7 +341,6 @@ Flexcoin official website
       </div>
     </section>
 
-    <!-- Tokenomics -->
     <section class="card">
       <div class="section-title">Tokenomics</div>
       <div class="tok-wrap">
@@ -385,7 +351,7 @@ Flexcoin official website
           <div id="rates" class="muted"></div>
 
           <div class="btn-row" style="justify-content:flex-start;margin-top:12px">
-            <a id="btn-presale-dxsale" class="btn" aria-disabled="true">DexSale Presale</a>
+            <a id="btn-presale-pinksale" class="btn" aria-disabled="true">PinkSale Presale</a>
           </div>
 
           <div id="tokenomics-note" class="tokenomics-note"></div>
@@ -393,7 +359,6 @@ Flexcoin official website
       </div>
     </section>
 
-    <!-- Countdown -->
     <section class="card">
       <div class="section-title">Presale Countdown</div>
       <div class="countbox">
@@ -402,63 +367,46 @@ Flexcoin official website
       </div>
     </section>
 
-    <!-- Action Preview -->
     <section class="card">
       <div class="section-title">Action Preview</div>
       <div class="grid" id="action-grid"></div>
     </section>
 
-    <!-- NFT Preview -->
     <section class="card">
       <div class="section-title">NFT Preview</div>
       <div class="grid" id="nft-grid"></div>
     </section>
 
-    <!-- Image Lightbox (simple) -->
-    <div id="img-lightbox" class="lightbox">
-      <img id="img-lightbox-img" src="" alt="">
-    </div>
-
-    <!-- Addresses -->
     <section class="card addr">
       <div class="section-title">Addresses</div>
       <table id="addr-table"></table>
     </section>
 
-    <!-- Roadmap -->
     <section id="roadmap" class="card">
       <div class="section-title">Roadmap</div>
       <div class="grid">
         <div class="roadmap-card card">
           <div class="muted">Phase 1</div>
-          <div style="font-weight:800;margin-top:.2rem">
-            Successful Launch & Survive in the Memecoin Sector
-          </div>
+          <div style="font-weight:800;margin-top:.2rem">Successful Launch & Survive in the Memecoin Sector</div>
         </div>
         <div class="roadmap-card card">
           <div class="muted">Phase 2</div>
-          <div style="font-weight:800;margin-top:.2rem">
-            Community Activation & Achieve 1,000 Holders
-          </div>
+          <div style="font-weight:800;margin-top:.2rem">Community Activation & Achieve 1,000 Holders</div>
         </div>
         <div class="roadmap-card card">
           <div class="muted">Phase 3</div>
-          <div style="font-weight:800;margin-top:.2rem">
-            DEX & CEX Exchange Listings
-          </div>
+          <div style="font-weight:800;margin-top:.2rem">DEX & CEX Exchange Listings</div>
         </div>
         <div class="roadmap-card card">
           <div class="muted">Phase 4</div>
-          <div style="font-weight:800;margin-top:.2rem">
-            Ecosystem Expansion (AI & NFT)
-          </div>
+          <div style="font-weight:800;margin-top:.2rem">Ecosystem Expansion (AI & NFT)</div>
         </div>
       </div>
     </section>
 
-    <!-- NFT MINT -->
     <section id="nft" class="card">
       <div class="section-title">FLEX NFT MINT</div>
+
       <div class="muted" style="margin-top:6px; font-weight:700; text-align:center; line-height:1.6;">
         1) CONNECT WALLET<br>
         ↓<br>
@@ -472,6 +420,7 @@ Flexcoin official website
           <option value="bscMainnet">BNB Mainnet</option>
           <option value="bscTestnet">BNB Testnet</option>
         </select>
+
         <div class="btn-row">
           <button id="connect" class="btn-gold">Connect Wallet</button>
           <button id="mint" class="btn-gold" disabled>Mint NFT (Legacy)</button>
@@ -482,7 +431,6 @@ Flexcoin official website
         <div id="wallet-hint" class="muted" style="margin-top:6px; text-align:center; display:none;"></div>
       </div>
 
-      <!-- Live Chart box -->
       <div id="chart-box">
         <div class="chart-head">
           <div><b>Live Price / Chart</b></div>
@@ -492,7 +440,6 @@ Flexcoin official website
       </div>
     </section>
 
-    <!-- Alerts -->
     <section id="alerts" class="card">
       <div class="alerts-header">
         <div class="section-title">Alerts</div>
@@ -504,7 +451,9 @@ Flexcoin official website
             target="_blank"
             rel="noopener"
             aria-label="Open Gmail compose to contact Flexcoin team"
-          >contact@flexcoin.io.kr</a>
+          >
+            contact@flexcoin.io.kr
+          </a>
         </div>
       </div>
 
@@ -515,11 +464,11 @@ Flexcoin official website
       <div class="btn-row">
         <button id="alert-submit" class="btn">Notify me</button>
       </div>
-      <div id="alert-msg" class="alert-hint">Enter your email to get presale & listing alerts. (coming soon if backend not set)</div>
+      <div id="alert-msg" class="alert-hint">Enter your email to get presale & listing alerts. (Coming soon if backend not set)</div>
     </section>
+
   </div>
 
-  <!-- Lightbox (advanced) -->
   <div class="lightbox" id="lightbox" aria-modal="true" role="dialog">
     <div class="lb-toolbar">
       <button class="btn" id="lb-zoom-in">+</button>
@@ -527,7 +476,7 @@ Flexcoin official website
       <button class="btn" id="lb-reset">75%</button>
       <button class="btn" id="lb-close">Close</button>
     </div>
-    <div class="lb-hint">Use wheel/pinch to zoom, drag to move, ESC to close</div>
+    <div class="lb-hint">Use wheel/pinch to zoom, drag to move, ESC to close.</div>
     <div class="lb-stage" id="lb-stage">
       <img id="lb-img" class="lb-img" alt="preview">
     </div>
@@ -536,50 +485,7 @@ Flexcoin official website
   <script>
     const $ = (q)=>document.querySelector(q);
 
-    /* ---------------- Whitepaper Direct Router (EN only) ---------------- */
-    (function directWhitepaperRouter(){
-      const lower = (s)=> (s || '').toLowerCase();
-
-      async function findEnPdf(){
-        const p = '/public/whitepaper/en.pdf';
-        try{
-          const r = await fetch(p, { method: 'HEAD', cache: 'no-cache' });
-          return r.ok ? p : null;
-        }catch(_){
-          return null;
-        }
-      }
-
-      async function handlePath(){
-        const p = lower(location.pathname);
-        const m = p.match(/^\/(whitepaper|wp|pdf)(?:\/)?([a-z]{2})?(?:\.pdf)?$/);
-        if(!m) return false;
-
-        const url = await findEnPdf();
-        if(url){
-          window.open(url,'_blank','noopener');
-          return true;
-        }
-        return false;
-      }
-
-      async function handleHash(){
-        const h = lower(location.hash || '');
-        if(h === '#whitepaper' || h.startsWith('#whitepaper-') || h.startsWith('#whitepaper_')){
-          const url = await findEnPdf();
-          if(url){
-            window.open(url,'_blank','noopener');
-            return true;
-          }
-        }
-        return false;
-      }
-
-      handlePath();
-      handleHash();
-    })();
-
-    /* --------- Utils --------- */
+    const deep = (obj, path) => path.split('.').reduce((o,k)=> (o && k in o) ? o[k] : undefined, obj);
     async function fetchFirst(paths){
       for(const p of paths){
         try{
@@ -589,30 +495,36 @@ Flexcoin official website
       }
       return {};
     }
+
     function firstExistingImage(paths){
       return new Promise(resolve=>{
-        let i=0; const next=()=>{
+        let i=0;
+        const next=()=>{
           if(i>=paths.length) return resolve(null);
-          const img=new Image(); img.onload=()=>resolve(paths[i]); img.onerror=()=>{ i++; next(); }; img.src=paths[i];
+          const img=new Image();
+          img.onload=()=>resolve(paths[i]);
+          img.onerror=()=>{ i++; next(); };
+          img.src=paths[i];
         };
         next();
       });
     }
 
-    /* --------- Links + Addresses + Chart + Alerts + Security Zone --------- */
     async function initLinks(){
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
 
-      if (!links.kyc_url) {
-        links.kyc_url = '/public/security/kyc_flexcoin.jpg';
-      }
+      if (!links.kyc_url) links.kyc_url = '/public/security/kyc_flexcoin.jpg';
 
       const setBtn=(id,url)=>{
         const b=$(id);
         if(!b) return;
-        if(url){ b.href=url; b.removeAttribute('disabled'); }
-        else { b.removeAttribute('href'); b.setAttribute('disabled',''); }
+        if(url){
+          b.href=url; b.removeAttribute('disabled');
+        }else{
+          b.removeAttribute('href'); b.setAttribute('disabled','');
+        }
       };
+
       setBtn('#btn-x',links.x_url);
       setBtn('#btn-tg',links.tg_url);
       setBtn('#btn-pcs',links.pancakeswap_url);
@@ -630,6 +542,7 @@ Flexcoin official website
           el.setAttribute('aria-disabled','true');
         }
       };
+
       setSec('#btn-security-audit', links.audit_url || '');
       setSec('#btn-security-kyc', links.kyc_url || '');
       setSec('#btn-security-lplock', links.lp_lock_url || '');
@@ -637,19 +550,28 @@ Flexcoin official website
       const teamLockDefault = 'https://www.dx.app/dxlock/view/token-locker?address=0xACA5524959729fBa95b9610ae560b20EAC2F1f3C&chain=56';
       setSec('#btn-security-teamlock', links.team_lock_url || teamLockDefault);
 
-      const addr = await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
-      const toScan=(a)=>a?`https://bscscan.com/address/${a}`:'#';
+      setSec('#btn-security-whitepaper', links.whitepaper_en_url || '/public/whitepaper/en.pdf');
 
-      const rows=[
-        ['Token',addr.token],
-        ['Team/Lock',addr.team_lock||addr.team],
-        ['Marketing',addr.marketing],
-        ['Presale',addr.presale],
-        ['User',addr.user]
-      ];
-      $('#addr-table').innerHTML = rows
-        .map(([k,v])=>`<tr><td>${k}</td><td><a href="${toScan(v)}" target="_blank" rel="noopener">${v||''}</a></td></tr>`)
-        .join('');
+      const addr = await fetchFirst(['/public/config/addresses.json','/config/addresses.json']);
+
+      const toScanAddr = (a)=> a ? `https://bscscan.com/address/${a}` : '';
+      const makeRow = (label, value)=>{
+        const v = (value || '').trim();
+        if(!v){
+          return `<tr><td>${label}</td><td class="muted">—</td></tr>`;
+        }
+        return `<tr><td>${label}</td><td><a href="${toScanAddr(v)}" target="_blank" rel="noopener">${v}</a></td></tr>`;
+      };
+
+      const rowsHtml = [
+        makeRow('Token', addr.token),
+        makeRow('Team/Lock', addr.team_lock || addr.team),
+        makeRow('Marketing', addr.marketing),
+        makeRow('Presale', addr.presale),
+        makeRow('User', addr.user)
+      ].join('');
+
+      $('#addr-table').innerHTML = rowsHtml;
 
       const bscBtn = $('#btn-security-bscscan');
       if(bscBtn){
@@ -690,41 +612,49 @@ Flexcoin official website
         if(!email){ msg.textContent = 'Please enter your email.'; return; }
         if(!formEndpoint){ msg.textContent = 'Alerts backend not set (coming soon).'; return; }
         try{
-          const r = await fetch(formEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,tg,ts:new Date().toISOString(),source:'flexcoin'})});
-          if(r.ok){ msg.textContent='Subscribed! We will notify you.'; $('#alert-email').value=''; $('#alert-tg').value=''; }
-          else{ msg.textContent='Submit failed. Please try again later.'; }
-        }catch(e){ msg.textContent='Network error. Please try again.'; }
+          const r = await fetch(formEndpoint,{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({email,tg,ts:new Date().toISOString(),source:'flexcoin'})
+          });
+          if(r.ok){
+            msg.textContent='Subscribed! We will notify you.';
+            $('#alert-email').value=''; $('#alert-tg').value='';
+          }else{
+            msg.textContent='Submit failed. Please try again later.';
+          }
+        }catch(e){
+          msg.textContent='Network error. Please try again.';
+        }
       };
     }
 
-    /* --------- Hero --------- */
     async function initHero(){
       const src = await firstExistingImage(['/public/hero/main.jpg','/hero/main.jpg','/public/hero/1.jpg','/hero/1.jpg']);
       if(src){ const img=$('#hero-img'); img.src=src; }
     }
 
-    /* --------- Tokenomics --------- */
     async function initTokenomics(){
       const j = await fetchFirst(['/public/config/allocations.json','/config/allocations.json']);
-      const t = j.tokenomics || {lp:54,presale:20,team:15,marketing:10,burn:1};
+
+      const t = j.tokenomics || { lp:25, presale:15, team:45, marketing:10, burn:5 };
 
       const canvas = $('#donut');
       if(!canvas) return;
       const ctx = canvas.getContext('2d');
 
       const vals=[t.lp,t.presale,t.team,t.marketing,t.burn];
-      const names=['LP','Presale','Team','Marketing','Burn'];
+      const names=['LP','PinkSale Presale','Team','Marketing','Burn'];
       const cols=['#ffd85a','#ff944d','#53d878','#4da1ff','#ff6b6b'];
 
-      const w = canvas.width;
-      const h = canvas.height;
+      const w = canvas.width, h = canvas.height;
       const size = Math.min(w,h);
-      const cx = w/2;
-      const cy = h/2;
+      const cx = w/2, cy = h/2;
       const outerR = size*0.46;
       const innerR = size*0.27;
 
       ctx.clearRect(0,0,w,h);
+
       const total = vals.reduce((acc,v)=>acc + (v||0), 0) || 1;
       let start = -Math.PI/2;
 
@@ -768,32 +698,33 @@ Flexcoin official website
       if(note){
         const lockDays = p.lp_lock_days ?? j.lp_lock_days ?? 365;
         note.innerHTML = `
-          • LP <b>${t.lp}%</b> — DEX liquidity, locked for at least <b>${lockDays} days</b>.<br>
-          • Presale <b>${t.presale}%</b> — Launchpad allocations (DexSale).<br>
-          • Team <b>${t.team}%</b> — Long-term builder allocation (vesting schedule to be announced).<br>
-          • Marketing <b>${t.marketing}%</b> — Marketing, listings and ecosystem growth only.
+          • Team <b>${t.team}%</b> — includes <b>8% locked</b> allocation (vesting/lock details will be published).<br>
+          • Marketing <b>${t.marketing}%</b> — listings, partnerships, and growth.<br>
+          • Burn <b>${t.burn}%</b> — supply reduction.<br>
+          • LP <b>${t.lp}%</b> — liquidity on DEX, locked for at least <b>${lockDays} days</b>.<br>
+          • PinkSale Presale <b>${t.presale}%</b> — launchpad allocation.
         `;
       }
 
       const links = await fetchFirst(['/public/config/links.json','/config/links.json']);
-      const btn = $('#btn-presale-dxsale');
-      const dxUrl = links.dexsale_url || links.presale_url || '';
+      const btn = $('#btn-presale-pinksale');
+      const psUrl = links.pinksale_url || '';
+
       if(btn){
-        if(dxUrl){
-          btn.textContent = 'DexSale Presale';
-          btn.href = dxUrl;
+        if(psUrl){
+          btn.textContent = 'PinkSale Presale';
+          btn.href = psUrl;
           btn.removeAttribute('aria-disabled');
           btn.target = '_blank';
           btn.rel = 'noopener';
         }else{
-          btn.textContent = 'DexSale Presale (coming soon)';
+          btn.textContent = 'PinkSale Presale (coming soon)';
           btn.removeAttribute('href');
           btn.setAttribute('aria-disabled','true');
         }
       }
     }
 
-    /* --------- Countdown --------- */
     async function initCountdown(){
       let sISO='2025-12-18T21:00:00+09:00', eISO='2026-01-01T21:00:00+09:00';
       const p = await fetchFirst(['/public/config/presale.json','/config/presale.json']);
@@ -804,13 +735,20 @@ Flexcoin official website
       const z=(n)=>String(n).padStart(2,'0');
       const fmt=(d)=>`${d.getFullYear()}. ${z(d.getMonth()+1)}. ${z(d.getDate())}. ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;
       range.textContent=`${fmt(s)} → ${fmt(e)}`;
-      const tick=()=>{ const now=new Date(); let t=s-now; if(t<0) t=e-now; if(t<=0){ count.textContent='—'; return; }
-        const d=Math.floor(t/86400000); t%=86400000; const h=Math.floor(t/3600000); t%=3600000; const m=Math.floor(t/60000); t%=60000; const s2=Math.floor(t/1000);
-        count.textContent=`${d}d ${z(h)}:${z(m)}:${z(s2)}`; };
+      const tick=()=>{
+        const now=new Date();
+        let t=s-now;
+        if(t<0) t=e-now;
+        if(t<=0){ count.textContent='—'; return; }
+        const d=Math.floor(t/86400000); t%=86400000;
+        const h=Math.floor(t/3600000); t%=3600000;
+        const m=Math.floor(t/60000); t%=60000;
+        const s2=Math.floor(t/1000);
+        count.textContent=`${d}d ${z(h)}:${z(m)}:${z(s2)}`;
+      };
       tick(); setInterval(tick,1000);
     }
 
-    /* --------- Gallery --------- */
     async function loadGrid(prefix, targetId){
       const list=Array.from({length:8},(_,i)=>i+1);
       const decided=await Promise.all(list.map(n=> firstExistingImage([`/public${prefix}/${n}.jpg`, `${prefix}/${n}.jpg`])));
@@ -825,49 +763,34 @@ Flexcoin official website
       });
     }
 
-    /* --------- Advanced Lightbox --------- */
     const lb=$('#lightbox'), lbImg=$('#lb-img'), lbStage=$('#lb-stage');
     let scale=0.75, minS=0.5, maxS=6, pos={x:0,y:0}, dragging=false, startPos={x:0,y:0};
     function applyLB(){ lbImg.style.transform=`translate(${pos.x}px,${pos.y}px) scale(${scale})`; }
     function openLightbox(src){ lbImg.src=src; scale=0.75; pos={x:0,y:0}; applyLB(); lb.classList.add('show'); document.body.classList.add('noscroll'); }
     function closeLightbox(){ lb.classList.remove('show'); document.body.classList.remove('noscroll'); }
-    $('#lb-close').onclick=closeLightbox; $('#lb-reset').onclick=()=>{scale=0.75;pos={x:0,y:0};applyLB();};
+    $('#lb-close').onclick=closeLightbox;
+    $('#lb-reset').onclick=()=>{scale=0.75;pos={x:0,y:0};applyLB();};
     $('#lb-zoom-in').onclick=()=>{ scale=Math.min(maxS,scale*1.2); applyLB(); };
     $('#lb-zoom-out').onclick=()=>{ scale=Math.max(minS,scale/1.2); applyLB(); };
     lbStage.addEventListener('wheel',(e)=>{ e.preventDefault(); const k=e.deltaY>0?1.2:1/1.2; scale=Math.min(maxS,Math.max(minS,scale*k)); applyLB(); },{passive:false});
     lbStage.addEventListener('mousedown',(e)=>{ dragging=true; lbStage.style.cursor='grabbing'; startPos={x:e.clientX-pos.x,y:e.clientY-pos.y}; });
     window.addEventListener('mousemove',(e)=>{ if(!dragging) return; pos={x:e.clientX-startPos.x,y:e.clientY-startPos.y}; applyLB(); });
     window.addEventListener('mouseup',()=>{ dragging=false; lbStage.style.cursor='grab'; });
-
     lb.addEventListener('click',(e)=>{ if(e.target===lb) closeLightbox(); });
 
-    /* --------- Wallet / NFT Mint (unchanged core logic) --------- */
     const CHAINS = {
-      bscTestnet: {
-        chainId: "0x61",
-        name: "BSC Testnet",
-        rpc: "https://data-seed-prebsc-1-s3.binance.org:8545",
-      },
-      bscMainnet: {
-        chainId: "0x38",
-        name: "BSC",
-        rpc: "https://bsc-dataseed.binance.org",
-      },
+      bscTestnet: { chainId: "0x61", name: "BSC Testnet", rpc: "https://data-seed-prebsc-1-s3.binance.org:8545" },
+      bscMainnet: { chainId: "0x38", name: "BSC", rpc: "https://bsc-dataseed.binance.org" }
     };
 
     const DEFAULT_PRICE_BNB = window.NFT_PRICE_BNB || "0.0001";
-
     const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
     const DROP_ABI = [
-      "function claim(address receiver,uint256 quantity,address currency,uint256 pricePerToken,(bytes32[] proof,uint256 quantityLimitPerWallet,uint256 pricePerToken,address currency) allowlistProof,bytes data) payable",
+      "function claim(address receiver,uint256 quantity,address currency,uint256 pricePerToken,(bytes32[] proof,uint256 quantityLimitPerWallet,uint256 pricePerToken,address currency) allowlistProof,bytes data) payable"
     ];
 
-    let NFT_ADDR = {
-      bscMainnet: "0xYourMainnetNFTAddress",
-      bscTestnet: "0xYourTestnetNFTAddress",
-    };
-
+    let NFT_ADDR = { bscMainnet: "0xYourMainnetNFTAddress", bscTestnet: "0xYourTestnetNFTAddress" };
     let signer = null;
 
     function setMintButtons(enabled) {
@@ -880,19 +803,14 @@ Flexcoin official website
       });
     }
 
-    function short(addr) {
-      return addr ? addr.slice(0, 6) + "…" + addr.slice(-4) : "";
-    }
+    function short(addr) { return addr ? addr.slice(0, 6) + "…" + addr.slice(-4) : ""; }
 
     async function ensureChain(chainKey) {
       const { ethereum } = window;
       if (!ethereum) throw new Error("MetaMask not installed.");
       const target = CHAINS[chainKey];
       try {
-        await ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: target.chainId }],
-        });
+        await ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: target.chainId }] });
       } catch (e) {
         if (e && e.code === 4902) {
           await ethereum.request({
@@ -901,8 +819,8 @@ Flexcoin official website
               chainId: target.chainId,
               chainName: target.name,
               rpcUrls: [target.rpc],
-              nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-            }],
+              nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 }
+            }]
           });
         } else {
           throw e;
@@ -913,11 +831,14 @@ Flexcoin official website
     async function connectWallet() {
       const netSel = document.querySelector("#net").value;
       await ensureChain(netSel);
+
       const provider = new ethers.BrowserProvider(window.ethereum);
       signer = await provider.getSigner();
       const addr = await signer.getAddress();
+
       document.querySelector("#connect").textContent = "Connected: " + short(addr);
       document.querySelector("#mint-log").textContent = "Connected: " + addr;
+
       setMintButtons(true);
       return signer;
     }
@@ -940,10 +861,7 @@ Flexcoin official website
       });
 
       window.ethereum.on("chainChanged", async (hex) => {
-        const v =
-          hex === "0x38" ? "bscMainnet" :
-          hex === "0x61" ? "bscTestnet" :
-          null;
+        const v = hex === "0x38" ? "bscMainnet" : hex === "0x61" ? "bscTestnet" : null;
         if (v) document.querySelector("#net").value = v;
       });
 
@@ -957,10 +875,7 @@ Flexcoin official website
     }
 
     async function setupMintUI() {
-      const addrConfig = await fetchFirst([
-        "/public/config/addresses.json",
-        "/config/addresses.json",
-      ]);
+      const addrConfig = await fetchFirst(["/public/config/addresses.json","/config/addresses.json"]);
       if (addrConfig.nft_mainnet) NFT_ADDR.bscMainnet = addrConfig.nft_mainnet;
       if (addrConfig.nft_testnet) NFT_ADDR.bscTestnet = addrConfig.nft_testnet;
 
@@ -979,37 +894,25 @@ Flexcoin official website
         if (isMobile) {
           hintEl.style.display = "block";
           hintEl.innerHTML =
-            "📱 <b>Mobile wallet tip</b><br>" +
-            "If the wallet does not connect, open the <b>MetaMask app</b>, go to the <b>Browser</b> tab, " +
-            "visit <b>flexcoin.io.kr</b>, then press <b>Connect Wallet</b> again on this page.";
+            "Mobile wallet tip: If the wallet does not connect, open the MetaMask app → Browser tab → visit flexcoin.io.kr → press Connect Wallet again.";
         }
       }
 
       btnConnect.onclick = async () => {
         try {
           if (!window.ethereum) {
-            const msg =
-              "No injected wallet detected. On mobile, open this site inside the MetaMask app browser. On desktop, install the MetaMask extension.";
+            const msg = "No injected wallet detected. On mobile, open this site inside the MetaMask app browser. On desktop, install the MetaMask extension.";
             if (logEl) logEl.textContent = msg;
             if (hintEl) {
               hintEl.style.display = "block";
-              hintEl.innerHTML =
-                "⚠️ <b>No wallet detected</b><br>" +
-                "Mobile: Open the <b>MetaMask app</b>, go to the <b>Browser</b> tab, visit <b>flexcoin.io.kr</b> and try again.<br>" +
-                "Desktop: Install the <b>MetaMask</b> browser extension and then click <b>Connect Wallet</b>.";
+              hintEl.innerHTML = "No wallet detected. Mobile: use MetaMask app browser. Desktop: install MetaMask extension.";
             }
-            alert(
-              "No wallet detected.\n\n" +
-              "Mobile: Open the MetaMask app, go to the Browser tab, visit flexcoin.io.kr and press Connect Wallet again.\n\n" +
-              "Desktop: Install the MetaMask browser extension and then click Connect Wallet."
-            );
+            alert("No wallet detected.\n\nMobile: Use MetaMask app browser.\nDesktop: Install MetaMask extension.");
             return;
           }
           await connectWallet();
         } catch (e) {
-          logEl.textContent =
-            "Connect error: " +
-            (e && e.message ? e.message : String(e));
+          logEl.textContent = "Connect error: " + (e && e.message ? e.message : String(e));
         }
       };
 
@@ -1021,12 +924,9 @@ Flexcoin official website
           const to = await signer.getAddress();
           const target = NFT_ADDR[chainKey];
 
-          if (!target || target.length < 20) {
-            throw new Error("NFT contract address is not configured.");
-          }
+          if (!target || target.length < 20) throw new Error("NFT contract address is not configured.");
 
           const pricePerToken = ethers.parseEther(DEFAULT_PRICE_BNB);
-
           const contract = new ethers.Contract(target, DROP_ABI, signer);
 
           const allowlistProof = {
@@ -1062,7 +962,6 @@ Flexcoin official website
       btnFlex.onclick = runMint;
     }
 
-    /* --------- Boot --------- */
     (async () => {
       await initLinks();
       await initHero();
@@ -1072,44 +971,6 @@ Flexcoin official website
       await loadGrid("/nft-preview", "#nft-grid");
       await setupMintUI();
     })();
-
-    /* -------- Simple Image Lightbox for grids -------- */
-    function initImageLightbox() {
-      const overlay = document.getElementById("img-lightbox");
-      const overlayImg = document.getElementById("img-lightbox-img");
-      if (!overlay || !overlayImg) return;
-
-      function openLightbox2(src, alt) {
-        overlayImg.src = src;
-        overlayImg.alt = alt || "";
-        overlay.classList.add("open");
-      }
-
-      function closeLightbox2() {
-        overlay.classList.remove("open");
-        overlayImg.src = "";
-      }
-
-      overlay.addEventListener("click", () => closeLightbox2());
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeLightbox2();
-      });
-
-      const selectors = ["#action-grid img", "#nft-grid img"];
-      selectors.forEach((sel) => {
-        document.querySelectorAll(sel).forEach((el) => {
-          el.style.cursor = "zoom-in";
-          el.addEventListener("click", (e) => {
-            e.preventDefault();
-            const src = el.src;
-            if (!src) return;
-            openLightbox2(src, el.alt || "");
-          });
-        });
-      });
-    }
-
-    window.addEventListener("load", initImageLightbox);
   </script>
 </body>
 </html>
