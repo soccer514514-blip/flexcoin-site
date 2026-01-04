@@ -1,11 +1,20 @@
 {
-  "tokenomics": { "lp": 60, "presale": 24, "team": 8, "marketing": 8, "burn": 0 },
-  "presale": {
-    "softcap_bnb": 20,
-    "hardcap_bnb": 78.3,
-    "rate_flex_per_bnb": 2000000,
-    "listing_rate_flex_per_bnb": 1600000
+  "tokenomics": {
+    "lp": 25,
+    "presale": 15,
+    "team": 45,
+    "marketing": 10,
+    "burn": 5
   },
-  "ui": { "hide_team": false },
-  "version": "v5.9"
+  "presale": {
+    "softcap_bnb": 10,
+    "hardcap_bnb": 75,
+    "rate_flex_per_bnb": 2000000,
+    "listing_rate_flex_per_bnb": 1600000,
+    "lp_lock_days": 365
+  },
+  "ui": {
+    "hide_team": false
+  },
+  "version": "v6.0"
 }
